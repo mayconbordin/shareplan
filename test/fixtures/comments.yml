@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  content: MyText
+  income_statement: 
+  user: 
+
+two:
+  content: MyText
+  income_statement: 
+  user: 

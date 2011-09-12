@@ -1,0 +1,17 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  income_statement_id: 1
+  account_id: 1
+  order: 1
+  value: 1.5
+  function: MyString
+  account_group: 
+
+two:
+  income_statement_id: 1
+  account_id: 1
+  order: 1
+  value: 1.5
+  function: MyString
+  account_group: 
