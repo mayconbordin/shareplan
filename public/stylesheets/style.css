@@ -363,20 +363,9 @@ a {
 			-moz-border-radius-topright: 5px;
 }
 
-#nova-projecao-button {
-	width: 181px;
-	height: 32px;
-	background: url(../images/buttons.png) no-repeat;
-	float:left;
-	margin-bottom: 10px;
-}
-
-#nova-projecao-button:hover {
-	background-position: 0 -32px;
-}
-
 #nova-projecao-button span {
-	display: none;
+	background: url(../images/add.png) no-repeat 0 50%;
+	padding: 6px 6px 6px 28px;
 }
 
 /********* NOVA PROJEÇÃO *********/
