@@ -122,66 +122,59 @@ Controller.Projection = (function() {
 	var chart;
 
 	function loadProjectionsTable() {
-		$('#projecoes-table').dataTable( {
-					"bLengthChange": false,
-					//"bFilter": false,
-					"sPaginationType": "full_numbers",
-					"oLanguage": {
-						"sInfo": "Exibindo _START_ até _END_ de _TOTAL_",
-						"oPaginate": {
-							"sFirst": "Primeira",
-							"sLast": "Última",
-							"sNext": "Próxima",
-							"sPrevious": "Anterior"
-						}
-					},
-					"bProcessing": true,
-					"bServerSide": true,
-					"sAjaxSource": "http://localhost:3000/projections/list",
-					"fnServerData": function( sUrl, aoData, fnCallback ) {
-						$.ajax( {
-							"url": sUrl,
-							"data": aoData,
-							"success": fnCallback,
-							"dataType": "jsonp",
-							"cache": false
-						} );
-					}
-				} );
-		
-		/*
 		$('#projecoes-table').dataTable({
 			"bLengthChange": false,
 			"bFilter": false,
 			"sPaginationType": "full_numbers",
 			"oLanguage": {
-				"sInfo": "Exibindo _START_ até _END_ de _TOTAL_"
+				"sInfo": "Exibindo _START_ até _END_ de _TOTAL_",
+				"oPaginate": {
+					"sFirst": "« Primeira",
+					"sLast": "Última »",
+					"sNext": "Próxima  &gt;",
+					"sPrevious": "&lt; Anterior"
+				},
+				"sProcessing": "Processando..."
 			},
-			"aaData": [
-				['Trident','Internet Explorer 4.0','Win 95+','4','X'],
-				['Trident','Internet Explorer 5.0','Win 95+','5','C'],
-				['Trident','Internet Explorer 5.5','Win 95+','5.5','A'],
-				['Trident','Internet Explorer 6','Win 98+','6','A']
-			],
 			"aoColumns": [
 				{ "sTitle": "Projeção" },
-				{ "sTitle": "Criado em" },
-				{ "sTitle": "Versões" },
-				{ "sTitle": "Comentários", "sClass": "center" },
+				{ "sTitle": "Data de Início" },
+				{ "sTitle": "Data de Fim" },
+				{ "sTitle": "Comentários", "sClass": "center", "bSortable": false },
 				{
-					"sTitle": "Grade",
+					"sTitle": "Criado em",
 					"sClass": "center",
 					"fnRender": function(obj) {
 						var sReturn = obj.aData[ obj.iDataColumn ];
-						if ( sReturn == "A" ) {
-							sReturn = "<b>A</b>";
-						}
+						var date = new Date(sReturn);
+						return date.format('d/m/Y h:i:s A');
+					}
+				},
+				{
+					"sTitle": "Ações",
+					"sClass": "center",
+					"bSortable": false,
+					"fnRender": function(obj) {
+						var sReturn = obj.aData[ obj.iDataColumn ];
 						return sReturn;
 					}
 				}
-			]
+			],
+			
+			/* Data Source Configuration */
+			"bProcessing": true,
+			"bServerSide": true,
+			"sAjaxSource": "/projections/list",
+			"fnServerData": function( sUrl, aoData, fnCallback ) {
+				$.ajax( {
+					"url": sUrl,
+					"data": aoData,
+					"success": fnCallback,
+					"dataType": "jsonp",
+					"cache": false
+				} );
+			}
 		});
-		*/
 	}
 	
 	function loadDatePicker() {

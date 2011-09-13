@@ -32,15 +32,17 @@ class ApplicationController < ActionController::Base
 			"iTotalRecords":"' + total.to_s + '",
 			"iTotalDisplayRecords":"' + display.to_s + '",
 			"aaData": ['
-			
-		for record in records
-			json += '['
-			for column in record
-				json += (column == record.last) ? '"' + column.to_s + '"' : '"' + column.to_s + '",'
-			end
-			json += (record == records.last) ? ']' : '],'
+			  
+		records.each_with_index do |record, i|
+		  json += '['
+		  
+		    record.each_with_index do |column, j|
+		      json += (j === (record.length-1)) ? '"' + column.to_s + '"' : '"' + column.to_s + '",'
+		    end
+		  
+		  json += (i == (records.length-1)) ? ']' : '],'
 		end
-			
+			  
 		json += ']});'
 		
 		return json

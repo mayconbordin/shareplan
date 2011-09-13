@@ -336,7 +336,8 @@ td.details {
 	border-right: 1px solid #f09220;
 }
 
-.paging_full_numbers span.paginate_active {
+.paging_full_numbers span.paginate_active,
+.paging_full_numbers span.paginate_button_disabled {
 	background-image: url(../images/grey-button-bg.png);
 	
 	border-left: 1px solid #808080;

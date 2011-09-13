@@ -357,7 +357,7 @@ a {
 			-moz-border-radius-topleft: 5px;
 }
 
-#projecoes-table thead tr :nth-child(5) {
+#projecoes-table thead tr :nth-child(6) {
 	border-top-right-radius: 5px;
 		-webkit-border-top-right-radius: 5px;
 			-moz-border-radius-topright: 5px;
