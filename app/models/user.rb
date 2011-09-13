@@ -1,4 +1,11 @@
 class User < ActiveRecord::Base
+	validates_presence_of :email, :password
+	validates_length_of :name, :maximum => 80
+	validates_length_of :email, :maximum => 120
+	validates_length_of :password, :maximum => 64
+	validates_length_of :status, :maximum => 80
+	validates_length_of :key, :maximum => 45
+	
 	has_many :messages
 	
 	has_and_belongs_to_many(:contacts,

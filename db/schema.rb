@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110912183940) do
+ActiveRecord::Schema.define(:version => 20110912231317) do
 
   create_table "account_groups", :force => true do |t|
     t.string   "name",       :limit => 120, :null => false
@@ -71,9 +71,9 @@ ActiveRecord::Schema.define(:version => 20110912183940) do
   end
 
   create_table "income_statement_users", :force => true do |t|
-    t.integer  "income_statement_id"
-    t.integer  "user_id"
-    t.string   "classification"
+    t.integer  "income_statement_id",               :null => false
+    t.integer  "user_id",                           :null => false
+    t.string   "classification",      :limit => 45, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
