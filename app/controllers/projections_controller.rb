@@ -5,4 +5,8 @@ class ProjectionsController < ApplicationController
 		@projections = IncomeStatement.all
 		#render :json => @projections
 	end
+	
+	def list
+		render :json => IncomeStatement.all
+	end
 end

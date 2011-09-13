@@ -1,14 +1,60 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Shareplan</title>
-  <%= stylesheet_link_tag :all %>
-  <%= javascript_include_tag :defaults %>
-  <%= csrf_meta_tag %>
-</head>
-<body>
-
-<%= yield %>
-
-</body>
+	<head>
+		<%= yield :title %>
+		<meta charset="UTF-8">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+		<!-- CSS Styles -->
+		<%= yield :styles %>
+		
+		<%= csrf_meta_tag %>
+	</head>
+	<body>
+		<!-- Wrapper -->
+		<div id="wrapper">
+			
+			<!-- Sidebar -->
+			<div id="sidebar">
+				<div id="logo">
+					<a href="#" title="Home"><img src="images/logo.png" alt="logo" /></a>
+				</div>
+				
+				<div id="user-bar">
+					<div id="user-name">Pedro José</div>
+					<div id="user-controls">
+						<a href="#" title="Editar conta">editar</a> |
+						<a href="#" title="Sair">sair</a>
+					</div>
+				</div>
+				
+				<ul id="menu">
+					<li><a id="menu-dashboard" href="#" title="Dashboard"><span>Dashboard</span></a></li>
+					<li><a id="menu-projecoes" href="#" title="Projeções"><span>Projeções</span></a></li>
+					<li><a id="menu-historico" href="#" title="Histórico"><span>Histórico</span></a></li>
+					<li><a id="menu-contatos"  href="#" title="Contatos"><span>Contatos</span></a></li>
+					<li><a id="menu-templates" href="#" title="Templates"><span>Templates</span></a></li>
+				</ul>
+				
+				<div id="notification-counter" title="Clique para ver as 10 notificações">10</div>
+			</div>
+			<!-- Sidebar -->
+			
+			<!-- Content -->
+			<div id="content">
+			
+				<%= yield %>
+				
+			</div>
+			<!-- Content -->
+			
+		</div>
+		<!-- Wrapper -->
+		
+		<!-- JS Scripts -->
+		<%= yield :scripts %>
+		
+	</body>
 </html>
