@@ -1,4 +1,8 @@
 var Controller = {};
+
+/**
+ * Dashboard Controller
+ */
 Controller.Dashboard = (function() {
 	var widgetWidth,
 		chart;
@@ -118,7 +122,34 @@ Controller.Projection = (function() {
 	var chart;
 
 	function loadProjectionsTable() {
-		$('#projecoes-table-container').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="projecoes-table"></table>' );
+		$('#projecoes-table').dataTable( {
+					"bLengthChange": false,
+					//"bFilter": false,
+					"sPaginationType": "full_numbers",
+					"oLanguage": {
+						"sInfo": "Exibindo _START_ até _END_ de _TOTAL_",
+						"oPaginate": {
+							"sFirst": "Primeira",
+							"sLast": "Última",
+							"sNext": "Próxima",
+							"sPrevious": "Anterior"
+						}
+					},
+					"bProcessing": true,
+					"bServerSide": true,
+					"sAjaxSource": "http://localhost:3000/projections/list",
+					"fnServerData": function( sUrl, aoData, fnCallback ) {
+						$.ajax( {
+							"url": sUrl,
+							"data": aoData,
+							"success": fnCallback,
+							"dataType": "jsonp",
+							"cache": false
+						} );
+					}
+				} );
+		
+		/*
 		$('#projecoes-table').dataTable({
 			"bLengthChange": false,
 			"bFilter": false,
@@ -150,6 +181,7 @@ Controller.Projection = (function() {
 				}
 			]
 		});
+		*/
 	}
 	
 	function loadDatePicker() {
@@ -241,13 +273,6 @@ Controller.Projection = (function() {
 				autoSave: true,
 				saveDateTarget: "#projecao-save-date span"
 			});
-			//dre.loadFromModel(1);
-			//dre.autoSave();
-			//dre.toView( dre.toEntity() );
-			
-			//var strDre = JSON.stringify(dre.toEntity());
-			//console.log( eval('(' + strDre + ')') );
-			//console.log(strDre);
 		}
 	};
 })();
