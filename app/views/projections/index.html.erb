@@ -1,0 +1,21 @@
+<h1>Listagem de Projeções</h1>
+
+<table>
+	<tr>
+		<th>Projeção</th>
+		<th>Data de Início</th>
+		<th>Data de Fim</th>
+		<th>Tipo</th>
+		<th>Comentário</th>
+	</tr>
+	
+	<% @projections.each do |projection| %>
+	<tr>
+		<td><%if projection.title.nil?%>null<%else projection.title.nil end%></td>
+		<td><%= projection.start_date %></td>
+		<td><%= projection.end_date %></td>
+		<td><%= projection.classification %></td>
+		<td><%= projection.comment %></td>
+	</tr>
+	<% end %>
+</table>
