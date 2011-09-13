@@ -11,7 +11,6 @@ class ProjectionsController < ApplicationController
 		
 		prepare = prepare_data_table(params, columns)
 
-		#@projections = IncomeStatement.all
 		@projections = IncomeStatement.order(prepare["order"]).limit(prepare["limit"]).offset(prepare["offset"])
 		list = Array.new
 
