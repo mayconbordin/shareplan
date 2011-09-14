@@ -142,7 +142,7 @@ Model.Account = (function() {
 	};
 })();
 
-Model.DRE = (function() {
+Model.IncomeStatement = (function() {
 	
 	return {
 		get: function(id, callback) {
@@ -152,8 +152,10 @@ Model.DRE = (function() {
 					{id:"1", tipo:"grupo", nome:"Receita Operaciona Bruta", items:[{id:"1", tipo:"conta",nome:"Receita de Vendas",items:[]}]},
 					{id:"2", tipo:"grupo", nome:"(-) Deduções", items:[{id:"2",tipo:"conta",nome:"ICMS s/ Vendas",items:[]}]},
 					{id:"1", tipo:"resultado", nome:"(=) Receita Operacional Líquida", items:[]},
-					{id:"3", tipo:"grupo", nome:"(-) Despesas", items:[{id:"3",tipo:"conta",nome:"Salários",items:[]},
-					{id:"4", tipo:"conta", nome:"Encargos Sociais", items:[]}]},
+					{id:"3", tipo:"grupo", nome:"(-) Despesas", items:[
+						{id:"3",tipo:"conta",nome:"Salários",items:[]},
+						{id:"4", tipo:"conta", nome:"Encargos Sociais", items:[]}
+					]},
 					{id:"4", tipo:"grupo", nome:"(+) Outras Receitas", items:[{id:"5",tipo:"conta",nome:"Juros Ativos",items:[]}]},
 					{id:"2", tipo:"resultado", nome:"(=) Resultado Líquido do Exercício", items:[]}
 				]

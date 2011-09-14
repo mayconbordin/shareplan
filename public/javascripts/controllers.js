@@ -138,16 +138,29 @@ Controller.Projection = (function() {
 			},
 			"aoColumns": [
 				{ "sTitle": "Projeção" },
-				{ "sTitle": "Data de Início" },
-				{ "sTitle": "Data de Fim" },
+				{
+					"sTitle": "Data de Início",
+					"sClass": "center",
+					"fnRender": function(obj) {
+						var sReturn = obj.aData[ obj.iDataColumn ];
+						return new Date(sReturn).format('d/m/Y');
+					}
+				},
+				{
+					"sTitle": "Data de Fim",
+					"sClass": "center",
+					"fnRender": function(obj) {
+						var sReturn = obj.aData[ obj.iDataColumn ];
+						return new Date(sReturn).format('d/m/Y');
+					}
+				},
 				{ "sTitle": "Comentários", "sClass": "center", "bSortable": false },
 				{
 					"sTitle": "Criado em",
 					"sClass": "center",
 					"fnRender": function(obj) {
 						var sReturn = obj.aData[ obj.iDataColumn ];
-						var date = new Date(sReturn);
-						return date.format('d/m/Y h:i:s A');
+						return new Date(sReturn).format('d/m/Y h:i:s A');
 					}
 				},
 				{
@@ -258,7 +271,7 @@ Controller.Projection = (function() {
 			loadDatePicker();
 			loadChart();
 			
-			var dre = new View.DRE({
+			var is = new View.IncomeStatement({
 				target: "#dre .body",
 				addButton: "#add-conta-dre",
 				callback: loadChart,

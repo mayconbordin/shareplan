@@ -172,7 +172,7 @@ View.Notification = {
  * @param {object|string} addButton Onde está o botão para adicionar novos itens
  * @param {function} callback A função que será quando forem feitas modificações na DRE
  */
-View.DRE = function(options) {
+View.IncomeStatement = function(options) {
 	this.opt = {
 		target: null,
 		addButton: null,
@@ -205,7 +205,7 @@ View.DRE = function(options) {
 		this.loadFromModel(this.opt.id);
 };
 
-View.DRE.prototype = {
+View.IncomeStatement.prototype = {
 	/**
 	 * Inicializa a DRE
 	 */

@@ -5,6 +5,42 @@ class ProjectionsController < ApplicationController
 		
 	end
 	
+	def create
+	  @projection = IncomeStatement.new(params[:projection])
+	  @projection.save
+	end
+	
+	def edit
+	  @projection = IncomeStatement.find(params[:id])
+	end
+	
+	def update
+	  @projection = IncomeStatement.find(params[:id])
+	  @projection.update_attributes(params[:projection])
+	end
+	
+	def destroy
+	  @projection = IncomeStatement.find(params[:id])
+	  @projection.destroy
+	end
+	
+	
+	# ------ JSON Actions ------
+	
+	def show
+    @projection = IncomeStatement.find(params[:id])
+    
+    items = @projection.get_items
+    
+    hash = {
+      "id"    => @projection.id,
+      "title" => @projection.title,
+      "items" => items
+    }
+        
+    render :json => hash
+  end
+  
 	def list
 		# Columns
 		columns = ["title", "start_date", "end_date", "", "created_at", "id"]
