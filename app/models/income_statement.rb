@@ -58,7 +58,7 @@ class IncomeStatement < ActiveRecord::Base
               new_items.last["items"].push({"id" => i.account.id, "type" => TYPE_ACCOUNT, "name" => i.account.name})
             end
           else
-            # add the account withou a group
+            # add the account without a group
             new_items.push({"id" => i.account.id, "type" => TYPE_ACCOUNT, "name" => i.account.name})
           end
         # add the results  
@@ -70,4 +70,5 @@ class IncomeStatement < ActiveRecord::Base
     
     return new_items
   end
+
 end

@@ -5,6 +5,14 @@ class ProjectionsController < ApplicationController
 		
 	end
 	
+	def new_step_one
+	  
+	end
+	
+	def new
+	  
+	end
+	
 	def create
 	  @projection = IncomeStatement.new(params[:projection])
 	  @projection.save

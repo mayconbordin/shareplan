@@ -131,10 +131,10 @@ Model.Account = (function() {
 		getFullList: function(callback) {
 			
 			var data = [
-				{id: 1, nome: "Receita Operaciona Bruta", tipo: "grupo"},
-				{id: 2, nome: "Receita de Vendas", tipo: "conta"},
-				{id: 3, nome: "(-) Deduções", tipo: "grupo"},
-				{id: 3, nome: "(=) Receita Operacional Líquida", tipo: "resultado"}
+				{id: 1, name: "Receita Operaciona Bruta", type: "group"},
+				{id: 2, name: "Receita de Vendas", type: "account"},
+				{id: 3, name: "(-) Deduções", type: "group"},
+				{id: 3, name: "(=) Receita Operacional Líquida", type: "result"}
 			];
 			
 			callback(data);
@@ -146,22 +146,11 @@ Model.IncomeStatement = (function() {
 	
 	return {
 		get: function(id, callback) {
-			var dre = {
-				id: id,
-				items:[
-					{id:"1", tipo:"grupo", nome:"Receita Operaciona Bruta", items:[{id:"1", tipo:"conta",nome:"Receita de Vendas",items:[]}]},
-					{id:"2", tipo:"grupo", nome:"(-) Deduções", items:[{id:"2",tipo:"conta",nome:"ICMS s/ Vendas",items:[]}]},
-					{id:"1", tipo:"resultado", nome:"(=) Receita Operacional Líquida", items:[]},
-					{id:"3", tipo:"grupo", nome:"(-) Despesas", items:[
-						{id:"3",tipo:"conta",nome:"Salários",items:[]},
-						{id:"4", tipo:"conta", nome:"Encargos Sociais", items:[]}
-					]},
-					{id:"4", tipo:"grupo", nome:"(+) Outras Receitas", items:[{id:"5",tipo:"conta",nome:"Juros Ativos",items:[]}]},
-					{id:"2", tipo:"resultado", nome:"(=) Resultado Líquido do Exercício", items:[]}
-				]
-			};
-			
-			if (callback) callback(dre);
+			$.ajax({
+  				url: "http://localhost:3000/projections/show/" + id,
+  				dataType: 'json',
+  				success: callback
+			});
 		},
 		save: function(dre, callback) {
 			

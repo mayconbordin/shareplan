@@ -810,7 +810,7 @@ table.dre tfoot tr {
 }
 
 .step {
-	width: 150px;
+	padding: 0 10px;
 	height: 29px;
 	background: url(../images/steps-bg.png) repeat-x 0 -29px;
 	text-align: center;
