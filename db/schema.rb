@@ -11,28 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110912231317) do
-
-  create_table "account_groups", :force => true do |t|
-    t.string   "name",       :limit => 120, :null => false
-    t.integer  "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "account_types", :force => true do |t|
-    t.string   "name",       :limit => 20, :null => false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "accounts", :force => true do |t|
-    t.string   "name",            :limit => 120, :null => false
-    t.integer  "account_type_id",                :null => false
-    t.integer  "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
+ActiveRecord::Schema.define(:version => 20110915144247) do
 
   create_table "comments", :force => true do |t|
     t.text     "content",             :null => false
@@ -49,23 +28,13 @@ ActiveRecord::Schema.define(:version => 20110912231317) do
     t.datetime "updated_at"
   end
 
-  create_table "income_statement_accounts", :force => true do |t|
-    t.integer  "income_statement_id",                :null => false
-    t.integer  "account_id",                         :null => false
-    t.integer  "order",                              :null => false
+  create_table "income_statement_items", :force => true do |t|
+    t.integer  "income_statement_id", :null => false
+    t.integer  "item_id",             :null => false
+    t.integer  "order",               :null => false
     t.float    "value"
-    t.string   "function",            :limit => 150
-    t.integer  "account_group_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "income_statement_results", :force => true do |t|
-    t.integer  "income_statement_id",                :null => false
-    t.integer  "result_id",                          :null => false
-    t.integer  "order",                              :null => false
-    t.float    "value"
-    t.string   "function",            :limit => 150
+    t.string   "function"
+    t.integer  "parent_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -89,17 +58,19 @@ ActiveRecord::Schema.define(:version => 20110912231317) do
     t.datetime "updated_at"
   end
 
-  create_table "messages", :force => true do |t|
-    t.string   "content",    :limit => 120, :null => false
-    t.boolean  "read",                      :null => false
-    t.integer  "user_id",                   :null => false
+  create_table "items", :force => true do |t|
+    t.string   "name",           :limit => 120, :null => false
+    t.string   "classification", :limit => 30,  :null => false
+    t.integer  "user_id"
+    t.string   "item_type",      :limit => 30
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "results", :force => true do |t|
-    t.string   "name",       :limit => 120, :null => false
-    t.integer  "user_id"
+  create_table "messages", :force => true do |t|
+    t.string   "content",    :limit => 120, :null => false
+    t.boolean  "read",                      :null => false
+    t.integer  "user_id",                   :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

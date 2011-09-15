@@ -19,56 +19,29 @@ class IncomeStatement < ActiveRecord::Base
   has_many :income_statement_users
   has_many :users, :through => :income_statement_users
   
-  has_many :income_statement_results
-  has_many :results, :through => :income_statement_results
-  
-  has_many :income_statement_accounts
-  has_many :accounts, :through => :income_statement_accounts
+  has_many :income_statement_items
+  has_many :items, :through => :income_statement_items
   
   # ---- Methods ----
-  def get_items
-    items     = []
-    new_items = []
-    
-    # Arrange accounts in ascendent order
-    self.income_statement_accounts.each do |i|
-      items[i.order] = i
-    end
-    
-    # Do the same to the results
-    self.income_statement_results.each do |i|
-      items[i.order] = i
-    end
 
-    items.each do |i|
-      if i != nil
-        # add the accounts
-        if i.instance_of? IncomeStatementAccount
-          # has a group
-          if i.account_group != nil
-            # check if last item was a group and the same as this
-            if new_items.last["type"] == TYPE_GROUP and new_items.last["id"] == i.account_group.id
-              # add the account to an existing group
-              new_items.last["items"].push({"id" => i.account.id, "type" => TYPE_ACCOUNT, "name" => i.account.name})
-            else
-              # create a new group
-              new_items.push({"id" => i.account_group.id, "type" => TYPE_GROUP, "name" => i.account_group.name, "items" => []})
-              
-              # add the account to the group
-              new_items.last["items"].push({"id" => i.account.id, "type" => TYPE_ACCOUNT, "name" => i.account.name})
-            end
-          else
-            # add the account without a group
-            new_items.push({"id" => i.account.id, "type" => TYPE_ACCOUNT, "name" => i.account.name})
-          end
-        # add the results  
-        else
-          new_items.push({"id" => i.result.id, "type" => TYPE_RESULT, "name" => i.result.name})
+  def get_hash_items
+    items = []
+    
+    # Put items in order
+    self.income_statement_items.sort! { |a,b| a.order <=> b.order }
+    
+    # Get the parent items and its childrens
+    self.income_statement_items.each do |i|
+      if i.parent_id == nil
+        items.push({"id" => i.item.id, "type" => i.item.classification, "name" => i.item.name, "items" => []})
+        
+        i.childrens.each do |c|
+          items.last["items"].push({"id" => c.item.id, "type" => c.item.classification, "name" => c.item.name})
         end
       end
     end
     
-    return new_items
+    return items
   end
 
 end

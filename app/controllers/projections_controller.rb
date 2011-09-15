@@ -37,13 +37,11 @@ class ProjectionsController < ApplicationController
 	
 	def show
     @projection = IncomeStatement.find(params[:id])
-    
-    items = @projection.get_items
-    
+            
     hash = {
       "id"    => @projection.id,
       "title" => @projection.title,
-      "items" => items
+      "items" => @projection.get_hash_items
     }
         
     render :json => hash

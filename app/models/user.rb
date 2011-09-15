@@ -17,7 +17,5 @@ class User < ActiveRecord::Base
 	has_many :income_statement_users
 	has_many :income_statements, :through => :income_statement_users
 	
-	has_many :results
-	has_many :account_groups
-	has_many :account
+	has_many :items
 end
