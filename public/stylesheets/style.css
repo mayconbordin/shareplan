@@ -543,12 +543,12 @@ a {
 }
 
 #dre .body .delete {
-	background: url(../images/delete___16.png) no-repeat;
+	background: url(../images/delete_16.png) no-repeat;
 	padding: 7px 9px;
 }
 
 #dre .body .add {
-	background: url(../images/add___16.png) no-repeat;
+	background: url(../images/add_16.png) no-repeat;
 	padding: 7px;
 	margin-right: 5px;
 }
@@ -653,6 +653,11 @@ a {
 
 #dre .body .new .blue-button {
 	margin-left: 5px;
+}
+
+/********* STEP ONE *********/
+#projecao-form {
+	margin-top: 20px;
 }
 
 /******************** COMPONENTS ********************/
@@ -873,6 +878,131 @@ table.dre tfoot tr {
 }
 
 /********** FORM **********/
+.form-container fieldset {
+	background: #f2f2f2;
+	padding: 25px;
+	
+	border: 1px solid #ccc;
+	border-radius: 5px;
+		-webkit-border-radius: 5px;
+			-moz-border-radius: 5px;
+}
+
+.form-container fieldset legend {
+	padding:0 10px;
+	font-weight: bold;
+	font-size: 14pt;
+}
+
+.form-container fieldset dl {
+	display: block;
+}
+
+.form-container fieldset dt {
+	width: 150px;
+	text-align: right;
+}
+
+.form-container fieldset dt label {
+	font-weight: bold;
+}
+
+.form-container fieldset dd {
+	position: relative;
+	top: -24px;
+	left: 165px;
+	display: block;
+	width: 80%;
+}
+
+.form-container fieldset dd p {
+	font-size: 10pt;
+	color: #666;
+	margin-top: 2px;
+}
+
+.form-container fieldset dd.text {
+	top: -18px;
+	position: relative;
+	left: 165px;
+	width: 500px;
+	font-size: 11pt;
+}
+
+.form-container fieldset input {
+	padding: 7px 6px 5px;
+}
+
+.form-container fieldset input,
+.form-container fieldset select,
+.form-container fieldset textarea {
+	padding: 7px 6px 5px;
+	border: 1px solid #ccc;
+	color: #333;
+	border-radius: 5px;
+		-webkit-border-radius: 5px;
+			-moz-border-radius: 5px;
+}
+
+.form-container fieldset select {
+	background-color: #fff;
+}
+
+.form-container fieldset input:hover,
+.form-container fieldset select:hover,
+.form-container fieldset textarea:hover {
+	border: 1px solid #ff8400;
+}
+
+.form-container fieldset input.valid {
+	border-color: #82BF08;
+	background-color: #E2FF89;
+}
+
+.form-container fieldset .valid-message {
+	background: url(../images/accept_16.png) no-repeat left center;
+	margin-left: 10px;
+	padding: 0 0 0 25px;
+	font-size: 10pt;
+}
+
+.form-container fieldset input.invalid {
+	border-color: #FF0000;
+	background-color: #FFC4C4;
+}
+
+.form-container fieldset .invalid-message {
+	background: url(../images/delete_16.png) no-repeat left center;
+	margin-left: 10px;
+	padding: 0 0 0 25px;
+	font-size: 10pt;
+}
+
+.form-container fieldset input.datepicker {
+	background: #fff url(../images/calendar_16.png) no-repeat 6px 6px;
+	padding-left: 30px;
+	cursor: pointer;
+	width: 20%;
+}
+
+.form-container fieldset input.small,
+.form-container fieldset textarea.small {
+	width: 25%;
+}
+
+.form-container fieldset input.medium,
+.form-container fieldset textarea.medium {
+	width: 50%;
+}
+
+.form-container fieldset input.large,
+.form-container fieldset textarea.large {
+	width: 75%;
+}
+
+
+
+/************/
 .textfield {
 	font-size: 12pt;
 	font-weight: bold;
