@@ -13,6 +13,45 @@ View.Notification = {
 		});
 	}
 };
+
+/**
+ * Message Builder
+ */
+View.FormValidator = {
+	validators: [],
+	rangeInput: function(msg, target) {
+		$(target).each(function() {
+			$(this).focusout(function() {
+				$(this).val() ?
+					$(this).removeClass("invalid") : $(this).addClass("invalid");
+			});
+		});
+			
+		var validate = function() {
+			var parent;
+			$(target).each(function() {
+				$(this).val() ?
+					$(this).removeClass("invalid") : $(this).addClass("invalid");
+				
+				parent = parent ? parent : $(this).parent().parent();
+			});
+			var html = $('<dt class="invalid"><span class="invalid-message">'+msg+'</span></dt><dd></dd>');
+		
+			$(parent).find('.invalid-message, .invalid').each(function() {
+				//$(this).remove();
+			});
+			
+			$(parent).append(html);
+		};
+		
+		this.validators.push(validate);
+	},
+	
+	validate: function() {
+		for (i = 0; i < this.validators.length; i++)
+			this.validators[i]();
+	}
+}
  
 /**
  * Componente para visualizar e manipular um DRE
@@ -197,7 +236,7 @@ View.IncomeStatement.prototype = {
 			target = this.target;
 		
 		button.click(function() {
-			Model.Account.getFullList(function(data) {
+			Model.Item.list(function(data) {
 				// Cria o combobox com o array de itens recuperados
 				var html = '<li class="new"><label>Esolha a conta a ser adicionada: </label>'
 						 	  + '<select class="combobox"><option value=""></option>';

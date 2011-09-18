@@ -12,4 +12,13 @@ class Item < ActiveRecord::Base
   validates_associated :user
     
   belongs_to :user
+  
+  def to_hash
+    hash = {
+      "id"    => id,
+      "type"  => classification,
+      "name"  => name
+    }
+    return hash
+  end
 end

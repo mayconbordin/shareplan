@@ -39,8 +39,9 @@
 <script src="/javascripts/controller.js" type="text/javascript"></script>
 
 <script type="text/javascript">
+	var projection_id = <%= @id %>;
 	$(document).ready(function () {
-		Controller.Projection.newStepThree();
+		Controller.Projection.newStepTwo(projection_id);
 		Controller.Sidebar.initialize();
 	});
 </script>

@@ -881,6 +881,7 @@ table.dre tfoot tr {
 .form-container fieldset {
 	background: #f2f2f2;
 	padding: 25px;
+	margin-bottom: 20px;
 	
 	border: 1px solid #ccc;
 	border-radius: 5px;
@@ -898,8 +899,24 @@ table.dre tfoot tr {
 	display: block;
 }
 
-.form-container fieldset dt {
-	width: 150px;
+.form-container fieldset dl.inline,
+.form-container fieldset dl.inline dt,
+.form-container fieldset dl.inline dd {
+	display: inline;
+}
+
+.form-container fieldset dl.inline .first,
+.form-container fieldset dl.inline p.last {
+	margin-left: 10px;
+}
+
+.form-container fieldset dl.inline .datepicker {
+	margin: 0 7px;
+	width: 100px;
+}
+
+.form-container fieldset dl.normal dt {
+	width: 180px;
 	text-align: right;
 }
 
@@ -907,12 +924,16 @@ table.dre tfoot tr {
 	font-weight: bold;
 }
 
-.form-container fieldset dd {
+.form-container fieldset dl.normal dd {
 	position: relative;
 	top: -24px;
-	left: 165px;
+	left: 200px;
 	display: block;
 	width: 80%;
+}
+
+.form-container fieldset dl dt.invalid {
+	display: none;
 }
 
 .form-container fieldset dd p {
@@ -954,6 +975,12 @@ table.dre tfoot tr {
 	border: 1px solid #ff8400;
 }
 
+.form-container fieldset input.error,
+.form-container fieldset select.error,
+.form-container fieldset textarea.error {
+	border: 1px solid #CD0A0A;
+}
+
 .form-container fieldset input.valid {
 	border-color: #82BF08;
 	background-color: #E2FF89;
@@ -981,7 +1008,6 @@ table.dre tfoot tr {
 .form-container fieldset input.datepicker {
 	background: #fff url(../images/calendar_16.png) no-repeat 6px 6px;
 	padding-left: 30px;
-	cursor: pointer;
 	width: 20%;
 }
 
@@ -1012,6 +1038,61 @@ table.dre tfoot tr {
 	border-radius: 5px;
 		-webkit-border-radius: 5px;
 			-moz-border-radius: 5px;
+}
+
+/********** ERRORS **********/
+.messages {
+	list-style-type: none;
+	margin: 20px 0;
+}
+
+.messages li {
+	margin-bottom: 10px;
+	padding: 16px 10px 30px 38px;
+	background-position: 10px 16px;
+	background-repeat: no-repeat;
+	border: 1px solid;
+	
+	border-radius: 5px;
+		-webkit-border-radius: 5px;
+			-moz-border-radius: 5px;
+}
+
+.messages .error {
+	background-color: #FFC4C4;
+	background-image: url(../images/delete_16.png);
+	border-color: #FF0000;
+}
+
+.messages li p {
+	float: left;
+}
+
+.messages li span.close {
+	width: 8px;
+	height: 8px;
+	background: url(../images/closelabel.png) no-repeat 0 0;
+	float: right;
+	margin-top: 3px;
+	cursor: pointer;
+}
+
+.messages .success {
+	background-color: #ECFFB3;
+	background-image: url(../images/accept_16.png);
+	border-color: #82BF08;
+}
+
+.messages .warning {
+	background-color: #FCEFA1;
+	background-image: url(../images/warning_16.png);
+	border-color: #FFCC00;
+}
+
+.messages .info {
+	background-color: #B0E2F9;
+	background-image: url(../images/info_16.png);
+	border-color: #00A2ED;
 }
 
 /********** JQUERY UI **********/

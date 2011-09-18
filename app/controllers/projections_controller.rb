@@ -5,12 +5,35 @@ class ProjectionsController < ApplicationController
 		
 	end
 	
+	# ------ Step One ------
 	def new_step_one
-	  
+	  if params[:id].nil?
+	    @projection = IncomeStatement.new
+	  else
+	    @projection = IncomeStatement.find(params[:id])
+	  end
 	end
 	
-	def new
+	def save_step_one
+	  @projection = IncomeStatement.new(params[:projection])
+	  #@projection.classification = IncomeStatement::TEMP
 	  
+    if @projection.save
+      redirect_to :action => :new_step_two, :id => @projection.id
+    else
+      render :action => :new_step_one
+    end
+	end
+	
+	# ------ Step Two ------
+	def new_step_two
+	  @projection = IncomeStatement.find(params[:id])
+	  
+	  @id = params[:id]
+	end
+	
+	def save_step_two
+	  render :text => params
 	end
 	
 	def create

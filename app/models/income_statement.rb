@@ -3,10 +3,8 @@ class IncomeStatement < ActiveRecord::Base
   PROJECTION    = "projection"
   HISTORY       = "history"
   TEMPLATE      = "template"
-  TYPE_ACCOUNT  = "account"
-  TYPE_RESULT   = "result"
-  TYPE_GROUP    = "group"
-  
+  TEMP          = "temp"
+    
   # ---- Validations ----
 	validates_presence_of :classification
 	validates_length_of :title, :maximum => 100
@@ -22,21 +20,21 @@ class IncomeStatement < ActiveRecord::Base
   has_many :income_statement_items
   has_many :items, :through => :income_statement_items
   
+   
   # ---- Methods ----
-
   def get_hash_items
     items = []
     
     # Put items in order
-    self.income_statement_items.sort! { |a,b| a.order <=> b.order }
+    income_statement_items.sort! { |a,b| a.order <=> b.order }
     
     # Get the parent items and its childrens
-    self.income_statement_items.each do |i|
+    income_statement_items.each do |i|
       if i.parent_id == nil
-        items.push({"id" => i.item.id, "type" => i.item.classification, "name" => i.item.name, "items" => []})
+        items.push(i.to_hash)
         
         i.childrens.each do |c|
-          items.last["items"].push({"id" => c.item.id, "type" => c.item.classification, "name" => c.item.name})
+        	items.last["items"].push(c.to_hash)
         end
       end
     end

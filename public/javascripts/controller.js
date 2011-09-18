@@ -190,36 +190,6 @@ Controller.Projection = (function() {
 		});
 	}
 	
-	function loadDatePicker() {
-		$( "#datepicker" ).datepicker({
-			dateFormat: 'dd/mm/yy',
-			dayNames: [
-				'Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'
-			],
-			dayNamesMin: [
-				'D','S','T','Q','Q','S','S','D'
-			],
-			dayNamesShort: [
-				'Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'
-			],
-			monthNames: [
-				'Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro',
-				'Outubro','Novembro','Dezembro'
-			],
-			monthNamesShort: [
-				'Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set',
-				'Out','Nov','Dez'
-			],
-			nextText: 'Próximo',
-			prevText: 'Anterior'
-		});
-		
-		$( "#datepicker" ).change(function() {
-			console.log($(this).val());
-			loadChart();
-		});
-	}
-	
 	function loadChart() {
 		chart = new Highcharts.Chart({
 		  chart: {
@@ -263,19 +233,85 @@ Controller.Projection = (function() {
 	   });
 	}
 	
+	function validatePeriod(target) {
+		var valid = true;
+		$(target).find(".datepicker").each(function() {
+			if ($(this).val()) {
+				$(this).removeClass("invalid");
+				if (valid) $("#invalid-period").hide();
+			} else {
+				$(this).addClass("invalid");
+				$("#invalid-period").css("display", "inline");
+				valid = false;
+			}
+		});
+		
+		var start = new Date($("#start-date").val());
+		var end = new Date($("#end-date").val());
+		console.log(start);
+		console.log(end);
+		if (start.getMilliseconds() > end.getMilliseconds()) {
+			$("#invalid-period").css("display", "inline");
+		}
+	};
+	
+	function loadValidations() {
+		$("#start-date, #end-date").each(function() {
+			$(this).change(function() {
+				validatePeriod($(this).parent().parent());
+			});
+			
+			$(this).focusout(function() {
+				validatePeriod($(this).parent().parent());
+			});
+		});
+	}
+	
 	return {
 		index: function() {
 			loadProjectionsTable();
 		},
-		newStepThree: function() {
-			loadDatePicker();
+		newStepOne: function() {
+			// load datepickers
+			$(".datepicker").datepicker(DatePickerConfig);
+			
+			// load basic validations
+			loadValidations();
+			
+			// submit form and teste validations
+			$("#projecao-next").click(function() {				
+				if (!$("#start-date").val() || !$("#end-date").val())
+					validatePeriod($("#start-date").parent().parent());
+				else
+					$("#projecao-form form").submit();
+					
+				return false;
+			});
+			
+			// register message close buttons
+			$(".close").each(function() {
+				$(this).click(function() {
+					$(this).parent().fadeOut("slow", function() {
+						$(this).remove();
+					});
+				});
+			});
+		},
+		newStepTwo: function(id) {
+			$("#datepicker").datepicker(DatePickerConfig);
+		
+			$("#datepicker").change(function() {
+				console.log($(this).val());
+				loadChart();
+			});
+			
 			loadChart();
 			
 			var is = new View.IncomeStatement({
 				target: "#dre .body",
 				addButton: "#add-conta-dre",
 				callback: loadChart,
-				id: 1,
+				id: id,
 				autoSave: true,
 				saveDateTarget: "#projecao-save-date span"
 			});

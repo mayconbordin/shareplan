@@ -86,15 +86,14 @@
 						<label>De</label>
 					</dt>
 					<dd>
-						<input type="text" class="datepicker" name="projection[start_date]" id="start-date" value="<%= @projection.start_date ? @projection.start_date.strftime("%d/%m/%Y") : "" %>" />
+						<input type="text" class="datepicker" name="projection[start_date]" id="start-date" value="<%= @projection.start_date.strftime("%d/%m/%Y") %>" />
 					</dd>
 					
 					<dt>
 						<label>até</label>
 					</dt>
 					<dd>
-						<input type="text" class="datepicker" name="projection[end_date]" id="end-date" value="<%= @projection.end_date ? @projection.end_date.strftime("%d/%m/%Y") : "" %>" />
-						<p class="last">Data no formato dia/mês/ano</p>
+						<input type="text" class="datepicker" name="projection[end_date]" id="end-date" value="<%= @projection.end_date.strftime("%d/%m/%Y") %>" />
 					</dd>
 					<dt id="invalid-period" class="invalid">
 						<span class="invalid-message">Você precisa informar um período</span>

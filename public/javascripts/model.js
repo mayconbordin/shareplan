@@ -118,26 +118,15 @@ Model.Projection = (function() {
 	};
 })();
 
-Model.Contact = (function() {
+Model.Item = (function() {
 	
 	return {
-		
-	};
-})();
-
-Model.Account = (function() {
-	
-	return {
-		getFullList: function(callback) {
-			
-			var data = [
-				{id: 1, name: "Receita Operaciona Bruta", type: "group"},
-				{id: 2, name: "Receita de Vendas", type: "account"},
-				{id: 3, name: "(-) Deduções", type: "group"},
-				{id: 3, name: "(=) Receita Operacional Líquida", type: "result"}
-			];
-			
-			callback(data);
+		list: function(callback) {
+			$.ajax({
+  				url: "http://localhost:3000/items/list",
+  				dataType: 'json',
+  				success: callback
+			});
 		}
 	};
 })();
@@ -152,10 +141,16 @@ Model.IncomeStatement = (function() {
   				success: callback
 			});
 		},
-		save: function(dre, callback) {
-			
-			var responseObj = {status: 200, dreId: 1};
-			if (callback) callback(responseObj);
+		save: function(is, callback) {
+			$.ajax({ 
+                url: 'http://localhost:3000/projections/save_step_two', 
+                type: 'post', 
+                data: is, 
+                dataType: 'json', 
+                contentType: "application/json; charset=utf-8", 
+                beforeSend: function() { /*$("#saveStatus").html("Saving").show();*/ }, 
+                success: callback
+            });
 		}
 	};
 })();
