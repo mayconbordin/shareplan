@@ -241,18 +241,22 @@ Controller.Projection = (function() {
 				if (valid) $("#invalid-period").hide();
 			} else {
 				$(this).addClass("invalid");
+				$("#invalid-period span").html("Você precisa informar um período");
 				$("#invalid-period").css("display", "inline");
 				valid = false;
 			}
 		});
 		
-		var start = new Date($("#start-date").val());
-		var end = new Date($("#end-date").val());
-		console.log(start);
-		console.log(end);
-		if (start.getMilliseconds() > end.getMilliseconds()) {
-			$("#invalid-period").css("display", "inline");
-		}
+		var start 	= $("#start-date").datepicker("getDate");
+		var end 	= $("#end-date").datepicker("getDate");
+		
+		if (start && end)
+			if (start.getTime() > end.getTime()) {
+				$("#invalid-period span").html("A data final precisa ser maior que a data inicial");
+				$("#invalid-period").css("display", "inline");
+				valid = false;
+			} else
+				if (valid) $("#invalid-period").hide();
 	};
 	
 	function loadValidations() {

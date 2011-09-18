@@ -16,7 +16,7 @@ class ProjectionsController < ApplicationController
 	
 	def save_step_one
 	  @projection = IncomeStatement.new(params[:projection])
-	  #@projection.classification = IncomeStatement::TEMP
+	  @projection.classification = IncomeStatement::TEMP
 	  
     if @projection.save
       redirect_to :action => :new_step_two, :id => @projection.id

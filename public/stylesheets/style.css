@@ -905,8 +905,7 @@ table.dre tfoot tr {
 	display: inline;
 }
 
-.form-container fieldset dl.inline .first,
-.form-container fieldset dl.inline p.last {
+.form-container fieldset dl.inline .first {
 	margin-left: 10px;
 }
 
