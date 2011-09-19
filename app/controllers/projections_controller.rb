@@ -32,6 +32,23 @@ class ProjectionsController < ApplicationController
 	  @id = params[:id]
 	end
 	
+	def add_item
+	  if params[:id]
+	    @projection = IncomeStatement.find(params[:id])
+	    
+	    render :text => params
+	  end
+	  
+	  #item = IncomeStatementItem.new(params[:item])
+	  
+	  #@projection.income_statement_items.push(item)
+	  #@projection.save
+	end
+	
+	def remove_item
+	  
+	end
+	
 	def save_step_two
 	  render :text => params
 	end

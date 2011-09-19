@@ -267,10 +267,12 @@ View.IncomeStatement.prototype = {
 					
 					if (!s)
 						novaConta.find('.message').show().html("Escolha uma conta para adicionar");
-					else if (target.parent().hasClass("group") && (s.tipo == "grupo" || s.tipo == "resultado"))
+					else if (target.parent().hasClass("group") && (s.type == "group" || s.type == "result"))
 						novaConta.find('.message').show().html("Não é permitido adicionar grupos de contas aqui");
-					else
+					else {
 						thisObj.addItem(s, target, novaConta);
+						//Model.IncomeStatement.addItem(thisObj.opt.id, {})
+					}
 					return false;
 				});
 				
@@ -326,7 +328,6 @@ View.IncomeStatement.prototype = {
 	 */
 	createItem: function(obj, asJq) {
 		asJq = (asJq == undefined) ? true : asJq;
-		//var type = {conta: 'account', grupo: 'group', resultado: 'result'};
 		var id = obj.type + '_' + obj.id;
 		
 		var html = '<li id="' + id + '" class="' + obj.type + '">'
@@ -418,8 +419,10 @@ View.IncomeStatement.prototype = {
 	loadFromModel: function(id) {
 		var thisObj = this;
 		Model.IncomeStatement.get(id, function(dre) {
-			if (dre)
+			if (dre) {
 				thisObj.toView($.extend(thisObj.dre, dre));
+				thisObj.dre.id = id;
+			}
 		});
 	},
 	
@@ -430,8 +433,8 @@ View.IncomeStatement.prototype = {
 	 * @param {string} msg A mensagem a ser exibida para o usuário
 	 */
 	changeHandler: function(msg) {
-		if (this.opt.autoSave === true)
-			this.save();
+		//if (this.opt.autoSave === true)
+			//this.save();
 		
 		if (msg)
 			View.Notification.show("O DRE foi modificado", msg);

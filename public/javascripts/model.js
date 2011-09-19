@@ -151,6 +151,16 @@ Model.IncomeStatement = (function() {
                 beforeSend: function() { /*$("#saveStatus").html("Saving").show();*/ }, 
                 success: callback
             });
+		},
+		addItem: function(id, item, callback) {
+			$.ajax({ 
+                url: 'http://localhost:3000/projections/add_item/' + id, 
+                type: 'post', 
+                data: item, 
+                beforeSend: function() { /*$("#saveStatus").html("Saving").show();*/ }, 
+                success: callback
+            });
 		}
+	
 	};
 })();
