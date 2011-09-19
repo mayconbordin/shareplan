@@ -419,10 +419,8 @@ View.IncomeStatement.prototype = {
 	loadFromModel: function(id) {
 		var thisObj = this;
 		Model.IncomeStatement.get(id, function(dre) {
-			if (dre) {
+			if (dre)
 				thisObj.toView($.extend(thisObj.dre, dre));
-				thisObj.dre.id = id;
-			}
 		});
 	},
 	
@@ -447,5 +445,88 @@ View.IncomeStatement.prototype = {
 			if (thisObj.opt.saveDateTarget)
 				thisObj.opt.saveDateTarget.html(new Date().format('h:i:s A'));
 		});
+	}
+};
+
+//========================================
+
+
+View.Is = function() {
+	this.incomeStatement = {};
+};
+
+View.Is.protoype = {
+	init: function() {
+		
+	},
+	
+	/**
+	 * Função acionada quando um item começa a ser movido
+	 *
+	 * @param {object} event
+	 */
+	sortStart: function(event) {
+		this.sorting = true,
+			thisObj  = this;
+		
+		// Change the 'to be sorted' element border and cursor
+		$(event.toElement).css({'cursor':'move', 'border':'1px solid #ff8400'});
+		
+		// Show the unmovable pieces
+		this.target.find(".unmovable").each(function() {
+			$(this).show();
+			thisObj.target.sortable("refresh");
+		});
+	},
+	
+	/**
+	 * Função acionada quando um item deixa de ser movido
+	 *
+	 * @param {object} event
+	 */
+	sortStop: function(event) {
+		this.sorting = false;
+		var el = $(event.toElement);
+		el.css({'cursor':'', 'border':''});
+		
+		this.target.find(".unmovable").each(function() {
+			$(this).hide();
+		});
+		
+		// Verifica se a operação não é permitida
+		if (
+			((el.is(".group, .result")) && el.parent().parent().is(".group"))
+			||
+			(el.is(".title") && el.parent().is(".group") && el.parent().parent().parent().is(".group"))
+		) {
+			this.target.sortable('cancel');
+			this.sortUpdate();
+		}
+	},
+	sortUpdate: function() {
+		
+	},
+	
+	
+	
+	addItem: function() {
+		
+	},
+	removeItem: function() {
+		
+	},
+	
+	createItem: function() {
+		
+	},
+	registerAddButton: function() {
+		
+	},
+	
+	loadFromModel: function(id) {
+		
+	},
+	toView: function(incomeStatement) {
+		
 	}
 };

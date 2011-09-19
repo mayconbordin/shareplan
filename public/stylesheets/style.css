@@ -343,7 +343,7 @@ a {
 	width: 197px;
 	height: 37px;
 	background: url(../images/titles.png) no-repeat 0 -30px;
-	margin-bottom: 20px;
+	margin-bottom: 40px;
 }
 
 #projecoes-table-container {
@@ -636,9 +636,12 @@ a {
 #dre .body .new .message {
 	display: none;
 	font-size: 10pt;
-	padding: 0 5px;
+	padding: 0 5px 0 35px;
 	margin: 0 0 5px 0;
-	border: 1px solid orange;
+	
+	background: #FFC4C4 url(../images/delete_16.png) no-repeat 10px 6px;
+	border: 1px solid #FF0000;
+	
 	height: 25px;
 	line-height: 25px;
 	
