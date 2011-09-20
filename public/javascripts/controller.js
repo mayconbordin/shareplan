@@ -322,3 +322,76 @@ Controller.Projection = (function() {
 		}
 	};
 })();
+
+Controller.History = (function() {
+	
+	return {
+		index: function() {
+			$('#projecoes-table').dataTable({
+				"bLengthChange": false,
+				"bFilter": false,
+				"sPaginationType": "full_numbers",
+				"oLanguage": {
+					"sInfo": "Exibindo _START_ até _END_ de _TOTAL_",
+					"oPaginate": {
+						"sFirst": "« Primeira",
+						"sLast": "Última »",
+						"sNext": "Próxima  &gt;",
+						"sPrevious": "&lt; Anterior"
+					},
+					"sProcessing": "Processando..."
+				},
+				"aoColumns": [
+					{ "sTitle": "DRE" },
+					{
+						"sTitle": "Data de Início",
+						"sClass": "center",
+						"fnRender": function(obj) {
+							var sReturn = obj.aData[ obj.iDataColumn ];
+							return new Date(sReturn).format('d/m/Y');
+						}
+					},
+					{
+						"sTitle": "Data de Fim",
+						"sClass": "center",
+						"fnRender": function(obj) {
+							var sReturn = obj.aData[ obj.iDataColumn ];
+							return new Date(sReturn).format('d/m/Y');
+						}
+					},
+					{
+						"sTitle": "Criado em",
+						"sClass": "center",
+						"fnRender": function(obj) {
+							var sReturn = obj.aData[ obj.iDataColumn ];
+							return new Date(sReturn).format('d/m/Y h:i:s A');
+						}
+					},
+					{
+						"sTitle": "Ações",
+						"sClass": "center",
+						"bSortable": false,
+						"fnRender": function(obj) {
+							var sReturn = obj.aData[ obj.iDataColumn ];
+							return sReturn;
+						}
+					}
+				],
+				
+				/* Data Source Configuration */
+				"bProcessing": true,
+				"bServerSide": true,
+				"sAjaxSource": "/history/list",
+				"fnServerData": function( sUrl, aoData, fnCallback ) {
+					$.ajax( {
+						"url": sUrl,
+						"data": aoData,
+						"success": fnCallback,
+						"dataType": "jsonp",
+						"cache": false
+					} );
+				}
+			});
+		}
+	};
+})();
