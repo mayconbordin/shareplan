@@ -76,6 +76,7 @@ class ProjectionsController < ApplicationController
 	# ------ JSON Actions ------
 	
 	def show
+	  @user = User.current_user
     @projection = IncomeStatement.find(params[:id])
             
     hash = {

@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::Base
+  layout :layout_by_resource
 	helper_method :data_table, :prepare_data_table
   protect_from_forgery
   
@@ -47,4 +48,14 @@ class ApplicationController < ActionController::Base
 		
 		return json
 	end
+	
+	protected
+
+  def layout_by_resource
+    if devise_controller?
+      "login"
+    else
+      "application"
+    end
+  end
 end
