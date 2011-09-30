@@ -13,45 +13,6 @@ View.Notification = {
 		});
 	}
 };
-
-/**
- * Message Builder
- */
-View.FormValidator = {
-	validators: [],
-	rangeInput: function(msg, target) {
-		$(target).each(function() {
-			$(this).focusout(function() {
-				$(this).val() ?
-					$(this).removeClass("invalid") : $(this).addClass("invalid");
-			});
-		});
-			
-		var validate = function() {
-			var parent;
-			$(target).each(function() {
-				$(this).val() ?
-					$(this).removeClass("invalid") : $(this).addClass("invalid");
-				
-				parent = parent ? parent : $(this).parent().parent();
-			});
-			var html = $('<dt class="invalid"><span class="invalid-message">'+msg+'</span></dt><dd></dd>');
-		
-			$(parent).find('.invalid-message, .invalid').each(function() {
-				//$(this).remove();
-			});
-			
-			$(parent).append(html);
-		};
-		
-		this.validators.push(validate);
-	},
-	
-	validate: function() {
-		for (i = 0; i < this.validators.length; i++)
-			this.validators[i]();
-	}
-}
  
 /**
  * Componente para visualizar e manipular um DRE
@@ -450,6 +411,18 @@ View.IncomeStatement.prototype = {
 
 //========================================
 
+View.Item = function() {
+	this.id 		= null;
+	this.type 		= null;
+	this.name 		= null;
+	this.value 		= null;
+	this.funct 		= null;
+	this.element 	= null;
+};
+
+View.Item.prototype = {
+	
+};
 
 View.Is = function() {
 	this.incomeStatement = {};

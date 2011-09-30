@@ -36,7 +36,7 @@ a {
 
 /******************** SIDEBAR ********************/
 #sidebar {
-	background: #333333 url(../images/sidebar-bg.png) repeat;
+	background: #333 url(../images/sidebar-bg.png) repeat;
 	height: 100%;
 	width: 250px;
 	position: fixed;
