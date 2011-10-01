@@ -1,3 +1,54 @@
+/*
+ * Registers a callback which copies the csrf token into the
+ * X-CSRF-Token header with each ajax request.  Necessary to 
+ * work with rails applications which have fixed
+ * CVE-2011-0447
+*/
+
+$(document).ajaxSend(function(e, xhr, options) {
+  var token = $("meta[name='csrf-token']").attr("content");
+  xhr.setRequestHeader("X-CSRF-Token", token);
+});
+
+// jQuery plugin: PutCursorAtEnd 1.0
+// http://plugins.jquery.com/project/PutCursorAtEnd
+// by teedyay
+//
+// Puts the cursor at the end of a textbox/ textarea
+
+// codesnippet: 691e18b1-f4f9-41b4-8fe8-bc8ee51b48d4
+(function($)
+{
+    jQuery.fn.putCursorAtEnd = function()
+    {
+        return this.each(function()
+        {
+            $(this).focus()
+
+            // If this function exists...
+            if (this.setSelectionRange)
+            {
+                // ... then use it
+                // (Doesn't work in IE)
+
+                // Double the length because Opera is inconsistent about whether a carriage return is one character or two. Sigh.
+                var len = $(this).val().length * 2;
+                this.setSelectionRange(len, len);
+            }
+            else
+            {
+                // ... otherwise replace the contents with itself
+                // (Doesn't work in Google Chrome)
+                $(this).val($(this).val());
+            }
+
+            // Scroll to the bottom, in case we're in a tall textarea
+            // (Necessary for Firefox and Google Chrome)
+            this.scrollTop = 999999;
+        });
+    };
+})(jQuery);
+ 
 /**
  * JavaScript Date.Format
  *
@@ -74,74 +125,9 @@ Date.replaceChars = {
     U: function() { return this.getTime() / 1000; }
 };
 
-
-//==============================================================================
- 
-var DependencyManager = {
-	plugins: {
-		facebox: {script: 'js/facebox.js', style: 'css/facebox.css'},
-		tipsy: {script: 'js/jquery.tipsy.js', style: 'css/jquery.tipsy.css'},
-		selectSkin: {script: 'js/jquery.select_skin.js', style: 'css/jquery.select_skin.css'},
-		dataTables: {script: 'js/jquery.dataTables.min.js', style: 'css/jquery.dataTables.css'},
-		gritter: {script: 'js/jquery.gritter.min.js', style: 'css/jquery.gritter.css'}
-	},
-	addPlugin: function(name) {
-		var plugin = this.plugins[name];
-		this.addScript(plugin.script);
-		this.addStyle(plugin.style);
-	},
-	
-	addScript: function(url) {
-		var head = document.getElementsByTagName("head")[0];
-		
-		var newScript 	= document.createElement('script');
-		newScript.type 	= 'text/javascript';
-		newScript.src 	= url;
-		
-		head.appendChild(newScript);
-	},
-	addStyle: function(url) {
-		var head = document.getElementsByTagName("head")[0];
-		   
-		var cssNode 	= document.createElement('link');
-		cssNode.type 	= 'text/css';
-		cssNode.rel 	= 'stylesheet';
-		cssNode.href 	= url;
-		cssNode.media 	= 'screen';
-		
-		head.appendChild(cssNode);
-	},
-	
-	/*
-	 * source: http://www.ejeliot.com/blog/109
-	 */
-	onFunctionAvailable: function(sMethod, oCallback, oObject, bScope) {
-		if (typeof(eval(sMethod)) === 'function') {
-			bScope ? oCallback.call(oObject) : oCallback(oObject);
-		} else {
-			setTimeout(function () {
-				onFunctionAvailable(sMethod, oCallback, oObject, bScope);
-			}), 50
-		}
-	}
-	
-	/*
-	onFunctionAvailable: function(sMethod) {
-		var a = sMethod.split('(');
-		
-		if( a.length < 1 )
-			return;
-			
-		var funcName = a[0];
-
-		if( typeof(eval(funcName)) === 'function' ) {
-			eval(sMethod);
-		} else {
-			setTimeout( function () { onFunctionAvailable(sMethod ); }, 1000 );
-		}
-	}
-	*/
-};
+function isNumber(n) {
+	return !isNaN(parseFloat(n)) && isFinite(n);
+}
 
 /**
  * jQuery UI DatePicker Configuration Object

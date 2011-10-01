@@ -32,10 +32,14 @@
 
 .dataTables_wrapper {
 	position: relative;
-	min-height: 302px;
+	/*min-height: 302px;*/
 	clear: both;
-	_height: 302px;
+	/*_height: 302px;*/
 	zoom: 1; /* Feeling sorry for IE */
+}
+
+.dataTables_wrapper .footer {
+	height: 60px;
 }
 
 .dataTables_processing {
@@ -66,10 +70,9 @@
 }
 
 .dataTables_info {
-	width: 60%;
+	width: 30%;
 	float: left;
-	margin-top: 10px;
-	font-weight: bold;
+	margin: 20px 0 0 10px;
 }
 
 .dataTables_paginate {
@@ -77,7 +80,7 @@
 	* width: 50px;
 	float: right;
 	text-align: right;
-	margin-top: 10px;
+	margin: 18px 10px 0 0;
 }
 
 /* Pagination nested */
@@ -129,7 +132,7 @@ table.display {
 }
 
 table.display thead tr {
-	background: #ff8400 url(../images/widget-header-bg.png) repeat-x;
+	background: #ffb400;
 	height: 35px;
 	
 	color: #fff;
@@ -138,20 +141,13 @@ table.display thead tr {
 table.display thead th {
 	padding: 10px 18px 10px 10px;
 
-	font-weight: bold;
 	cursor: pointer;
 	* cursor: hand;
-}
-
-table.display tbody {
-	/*border: 1px solid #ccc;*/
-	border-top: 0;
 }
 
 table.display tfoot th {
 	padding: 3px 18px 3px 10px;
 	border-top: 1px solid black;
-	font-weight: bold;
 }
 
 table.display tr.heading2 td {
@@ -198,7 +194,7 @@ table.display td.center {
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * DataTables row classes
- */
+
 table.display tr.odd.gradeA {
 	background-color: #ddffdd;
 }
@@ -230,14 +226,14 @@ table.display tr.odd.gradeU {
 table.display tr.even.gradeU {
 	background-color: #eee;
 }
+*/
 
-
-tr.odd {
-	background-color: #f2f2f2;
+table.display tr.odd td {
+	background-color: #fbfbfb;
 }
 
-tr.even {
-	background-color: white;
+table.display tr.even td {
+	background-color: #fff;
 }
 
 
@@ -300,7 +296,7 @@ td.details {
 }
 
 .paging_full_numbers {
-	width: 400px;
+	width: 65%;
 	height: 22px;
 	line-height: 22px;
 }
@@ -312,36 +308,29 @@ td.details {
 	*cursor: hand;
 	
 	color: #fff;
-	font-weight: bold;
-	background: url(../images/blue-button-bg.png) repeat-x;
-	
-	border-left: 1px solid #2b92d4;
-	border-right: 1px solid #2b92d4;
-	
-	padding: 7px 6px 7px 6px;
-	
+	padding: 8px 10px;
+	background: #00aefe;
 	border-radius: 5px;
 		-webkit-border-radius: 5px;
 			-moz-border-radius: 5px;
 }
 
 .paging_full_numbers span.paginate_button {
-	background-color: #ddd;
+	background-color: #00aefe;
 }
 
 .paging_full_numbers span.paginate_button:hover {
-	background-image: url(../images/orange-button-bg.png);
-	
-	border-left: 1px solid #f09220;
-	border-right: 1px solid #f09220;
+	background-color: #ffb400;
 }
 
-.paging_full_numbers span.paginate_active,
-.paging_full_numbers span.paginate_button_disabled {
-	background-image: url(../images/grey-button-bg.png);
-	
-	border-left: 1px solid #808080;
-	border-right: 1px solid #808080;
+.paging_full_numbers span.paginate_button_disabled,
+.paging_full_numbers span.paginate_button_disabled:hover {
+	background-color: #666;
+	cursor: default;
+}
+
+.paging_full_numbers span.paginate_active {
+	background: #ffb400;
 }
 
 table.display tr.even.row_selected td {
@@ -357,10 +346,11 @@ table.display tr.odd.row_selected td {
  * Sorting classes for columns
  */
 /* For the standard odd/even */
-tr.odd td.sorting_1 {
-	background-color: #bebebe;
+table.display tr.odd td.sorting_1 {
+	background-color: #eee;
 }
 
+/*
 tr.odd td.sorting_2 {
 	background-color: #DADCFF;
 }
@@ -368,11 +358,13 @@ tr.odd td.sorting_2 {
 tr.odd td.sorting_3 {
 	background-color: #E0E2FF;
 }
+*/
 
-tr.even td.sorting_1 {
-	background-color: #dedede;
+table.display tr.even td.sorting_1 {
+	background-color: #e3e3e3;
 }
 
+/*
 tr.even td.sorting_2 {
 	background-color: #F2F3FF;
 }
@@ -380,7 +372,7 @@ tr.even td.sorting_2 {
 tr.even td.sorting_3 {
 	background-color: #F9F9FF;
 }
-
+*/
 
 /* For the Conditional-CSS grading rows */
 /*
@@ -392,6 +384,7 @@ tr.even td.sorting_3 {
 	  dd > d1
 	  ee > e2
  */
+/*
 tr.odd.gradeA td.sorting_1 {
 	background-color: #c4ffc4;
 }
@@ -487,11 +480,12 @@ tr.even.gradeU td.sorting_2 {
 tr.even.gradeU td.sorting_3 {
 	background-color: #e2e2e2;
 }
-
+*/
 
 /*
  * Row highlighting example
  */
+/*
 .ex_highlight #example tbody tr.even:hover, #example tbody tr.even td.highlighted {
 	background-color: #ECFFB3;
 }
@@ -531,11 +525,12 @@ tr.even.gradeU td.sorting_3 {
 .ex_highlight_row #example tr.odd:hover td.sorting_3 {
 	background-color: #DBFF70;
 }
-
+*/
 
 /*
  * KeyTable
  */
+/*
 table.KeyTable td {
 	border: 3px solid transparent;
 }
@@ -567,3 +562,4 @@ div.box {
 	border: 1px solid #8080FF;
 	background-color: #E5E5FF;
 }
+*/

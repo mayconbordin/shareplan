@@ -16,45 +16,45 @@
 		<!-- Wrapper -->
 		<div id="wrapper">
 			
-			<!-- Sidebar -->
-			<div id="sidebar">
-				<div id="logo">
-					<a href="#" title="Home"><img src="/images/logo.png" alt="logo" /></a>
-				</div>
+			<!-- Header -->
+			<div id="header">
 				
-				<div id="user-bar">
-					<div id="user-name">Pedro José</div>
-					<div id="user-controls">
-						<a href="#" title="Editar conta">editar</a> |
-						<a href="#" title="Sair">sair</a>
-					</div>
+				<div id="logo">
+					<a href="#" title="Ir para página principal"><img src="/images/logo.png" alt="logo" /></a>
 				</div>
 				
 				<ul id="menu">
-					<li><a id="menu-dashboard" href="#" title="Dashboard"><span>Dashboard</span></a></li>
-					<li><a id="menu-projecoes" href="#" title="Projeções"><span>Projeções</span></a></li>
-					<li><a id="menu-historico" href="#" title="Histórico"><span>Histórico</span></a></li>
-					<li><a id="menu-contatos"  href="#" title="Contatos"><span>Contatos</span></a></li>
-					<li><a id="menu-templates" href="#" title="Templates"><span>Templates</span></a></li>
+					<li><a class="dashboard" href="<%= url_for(:controller => 'dashboard') %>" title="">Dashboard</a></li>
+					<li><a class="projection current" href="<%= url_for(:controller => 'projections') %>" title="">Projeções</a></li>
+					<li><a class="history" href="<%= url_for(:controller => 'history') %>" title="">Histórico</a></li>
+					<li><a class="contacts" href="<%= url_for(:controller => 'contacts') %>" title="">Contatos</a></li>
+					<li><a class="templates" href="<%= url_for(:controller => 'templates') %>" title="">Templates</a></li>
 				</ul>
 				
-				<div id="notification-counter" title="Clique para ver as 10 notificações">10</div>
 			</div>
-			<!-- Sidebar -->
+			<!-- Header -->
 			
-			<!-- Content -->
-			<div id="content">
+			<!-- Userbox -->
+			<div id="userbox">
+				<div id="username">
+					Olá <a href="<%= url_for(:action => 'edit', :controller => 'users') %>" title="Editar meus dados">mayconbordin</a>
+					(<a id="sign-out" href="<%= url_for(:action => 'sign_out', :controller => 'users') %>" title="">Sair</a>)
+				</div>
+			</div>
+			<!-- Userbox -->
+			
+			<!-- Main Container -->
+			<div class="main-container">
 			
 				<%= yield %>
 				
 			</div>
-			<!-- Content -->
+			<!-- Main Container -->
 			
 		</div>
 		<!-- Wrapper -->
 		
 		<!-- JS Scripts -->
 		<%= yield :scripts %>
-		
 	</body>
 </html>

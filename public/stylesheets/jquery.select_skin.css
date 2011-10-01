@@ -1,12 +1,10 @@
 /* Custom form select element */   
 .cmf-skinned-select {
     padding: 3px 7px;
-    border: 1px solid #ccc;
     background: url(../images/select-arrow.png) 98% 50% no-repeat;
     
     font-size: 10pt;
-    font-weight: bold;
-    color: #666;
+    border: 1px solid #ccc;
     
     border-radius: 5px;
     	-webkit-border-radius: 5px;

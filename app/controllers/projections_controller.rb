@@ -1,5 +1,6 @@
 class ProjectionsController < ApplicationController
 	layout "frontend"
+	before_filter :authenticate_user!
 	
 	def index
 		
@@ -12,6 +13,8 @@ class ProjectionsController < ApplicationController
 	  else
 	    @projection = IncomeStatement.find(params[:id])
 	  end
+	  
+	  @templates = IncomeStatement.where("classification = ?", IncomeStatement::TEMPLATE)
 	end
 	
 	def save_step_one
@@ -30,23 +33,6 @@ class ProjectionsController < ApplicationController
 	  @projection = IncomeStatement.find(params[:id])
 	  
 	  @id = params[:id]
-	end
-	
-	def add_item
-	  if params[:id]
-	    @projection = IncomeStatement.find(params[:id])
-	    
-	    render :text => params
-	  end
-	  
-	  #item = IncomeStatementItem.new(params[:item])
-	  
-	  #@projection.income_statement_items.push(item)
-	  #@projection.save
-	end
-	
-	def remove_item
-	  
 	end
 	
 	def save_step_two
@@ -75,37 +61,53 @@ class ProjectionsController < ApplicationController
 	
 	# ------ JSON Actions ------
 	
+	def save
+	  
+	end
+	
 	def show
-	  @user = User.current_user
-    @projection = IncomeStatement.find(params[:id])
+	  @user = current_user
+    @projection = IncomeStatement.find_by_id_and_user(params[:id], @user)
             
-    hash = {
-      "id"    => @projection.id,
-      "title" => @projection.title,
-      "items" => @projection.get_hash_items
-    }
-        
-    render :json => hash
+    if @projection.nil?
+      render :json => {status: "error"}
+    else
+      render :json => @projection.to_hash(@user)
+    end
   end
   
-	def list
-		# Columns
-		columns = ["title", "start_date", "end_date", "", "created_at", "id"]
-				
-		prepare = prepare_data_table(params, columns)
+	def list_my_projections
+    @user = current_user
 
-		@projections = IncomeStatement.where('classification = ?', IncomeStatement::PROJECTION)
-		                              .order(prepare["order"])
-		                              .limit(prepare["limit"])
-		                              .offset(prepare["offset"])
+	  columns = ["title", "start_date", "end_date", "", "", "created_at", "id"]
+		prepare = prepare_data_table(params, columns)
+		
+		@projections = @user.my_projections(prepare["order"], prepare["limit"], prepare["offset"])
+
 		list = Array.new
 
 		@projections.each do |p|
-		  #versões = p.childrens.count
-			list.push([p.title, p.start_date, p.end_date, p.comments.count, p.created_at, p.id])
+			list.push([p.title, p.start_date, p.end_date, p.comments.count, p.childrens.count, p.created_at, p.id])
 		end
 
-		json = data_table(params, @projections.count, @projections.count, list)
-		render :json => json
+		render :json => data_table(params, @projections.count, @projections.count, list)
 	end
+	
+  def list_shared_projections
+    @user = current_user
+
+    columns = ["title", "start_date", "end_date", "", "", "created_at", "id"]
+    prepare = prepare_data_table(params, columns)
+    
+    @projections = @user.shared_projections(prepare["order"], prepare["limit"], prepare["offset"])
+
+    list = Array.new
+
+    @projections.each do |p|
+      list.push([p.title, p.start_date, p.end_date, @user.name, p.childrens.count, p.created_at, p.id])
+    end
+
+    render :json => data_table(params, @projections.count, @projections.count, list)
+  end
+  
 end

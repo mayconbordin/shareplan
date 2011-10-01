@@ -12,6 +12,9 @@ class IncomeStatementItem < ActiveRecord::Base
   def to_hash
   	hash = {
   		"id" 		=> item.id,
+  		"order" => order,
+  		"value" => value,
+  		"funct" => function,
   		"type" 	=> item.classification,
   		"name" 	=> item.name,
   		"items" => []

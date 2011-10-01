@@ -14,11 +14,10 @@ class Item < ActiveRecord::Base
   belongs_to :user
   
   def to_hash
-    hash = {
+    {
       "id"    => id,
       "type"  => classification,
       "name"  => name
     }
-    return hash
   end
 end

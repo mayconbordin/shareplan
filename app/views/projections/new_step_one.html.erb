@@ -3,71 +3,32 @@
 <% end %>
 
 <% content_for :styles do %>
-<link rel="stylesheet" href="/stylesheets/reset.css" type="text/css" media="screen" />
-<link rel="stylesheet" href="/stylesheets/base/jquery.ui.all.css" type="text/css" media="screen" />
-<link rel="stylesheet" href="/stylesheets/facebox.css" type="text/css" media="screen" />
-<link rel="stylesheet" href="/stylesheets/style.css" type="text/css" media="screen" />
-<link rel="stylesheet" href="/stylesheets/jquery.tipsy.css" type="text/css" media="screen" />
-<link rel="stylesheet" href="/stylesheets/jquery.select_skin.css" type="text/css" media="screen" />
-<link rel="stylesheet" href="/stylesheets/jquery.dataTables.css" type="text/css" media="screen" />
-<link rel="stylesheet" href="/stylesheets/jquery.gritter.css" type="text/css" media="screen" />
+	<%= stylesheet_link_tag "reset", "base/jquery.ui.all", "style" %>
 <% end %>
 
 <% content_for :scripts do %>
-<script src="/javascripts/jquery-1.6.2.min.js" type="text/javascript"></script>
-<script src="/javascripts/jquery.tipsy.js" type="text/javascript"></script>
-<script src="/javascripts/jquery.dataTables.min.js" type="text/javascript"></script>
-<script src="/javascripts/jquery.gritter.min.js" type="text/javascript"></script>
-<script src="/javascripts/highcharts.js" type="text/javascript"></script>
-<script src="/javascripts/facebox.js" type="text/javascript"></script>
-
-<script src="/javascripts/ui/jquery.ui.core.min.js" type="text/javascript"></script>
-<script src="/javascripts/ui/jquery.ui.widget.min.js" type="text/javascript"></script>
-<script src="/javascripts/ui/jquery.ui.mouse.min.js" type="text/javascript"></script>
-<script src="/javascripts/ui/jquery.ui.sortable.min.js" type="text/javascript"></script>
-<script src="/javascripts/ui/jquery.ui.datepicker.min.js" type="text/javascript"></script>
-<script src="/javascripts/ui/jquery.ui.position.min.js" type="text/javascript"></script>
-<script src="/javascripts/ui/jquery.ui.button.min.js" type="text/javascript"></script>
-<script src="/javascripts/ui/jquery.ui.autocomplete.min.js" type="text/javascript"></script>
-
-<script src="/javascripts/jquery.ui.widgets.js" type="text/javascript"></script>
-
-
-<script src="/javascripts/util.js" type="text/javascript"></script>
-<script src="/javascripts/model.js" type="text/javascript"></script>
-<script src="/javascripts/view.js" type="text/javascript"></script>
-<script src="/javascripts/controller.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-	$(document).ready(function () {
-		Controller.Projection.newStepOne();
-		Controller.Sidebar.initialize();
-	});
-</script>
+	<%= javascript_include_tag "jquery-1.6.2.min", "ui/jquery.ui.core.min", "ui/jquery.ui.datepicker.min", "util", "model", "view", "controller" %>
+	<script type="text/javascript">
+		$(document).ready(function () {
+			Controller.Projection.newStepOne();
+			Controller.User.logout();
+		});
+	</script>
 <% end %>
 
 
-<!-- Nova Projeção -->
-<div id="projecao">
-	<h1 id="projecao-title"><span>Nova Projeção</span></h1>
-
-	<!-- Steps -->
-	<div class="steps">
-		<div class="left-corner  left-corner-current"></div>
-		
-		<div class="step current"><a href="" title="">Definir Período e Template</a></div>
-		
-		<div class="arrow arrow-left-current"></div>
-		
-		<div class="step"><a href="" title="">Projetar DRE</a></div>
-		
-		<div class="arrow"></div>
-		
-		<div class="step"><a href="" title="">Compartilhar</a></div>
-		
-		<div class="right-corner"></div>
-	</div>
-	<!-- Steps -->
+<h1 class="page">Nova Projeção</h1>
+				
+<!-- New Projection -->
+<div id="new-projection">
+	
+	<!-- Progress -->
+	<ul id="new-projection-progress" class="progress">
+		<li class="current corner-left-step"><a href="#" title=""><span class="dot">1</span> Informações Básicas</a></li>
+		<li class="step"><a href="#" title=""><span class="dot">2</span> Projetar DRE</a></li>
+		<li class="corner-right-step"><a href="#" title=""><span class="dot">3</span> Compartilhar</a></li>
+	</ul>
+	<!-- Progress -->
 	
 	<% if @projection.errors.any? %>
 	<ul class="messages">
@@ -76,9 +37,10 @@
 		<% end %>
 	</ul>
 	<% end %>
-	
-	<div id="projecao-form" class="form-container">
-		<form action="save_step_one" method="post">
+
+	<!-- Form -->
+	<div id="projection-form" class="form-container">
+		<%= form_tag(:action => 'save_step_one', :controller => 'projections', :method => "post") do %>
 			<fieldset>
 				<legend>Período</legend>
 				<dl class="inline">
@@ -86,21 +48,21 @@
 						<label>De</label>
 					</dt>
 					<dd>
-						<input type="text" class="datepicker" name="projection[start_date]" id="start-date" value="<%= @projection.start_date ? @projection.start_date.strftime("%d/%m/%Y") : "" %>" />
+						<input type="text" class="datepicker" name="projection[start_date]" id="start-date" />
 					</dd>
-					
+	
 					<dt>
 						<label>até</label>
 					</dt>
 					<dd>
-						<input type="text" class="datepicker" name="projection[end_date]" id="end-date" value="<%= @projection.end_date ? @projection.end_date.strftime("%d/%m/%Y") : "" %>" />
+						<input type="text" class="datepicker" name="projection[end_date]" id="end-date" />
 					</dd>
 					<dt id="invalid-period" class="invalid">
 						<span class="invalid-message">Você precisa informar um período</span>
 					</dt><dd></dd>
 				</dl>
 			</fieldset>
-			
+
 			<fieldset>
 				<legend>Template</legend>
 				<dl class="normal">
@@ -109,16 +71,16 @@
 					</dt>
 					<dd>
 						<select name="template" id="template">
-							<option>Escolher</option>
-							<option>Option One</option>
-							<option>Option Two</option>
-							<option>Option Three</option>
+							<option value="">Nenhum</option>
+							<% @templates.each do |t| %>
+							<option value="<%= t.id %>"><%= t.title %></option>
+							<% end %>
 						</select>
 						<p>Templates contém a estrutura das contas e seus grupos, usar templates facilita a criação de projeções</p>
 					</dd>
 				</dl>
 			</fieldset>
-			
+
 			<fieldset>
 				<legend>Informações</legend>
 				<dl class="normal">
@@ -126,30 +88,29 @@
 						<label>Título</label>
 					</dt>
 					<dd>
-						<input type="text" class="large" name="projection[title]" value="<%= @projection.title %>" />
-						<p>Descreve brevemente a projeção para poder indentificá-la posteriormente</p>
+						<input type="text" class="large" name="projection[title]" />
+						<p>Descreva brevemente a projeção para poder indentificá-la posteriormente</p>
 					</dd>
-					
+	
 					<dt>
 						<label>Comentário</label>
 					</dt>
 					<dd>
-						<textarea class="large" name="projection[comment]"><%= @projection.comment %></textarea>
+						<textarea class="large" name="projection[comment]"></textarea>
 						<p>Se desejar, pode colocar aqui alguns comentários/observações a respeito de sua projeção</p>
 					</dd>
 				</dl>
 			</fieldset>
-		</form>	
+			
+			<div id="projection-bottom">
+				<a id="projection-cancel" class="button" href="<%= url_for(:controller => 'projections') %>" title="Cancelar projeção">Cancelar</a>
+				<a id="projection-next" class="button" href="#" title="Avançar na criação da projeção">Avançar</a>
+			</div>
+			<div class="clear"></div>
+		<% end %>
+		
 	</div>
+	<!-- Form -->
 	
-	<!-- Bottom -->
-	<div id="projecao-bottom">
-		<p>
-			<a id="projecao-cancel" class="blue-button" href="/projections" title="Cancelar criação de projeção">Cancelar</a>
-			<a id="projecao-next" class="blue-button" href="#" title="Ir para o próximo passo">Próximo »</a>
-		</p>
-	</div>
-	<!-- Bottom -->
-
 </div>
-<!-- Nova Projeção -->
+<!-- New Projection -->

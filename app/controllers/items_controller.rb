@@ -1,6 +1,7 @@
 class ItemsController < ApplicationController
-  def list
-    @items = Item.order('classification')
+  def list(user = nil)
+    id = user == nil ? nil : user.id
+    @items = Item.where("user_id IS NULL OR user_id = ?", id).order('name')
     
     list = []
     

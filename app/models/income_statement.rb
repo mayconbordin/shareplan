@@ -41,5 +41,37 @@ class IncomeStatement < ActiveRecord::Base
     
     return items
   end
+  
+  def to_hash(user = nil)
+    hash = {
+      "id"          => id,
+      "title"       => title,
+      "start_date"  => start_date,
+      "end_date"    => end_date,
+      "items"       => get_hash_items
+    }
+    
+    if !user.nil?
+      hash["role"] = get_user(user).classification
+    end
+    
+    return hash
+  end
+  
+  def get_user(user)
+    income_statement_users.each do |u|
+      if u.user_id == user.id
+        return u
+      end
+    end
+    
+    return nil
+  end
+  
+  def self.find_by_id_and_user(id, user)
+    self.joins(:income_statement_users)
+        .where("income_statements.id = ? AND income_statement_users.user_id = ?", id, user.id)
+        .first
+  end
 
 end
