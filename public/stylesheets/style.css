@@ -811,10 +811,9 @@ h3 {
 
 .main-container .container-box .header a {
 	position: relative;
-	left: 10px;
-	float: left;
-	top: 15px;
-	padding: 5px 10px;
+	right: 10px;
+	float: right;
+	top: 12px;
 }
 
 .main-container h1.page {

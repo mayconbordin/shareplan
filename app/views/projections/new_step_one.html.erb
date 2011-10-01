@@ -3,11 +3,23 @@
 <% end %>
 
 <% content_for :styles do %>
-	<%= stylesheet_link_tag "reset", "base/jquery.ui.all", "style" %>
+	<%= stylesheet_link_tag
+		"reset",
+		"base/jquery.ui.all",
+		"style"
+	%>
 <% end %>
 
 <% content_for :scripts do %>
-	<%= javascript_include_tag "jquery-1.6.2.min", "ui/jquery.ui.core.min", "ui/jquery.ui.datepicker.min", "util", "model", "view", "controller" %>
+	<%= javascript_include_tag
+		"jquery-1.6.2.min",
+		"ui/jquery.ui.core.min",
+		"ui/jquery.ui.datepicker.min",
+		"util",
+		"model",
+		"view",
+		"controller"
+	%>
 	<script type="text/javascript">
 		$(document).ready(function () {
 			Controller.Projection.newStepOne();

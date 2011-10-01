@@ -148,13 +148,13 @@ Controller.Projection = (function() {
 			// register message close buttons
 			messagesClose();
 		},
-		newStepTwo: function() {
+		newStepTwo: function(id) {
 			var chart = new View.ProjectionChart("chart");
 
 			var is = new View.IncomeStatement({
 				target: "#income-statement .body",
 				addButton: "#add-projection-item",
-				id: 1,
+				id: id,
 				saveDateTarget: "#projection-save-date span",
 				onItemClick: function(item, remove) {
 					chart.load(item, remove);
