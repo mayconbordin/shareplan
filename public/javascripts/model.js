@@ -43,7 +43,7 @@ Model.Item = (function() {
 
 Model.IncomeStatement = (function() {
 	var id = null,
-		buffer = {},
+		buffer = {items: {}},
 		lastSaved = new Date().getTime(),
 		delay = 1000 * 10,
 		beforeSave = null,
@@ -105,7 +105,6 @@ Model.IncomeStatement = (function() {
 			if (callback) callback(data);
 		},
 		
-		// vai devolver sucesso ou erro e a hora que foi salvo (se foi)
 		setSaveCallbacks: function(b, a) {
 			beforeSave = b;
 			afterSave = a;
@@ -117,9 +116,10 @@ Model.IncomeStatement = (function() {
 		
 		save: function(item) {
 			if (buffer[item.id])
-				$.extend(buffer[item.id], item);
+				$.extend(buffer.items[item.id], item);
 			else
-				buffer[item.id] = item;
+				buffer.items[item.id] = item;
+
 				
 			var now = new Date().getTime();
 			
@@ -130,22 +130,16 @@ Model.IncomeStatement = (function() {
 		sendData: function() {
 			if (beforeSave)
 				beforeSave();
-		
-			console.log("buffer:");
-			console.log(buffer);
 			
 			// set the income statement id
 			buffer.id = id;
 			
-			/*
 			$.ajax({
 			  type: 'POST',
-			  url: url,
+			  url: "http://localhost:3000/projections/save",
 			  data: buffer,
-			  success: success,
 			  dataType: "json"
 			});
-			*/
 		
 			// só em caso de sucesso
 			var date = new Date();
@@ -154,8 +148,8 @@ Model.IncomeStatement = (function() {
 			if (afterSave)
 				afterSave({date: date, success: true});
 			
-			// e limpa o buffer
-			buffer = {};
+			// clear the buffer
+			buffer = {items: {}};
 		}
 	};
 })();

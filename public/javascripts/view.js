@@ -719,6 +719,7 @@ View.Item.Chooser = (function() {
 				// Call event registrations
 				thisObj.registerOnSubmit();
 				thisObj.registerOnCancel();
+				thisObj.registerOnNewAccount();
 				
 			});
 		},
@@ -887,7 +888,7 @@ View.Item.addItem = function(obj, item, toRemove) {
 
 	//atualiza via ajax o novo item
 	console.log("added item");
-	Model.IncomeStatement.save({id: this.id, type: "create"});
+	Model.IncomeStatement.save({id: item.id, type: "create"});
 };
 
 /**
@@ -1115,6 +1116,9 @@ View.IncomeStatement.prototype = {
 			// Copy additional data
 			thisObj.start_date 	= new Date(is.start_date);
 			thisObj.end_date 	= new Date(is.end_date);
+			
+			// Carrega as fórmulas e valores
+			View.Formula.reloadAll(thisObj.items);
 			
 			thisObj.toView(thisObj.items);
 		});
