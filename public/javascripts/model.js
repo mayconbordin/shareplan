@@ -120,7 +120,6 @@ Model.IncomeStatement = (function() {
 			else
 				buffer.items[item.id] = item;
 
-				
 			var now = new Date().getTime();
 			
 			if (lastSaved && (now - lastSaved) > delay)
@@ -138,18 +137,21 @@ Model.IncomeStatement = (function() {
 			  type: 'POST',
 			  url: "http://localhost:3000/projections/save",
 			  data: buffer,
-			  dataType: "json"
+			  dataType: "json",
+			  success: function() {
+				var date = new Date();
+				lastSaved = date.getTime();
+				
+				if (afterSave)
+					afterSave({date: date, success: true});
+				
+				// clear the buffer
+				// requisições podem ser feitas durante o envio
+				// é preciso criar uma fechadura que aloca em outro buffer os dados
+				// recebidos ou algo do tipo
+				buffer = {items: {}};
+			  }
 			});
-		
-			// só em caso de sucesso
-			var date = new Date();
-			lastSaved = date.getTime();
-			
-			if (afterSave)
-				afterSave({date: date, success: true});
-			
-			// clear the buffer
-			buffer = {items: {}};
 		}
 	};
 })();

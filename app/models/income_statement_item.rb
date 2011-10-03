@@ -23,23 +23,30 @@ class IncomeStatementItem < ActiveRecord::Base
   	return hash
   end
   
-  def set_from_hash(hash)
+  def self.from_hash(id, hash)
+    item = where(:income_statement_id => id, :item_id => hash["id"]).first
+        
+    if item.nil?
+      item = new(:income_statement_id => id, :item_id => hash["id"], :order => 0)
+    end
+
     if hash["order"]
-      write_attribute(:order, hash["order"].to_i)
+      item.order = hash["order"].to_i
     end
     
     if hash["parent"]
-      p = where(:income_statement_id => income_statement_id, :item_id => hash["parent"]).first
-      logger.info(p)
-      write_attribute(:parent_id, p.id)
+      p = where(:income_statement_id => id, :item_id => hash["parent"]).first
+      item.parent_id = p.id
     end
     
     if hash["value"]
-      write_attribute(:value, hash["value"].to_i)
+      item.value = hash["value"].to_i
     end
     
     if hash["funct"]
-      write_attribute(:function, hash["funct"])
+      item.function = hash["funct"]
     end
+    
+    return item
   end
 end

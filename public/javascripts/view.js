@@ -432,6 +432,7 @@ View.Item = function(item, parent, incomeStatement) {
 	this.type 		= item.type;
 	this.name 		= item.name;
 	this.order		= item.order;
+	this.parentId	= null;
 	
 	// The item object
 	//this.item		= item;
@@ -465,6 +466,17 @@ View.Item.prototype = {
 			
 		this.element = this.createHtml(this);
 		this.formula = new View.Formula(this);
+	},
+	
+	save: function() {
+		Model.IncomeStatement.save({
+			id: this.id,
+			order: this.order,
+			value: this.value,
+			funct: this.funct,
+			parent_id: this.parentId,
+			type: "update"
+		});
 	},
 	
 	/**

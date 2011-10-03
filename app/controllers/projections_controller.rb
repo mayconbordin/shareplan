@@ -78,26 +78,8 @@ class ProjectionsController < ApplicationController
 	      @item = IncomeStatementItem.where(:income_statement_id => id, :item_id => i[1]["id"]).first
 	      @item.destroy
 	    elsif i[1]["type"] == "update" or i[1]["type"] == "create"
-	      @item = IncomeStatementItem.where(:income_statement_id => id, :item_id => i[1]["id"]).first
-	      
-	      if @item.nil?
-	        @item = IncomeStatementItem.new(:income_statement_id => id, :item_id => i[1]["id"], :order => 0)
-	      end
-	      
-	      #if i[1]["parent"]
-	      #  @item.parent_id = IncomeStatementItem.where(:income_statement_id => id, :item_id => i[1]["parent"]).first
-	      #end
-	      
-	      @item.set_from_hash(i[1])
+	      @item = IncomeStatementItem.from_hash(id, i[1])
 	      @item.save
-	      
-	      logger.info(@item.errors)
-	    #elsif i[1]["type"] == "create"
-	     # @item = IncomeStatementItem.new(:income_statement_id => id, :item_id => i[1]["id"], :order => 0)
-	      #@item.set_from_hash(i[1])
-        #@item.save
-        
-        #logger.info(@item.errors)
 	    end
 	  end
 	  
