@@ -22,6 +22,12 @@ class ProjectionsController < ApplicationController
 	  @projection.classification = IncomeStatement::TEMP
 	  
     if @projection.save
+      IncomeStatementUser.new(
+        :income_statement => @projection,
+        :user             => current_user,
+        :classification   => IncomeStatementUser::CREATOR_CLASS
+      ).save
+      
       redirect_to :action => :new_step_two, :id => @projection.id
     else
       render :action => :new_step_one
@@ -65,6 +71,19 @@ class ProjectionsController < ApplicationController
 	  
 	end
 	
+	def destroy
+	  Comment.destroy_all(:income_statement_id => params[:id])
+	  IncomeStatementItem.destroy_all(:income_statement_id => params[:id])
+	  IncomeStatementUser.destroy_all(:income_statement_id => params[:id])
+	  IncomeStatement.destroy_all(:parent_id => params[:id])
+	  
+	  if IncomeStatement.destroy(params[:id])
+	    render :json => {status: "success"}
+	  else
+	    render :json => {status: "error"}
+	  end
+	end
+	
 	def show
 	  @user = current_user
     @projection = IncomeStatement.find_by_id_and_user(params[:id], @user)
@@ -79,7 +98,7 @@ class ProjectionsController < ApplicationController
 	def list_my_projections
     @user = current_user
 
-	  columns = ["title", "start_date", "end_date", "", "", "created_at", "id"]
+	  columns = ["title", "start_date", "end_date", "", "", "created_at", "id", ""]
 		prepare = prepare_data_table(params, columns)
 		
 		@projections = @user.my_projections(prepare["order"], prepare["limit"], prepare["offset"])
@@ -87,7 +106,16 @@ class ProjectionsController < ApplicationController
 		list = Array.new
 
 		@projections.each do |p|
-			list.push([p.title, p.start_date, p.end_date, p.comments.count, p.childrens.count, p.created_at, p.id])
+			list.push([
+			  p.title,
+			  p.start_date,
+			  p.end_date,
+			  p.comments.count,
+			  p.childrens.count,
+			  p.created_at,
+			  p.id,
+			  p.classification
+			])
 		end
 
 		render :json => data_table(params, @projections.count, @projections.count, list)

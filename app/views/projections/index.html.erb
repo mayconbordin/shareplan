@@ -28,35 +28,22 @@
 	</script>
 <% end %>
 
-<a id="new-projections-button" class="button" href="<%= url_for(:action => 'new_step_one', :controller => 'projections') %>" title="Criar uma nova projeção">Nova Projeção</a>
 
-<!-- Suas Projeções -->
+<div id="projection-title">
+	<h1>Projeções</h1>
+	<a id="new-projections-button" class="green-button" href="<%= url_for(:action => 'new_step_one', :controller => 'projections') %>" title="Criar uma nova projeção">Nova Projeção</a>
+</div>
+
+<!-- Projeções -->
 <div id="projections" class="container-box">
 	<ul id="projections-header" class="header">
-		<!--
-		<h1>Minhas Projeções</h1>
-		
-		<a id="new-projections-button" class="button" href="<%= url_for(:action => 'new_step_one', :controller => 'projections') %>" title="Criar uma nova projeção">Nova Projeção</a>
-		-->
-		<li><a href="" title="">Minhas Projeções</a></li>
-		<li><a href="" title="">Projeções Compartilhadas</a></li>
-		
+		<li class="selected"><a id="select-my-projections" href="#" title="">Minhas Projeções</a></li>
+		<li><a id="select-shared-projections" href="#" title="">Projeções Compartilhadas</a></li>
 	</ul>
 	
 	<div id="projections-table-container" class="table-container">
 		<table cellpadding="0" cellspacing="0" border="0" class="display" id="projections-table"></table>
-	</div>
-</div>
-<!-- Suas Projeções -->
-
-<!-- Projeções Compartilhadas 
-<div id="shared-projections" class="container-box">
-	<div id="shared-projections-header" class="header">
-		<h1>Projeções Compartilhadas com Você</h1>
-	</div>
-	
-	<div id="shared-projections-table-container">
 		<table cellpadding="0" cellspacing="0" border="0" class="display" id="shared-projections-table"></table>
 	</div>
 </div>
-<!-- Projeções Compartilhadas -->
+<!-- Projeções -->

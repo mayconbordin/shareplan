@@ -10,6 +10,14 @@ $(document).ajaxSend(function(e, xhr, options) {
   xhr.setRequestHeader("X-CSRF-Token", token);
 });
 
+/**
+ * Set the basic facebox configuration
+ */
+if ($.facebox) {
+	$.facebox.settings.loadingImage = '/images/facebox/loading.gif';
+	$.facebox.settings.closeImage 	= '/images/facebox/closelabel.png';
+}
+
 // jQuery plugin: PutCursorAtEnd 1.0
 // http://plugins.jquery.com/project/PutCursorAtEnd
 // by teedyay

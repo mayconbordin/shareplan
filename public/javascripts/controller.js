@@ -124,8 +124,7 @@ Controller.Projection = (function() {
 	
 	return {
 		index: function() {
-			View.Table.loadMyProjections();
-			View.Table.loadSharedProjections();
+			View.Table.loadProjections();
 		},
 		
 		newStepOne: function() {
@@ -140,7 +139,7 @@ Controller.Projection = (function() {
 				if (!$("#start-date").val() || !$("#end-date").val())
 					validatePeriod($("#start-date").parent().parent());
 				else
-					("#projection-form form").submit();
+					$("#projection-form form").submit();
 					
 				return false;
 			});
@@ -160,7 +159,7 @@ Controller.Projection = (function() {
 					chart.load(item, remove);
 				},
 				beforeSave: function() {
-					$("#projection-save-date").html('<img class="loader" src="images/loader.gif" alt="loading" /> salvando projeção...');
+					$("#projection-save-date").html('<img class="loader" src="/images/loader.gif" alt="loading" /> salvando projeção...');
 				},
 				afterSave: function(r) {
 					if (r.success)

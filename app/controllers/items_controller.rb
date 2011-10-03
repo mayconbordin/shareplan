@@ -1,4 +1,19 @@
 class ItemsController < ApplicationController
+  layout "frontend"
+  before_filter :authenticate_user!
+  
+  def create
+    @user = current_user
+    @item = Item.new(params[:item])
+    @item.user = @user
+    
+    if @item.save
+      render :json => @item.to_hash
+    else
+      render :json => {error: true}
+    end
+  end
+  
   def list(user = nil)
     id = user == nil ? nil : user.id
     @items = Item.where("user_id IS NULL OR user_id = ?", id).order('name')

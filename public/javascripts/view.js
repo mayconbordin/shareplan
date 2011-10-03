@@ -222,11 +222,6 @@ View.Formula.prototype = {
 View.Formula.Editor = (function() {
 	var item, html, formula;
 	
-	if ($.facebox) {
-		$.facebox.settings.loadingImage = 'images/facebox/loading.gif';
-		$.facebox.settings.closeImage 	= 'images/facebox/closelabel.png';
-	}
-	
 	return {
 		/**
 		 * Open the editor
@@ -376,7 +371,7 @@ View.Formula.Editor = (function() {
 		executeFormula: function() {
 			var value = item.formula.processFormula(formula.val(), false);
 			this.hideError();
-			
+						
 			if (value !== false)
 				html.find(".run input").val(value);
 			else {
@@ -455,7 +450,7 @@ View.Item = function(item, parent, incomeStatement) {
 	this.incomeStatement = incomeStatement;
 	
 	// His childrens
-	this.items = item.items;
+	this.items = item.items ? item.items : [];
 	
 	this.initialize();
 };
@@ -535,14 +530,6 @@ View.Item.prototype = {
 			var value 		= document.createElement('input');
 			value.className = 'value';
 			value.type 		= 'text';
-			/*
-			value.onpaste = function() {
-				console.log("Handler for .onpaste() called.");
-			};
-			$(value).keypress(function() {
-  				console.log("Handler for .keypress() called.");
-			});
-			*/
 			
 			var formula 		= document.createElement('input');
 			formula.className 	= 'formula';
@@ -574,7 +561,8 @@ View.Item.prototype = {
 	 * @param {object} obj The object in wich the event has been applied
 	 */
 	onAdd: function(e, obj) {
-		View.Item.showItemChooser(obj.list, obj);
+		View.Item.Chooser.show(obj.list, obj);
+		
 	},
 	
 	/**
@@ -703,61 +691,167 @@ View.Item.remove = function(obj, id, remove) {
 	}
 };
 
-/**
- * Show the item chooser in the given target
- *
- * @param {object} target
- * @param {object} obj
- */
-View.Item.showItemChooser = function(target, obj) {
-	Model.Item.list(function(data) {
-		// Creates the combobox with the resulting data array
-		var html = '<li class="new"><label>Esolha a conta a ser adicionada: </label>'
-				 + '<select class="combobox"><option value=""></option>';
-
-		for (var i = 0; i < data.length; i++)
-			html += '<option value="' + i + '">' + data[i].name + '</option>';
+View.Item.Chooser = (function() {
+	var target,
+		obj,
+		thisObj,
+		chooser,
+		data;
 		
-		html += '</select><a class="button submit" href="#" title="">OK</a>'
-			  + '<a class="button cancel" href="#" title="">Cancelar</a>'
-			  + '<label class="labelNewAccount">ou crie uma</label>'
-			  + '<a class="green-button newAccount" href="#" title="">nova conta</a>'
-			  + '<p class="message"></p></li>';
-
-		// Add the item selector to the target with super fancy effects
-		var newAcc = $(html);
-		newAcc.hide().appendTo(target).fadeIn("slow", function(){obj.incomeStatement.sortUpdate()});
-	
-		// Applies the combobox ui component
-		newAcc.find('.combobox').combobox();
-	
-		// Register the submit event
-		newAcc.find('.submit').click(function() {
-			var s = data[ newAcc.find('.combobox').val() ];
-		
-			if (!s)
-				newAcc.find('.message').show().html("Escolha uma conta para adicionar");
-			else if ($(target).parent().hasClass("group") && (s.type == "group" || s.type == "result"))
-				newAcc.find('.message').show().html("Não é permitido adicionar grupos de contas aqui");
-			else if (obj.incomeStatement.getItem(s.type + "_" + s.id))
-				newAcc.find('.message').show().html("Esta conta já existe no DRE");
-			else {
-				View.Item.addItem(obj, s, newAcc);
-			}
-			return false;
-		});
-	
-		// Register the cancel event
-		newAcc.find('.cancel').click(function() {
-			newAcc.fadeOut("slow", function() {
-				$(this).remove();
+	return {
+		show: function(t, o) {
+			target 	= t;
+			obj 	= o;
+			thisObj = this;
+			
+			Model.Item.list(function(r) {
+				data	= r;
+				chooser = thisObj.createCombobox();
+				
+				// Add the item selector to the target with super fancy effects
+				chooser.hide().appendTo(target).fadeIn("slow", function(){
+					obj.incomeStatement.sortUpdate();
+				});
+			
+				// Applies the combobox ui component
+				chooser.find('.combobox').combobox();
+				
+				// Call event registrations
+				thisObj.registerOnSubmit();
+				thisObj.registerOnCancel();
+				
 			});
-			return false;
-		});
+		},
 		
-		//Precisa lidar com a criação de novas contas, usando facebox
-	});
-};
+		showError: function(message) {
+			chooser.find('.message').show().html(message);
+		},
+		
+		registerOnSubmit: function() {
+			chooser.find('.submit').click(function() {
+				var s = data[ chooser.find('.combobox').val() ];
+				var m = chooser.find('.message');
+			
+				if (!s)
+					thisObj.showError("Escolha uma conta para adicionar");
+				else if ($(target).parent().hasClass("group") && (s.type == "group" || s.type == "result"))
+					thisObj.showError("Não é permitido adicionar grupos de contas aqui");
+				else if (obj.incomeStatement.getItem(s.type + "_" + s.id))
+					thisObj.showError("Esta conta já existe no DRE");
+				else {
+					View.Item.addItem(obj, s, chooser);
+				}
+				return false;
+			});
+		},
+		
+		registerOnCancel: function() {
+			chooser.find('.cancel').click(function() {
+				chooser.fadeOut("slow", function() {
+					$(this).remove();
+				});
+				return false;
+			});
+		},
+		
+		registerOnNewAccount: function() {
+			chooser.find('.newAccount').click(function() {
+				View.Item.NewAccountBox.show(chooser, data);
+				return false;
+			});
+		},
+		
+		createCombobox: function() {
+			// Creates the combobox with the resulting data array
+			var html = '<li class="new"><label>Esolha a conta a ser adicionada: </label>'
+					 + '<select class="combobox"><option value=""></option>';
+	
+			for (var i = 0; i < data.length; i++)
+				html += '<option value="' + i + '">' + data[i].name + '</option>';
+			
+			html += '</select><a class="button submit" href="#" title="">OK</a>'
+				  + '<a class="button cancel" href="#" title="">Cancelar</a>'
+				  + '<label class="labelNewAccount">ou crie uma</label>'
+				  + '<a class="green-button newAccount" href="#" title="">nova conta</a>'
+				  + '<p class="message"></p></li>';
+				  
+			return $(html);
+		}
+	};
+})();
+
+View.Item.NewAccountBox = (function() {
+	var chooser,
+		data,
+		accountBox,
+		thisObj;
+	
+	return {
+		show: function(c, d) {
+			chooser = c;
+			data 	= d;
+			thisObj = this;
+			
+			jQuery.facebox(this.createHtml());
+			
+			accountBox = $("#new-account-box");
+			this.registerOnSave();
+			this.registerOnCancel();
+		},
+		
+		createHtml: function() {
+			var html = '<form id="new-account-box"><h2>Criar nova conta</h2>'
+					 + '<div class="container"><label>Nome da conta:</label>'
+					 + '<input name="item[name]" class="textfield" type="text" /></div><div class="container"><label>Tipo de conta:</label>'
+					 + '<select name="item[classification]"><option value="account">Conta</option><option value="group">Grupo de contas</option><option value="result">Resultado</option></select></div>'
+					 + '<div class="container"><label>Débito ou crédito:</label>'
+					 + '<select name="item[item_type]"><option value="debt">Débito</option><option value="credit">Crédito</option></select></div>'
+					 + '<div class="buttons"><a class="button cancel" href="#" title="Cancelar">Cancelar</a>'
+					 + '<a class="button save" href="#" title="Criar">Criar</a></div></form>';
+					 
+			return html;
+		},
+		
+		registerOnCancel: function() {
+			accountBox.find(".cancel").click(function() {
+				jQuery(document).trigger('close.facebox');
+			});
+		},
+		
+		registerOnSave: function() {
+			accountBox.find(".save").click(function() {
+				var values = {};
+				$.each(accountBox.serializeArray(), function(i, field) {
+				    values[field.name] = field.value;
+				});
+				
+				Model.Item.save(values, function(r) {
+					if (r.error) {
+						thisObj.onSaveError();
+					} else {
+						thisObj.onSaveSuccess(r);
+					}
+				});
+				return false;
+			});
+		},
+		
+		onSaveSuccess: function(newItem) {
+			jQuery(document).trigger('close.facebox');
+						
+			chooser.find(".combobox option:selected").removeAttr('selected');
+			
+			var i = (data.push(newItem) - 1);
+			chooser.find(".combobox").append('<option value="' + i + '" selected="selected">' + data[i].name + '</option>');
+			
+			chooser.find('.ui-autocomplete-input').val(data[i].name);
+		},
+		
+		onSaveError: function() {
+			
+		}
+	};
+})();
 
 /**
  * Add an item to a list
@@ -865,7 +959,7 @@ View.IncomeStatement.prototype = {
 			
 		if (this.addButton)
 			this.addButton.click(function() {
-				View.Item.showItemChooser(thisObj.target, {
+				View.Item.Chooser.show(thisObj.target, {
 					incomeStatement: thisObj,
 					items: thisObj.items,
 					list: thisObj.target
@@ -1256,6 +1350,58 @@ View.Table = {
 		}
 	},
 	
+	loadSharedProjections: function(callback) {
+		var options = {
+			"sAjaxSource": "/projections/list_shared_projections",
+			"aoColumns": [
+				{
+					"sTitle": "Projeção",
+					"fnRender": function(obj) {
+						var sReturn = obj.aData[ obj.iDataColumn ];
+						var html = '<a href="#'+obj.aData[6]+'" title="Visualizar projeção">'+sReturn+'</a>';
+						return html;
+					}
+				},
+				{
+					"sTitle": "Início",
+					"sClass": "center",
+					"fnRender": function(obj) {
+						var sReturn = obj.aData[ obj.iDataColumn ];
+						return new Date(sReturn).format('d/m/Y');
+					}
+				},
+				{
+					"sTitle": "Fim",
+					"sClass": "center",
+					"fnRender": function(obj) {
+						var sReturn = obj.aData[ obj.iDataColumn ];
+						return new Date(sReturn).format('d/m/Y');
+					}
+				},
+				{ "sTitle": "Criado por", "sClass": "center", "bSortable": false, },
+				{ "sTitle": "Versões", "sClass": "center", "bSortable": false, },
+				{
+					"sTitle": "Criado em",
+					"sClass": "center",
+					"fnRender": function(obj) {
+						var sReturn = obj.aData[ obj.iDataColumn ];
+						return new Date(sReturn).format('d/m/Y');
+					}
+				}
+			],
+			"fnInitComplete": function() {
+				$('<div id="shared-projections-table-footer" class="footer"></div>')
+					.append($('#shared-projections-table_info'))
+					.append($('#shared-projections-table_paginate'))
+					.appendTo('#shared-projections-table_wrapper');
+					
+				if (callback) callback();
+			}
+		};
+		$.extend(options, this.options);
+		$('#shared-projections-table').dataTable(options);
+	},
+	
 	loadMyProjections: function() {
 		var options = {
 			"sAjaxSource": "/projections/list_my_projections",
@@ -1265,6 +1411,9 @@ View.Table = {
 					"fnRender": function(obj) {
 						var sReturn = obj.aData[ obj.iDataColumn ];
 						var html = '<a href="#'+obj.aData[6]+'" title="Visualizar projeção">'+sReturn+'</a>';
+						
+						if (obj.aData[7] == "temp")
+							html += ' - Rascunho';
 						return html;
 					}
 				},
@@ -1313,58 +1462,40 @@ View.Table = {
 			}
 		};
 		$.extend(options, this.options);
-		
 		$('#projections-table').dataTable(options);
 	},
 	
-	loadSharedProjections: function() {
-		var options = {
-			"sAjaxSource": "/projections/list_shared_projections",
-			"aoColumns": [
-				{
-					"sTitle": "Projeção",
-					"fnRender": function(obj) {
-						var sReturn = obj.aData[ obj.iDataColumn ];
-						var html = '<a href="#'+obj.aData[6]+'" title="Visualizar projeção">'+sReturn+'</a>';
-						return html;
-					}
-				},
-				{
-					"sTitle": "Início",
-					"sClass": "center",
-					"fnRender": function(obj) {
-						var sReturn = obj.aData[ obj.iDataColumn ];
-						return new Date(sReturn).format('d/m/Y');
-					}
-				},
-				{
-					"sTitle": "Fim",
-					"sClass": "center",
-					"fnRender": function(obj) {
-						var sReturn = obj.aData[ obj.iDataColumn ];
-						return new Date(sReturn).format('d/m/Y');
-					}
-				},
-				{ "sTitle": "Criado por", "sClass": "center", "bSortable": false, },
-				{ "sTitle": "Versões", "sClass": "center", "bSortable": false, },
-				{
-					"sTitle": "Criado em",
-					"sClass": "center",
-					"fnRender": function(obj) {
-						var sReturn = obj.aData[ obj.iDataColumn ];
-						return new Date(sReturn).format('d/m/Y');
-					}
-				}
-			],
-			"fnInitComplete": function() {
-				$('<div id="shared-projections-table-footer" class="footer"></div>')
-					.append($('#shared-projections-table_info'))
-					.append($('#shared-projections-table_paginate'))
-					.appendTo('#shared-projections-table_wrapper');
-			}
-		};
-		$.extend(options, this.options);
+	loadProjections: function() {
+		var thisObj = this;
+		this.loadMyProjections();
 		
-		$('#shared-projections-table').dataTable(options);
+		$('#select-my-projections').click(function() {
+			$(this).parent().addClass("selected");
+			$('#projections-table').show();
+			$('#projections-table-footer').show();
+			
+			$('#select-shared-projections').parent().removeClass("selected");
+			$('#shared-projections-table').hide();
+			$('#shared-projections-table-footer').hide();
+		});
+		
+		$('#select-shared-projections').click(function() {
+			var button = $(this);
+			function load() {
+				button.parent().addClass("selected");
+				$('#shared-projections-table').show();
+				$('#shared-projections-table-footer').show();
+				
+				$('#select-my-projections').parent().removeClass("selected");
+				$('#projections-table').hide();
+				$('#projections-table-footer').hide();
+			}
+			
+			if (!$('#shared-projections-table').html())
+				thisObj.loadSharedProjections(load);
+			else
+				load();
+			
+		});
 	}
 };

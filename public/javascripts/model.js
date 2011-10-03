@@ -26,6 +26,17 @@ Model.Item = (function() {
   				dataType: 'json',
   				success: callback
 			});
+		},
+		
+		save: function(data, callback) {
+			$.ajax({
+			  type: 'POST',
+			  url: "http://localhost:3000/items/create",
+			  data: data,
+			  success: callback,
+			  error: callback,
+			  dataType: "json"
+			});
 		}
 	};
 })();
@@ -44,6 +55,14 @@ Model.IncomeStatement = (function() {
   				url: "http://localhost:3000/projections/show/" + id,
   				dataType: 'json',
   				success: callback
+			});
+		},
+		
+		destroy: function(id, callback) {
+			$.ajax({
+			  type: 'DELETE',
+			  url: "http://localhost:3000/projections/destroy/" + id,
+			  success: success,
 			});
 		},
 		

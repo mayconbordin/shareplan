@@ -238,6 +238,28 @@ h3 {
 /* PROJECTIONS ============================================================== */
 #projections {
 	margin-top: 20px;
+	clear: both;
+}
+
+#projection-title {
+	height: 30px;
+	margin-bottom: 10px;
+}
+
+#projection-title h1 {
+	float: left
+}
+
+#new-projections-button {
+	float: left;
+	position: relative;
+	top: -5px;
+	left: 20px;
+}
+
+#shared-projections-table,
+#shared-projections-table-footer {
+	display: none;
 }
 
 /* NEW PROJECTION =========================================================== */
@@ -589,6 +611,49 @@ h3 {
 	padding: 6px;
 }
 
+/* NEW ACCOUNT BOX ========================================================== */
+#new-account-box {
+	width: 360px;
+}
+
+#new-account-box h2 {
+	margin-bottom: 10px;
+}
+
+#new-account-box .container {
+	clear: both;
+	height: 30px;
+	margin-bottom: 5px;
+}
+
+#new-account-box .container label {
+	float: left;
+	line-height: 30px;
+}
+
+#new-account-box .container input,
+#new-account-box .container select {
+	float: right;
+	width: 200px;
+}
+
+#new-account-box .buttons {
+	float: right;
+	clear: both;
+	margin-top: 10px;
+	height: 20px;
+}
+
+#new-account-box .buttons .cancel {
+	padding: 2px 10px;
+	margin-right: 5px;
+}
+
+#new-account-box .buttons .save {
+	padding: 2px 10px;
+}
+
+
 /* FORMULA BOX ============================================================== */
 #formulator {
 	width: 570px;
@@ -800,20 +865,34 @@ h3 {
 			-moz-border-radius: 5px;
 }
 .main-container .container-box .header {
-	height: 46px;
-	margin-bottom: 10px;
+	height: 52px;
+	padding-left: 10px;
 }
 
-.main-container .container-box .header h1 {
-	float: left;
-	padding: 15px 0 0 10px;
-}
-
-.main-container .container-box .header a {
+.main-container .container-box .header li {
+	display: inline;
+	margin-right: 10px;
 	position: relative;
-	right: 10px;
-	float: right;
-	top: 12px;
+	top: 18px;
+}
+
+.main-container .container-box .header li a {
+	padding: 5px 10px;
+	color: #666;
+	border: 1px solid #ccc;
+	text-transform: uppercase;
+	border-radius: 5px;
+		-webkit-border-radius: 5px;
+			-moz-border-radius: 5px;
+}
+
+.main-container .container-box .header li.selected a,
+.main-container .container-box .header li a:hover {
+	background: #666;
+	color: #fff;
+	text-decoration: none;
+	border: 1px solid #666;
+	
 }
 
 .main-container h1.page {
@@ -1083,6 +1162,7 @@ a.button:hover {
 a.green-button {
 	color: #fff;
 	background: #a7dd16;
+	border: 1px solid #a7dd16;
 	
 	padding: 8px 10px;
 	
@@ -1093,6 +1173,8 @@ a.green-button {
 
 a.green-button:hover {
 	color: #fff;
+	text-decoration: none;
+	background: #b7f218;
 }
 
 a.red-button {
@@ -1206,4 +1288,8 @@ a.red-button:hover {
 .ui-widget {
 	font-family: CantarellBold, Arial, Tahoma, sans-serif;
 	font-size: 12pt;
+}
+
+.ui-datepicker {
+	font-size: 10pt;
 }
