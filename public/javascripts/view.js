@@ -564,7 +564,8 @@ View.Item.prototype = {
 	 * @param {object} obj The object in wich the event has been applied
 	 */
 	onAdd: function(e, obj) {
-		View.Item.Chooser.show(obj.list, obj);
+		var chooser = new View.Item.Chooser(obj.list, obj);
+		chooser.show(obj.list, obj);
 		
 	},
 	
@@ -696,95 +697,95 @@ View.Item.remove = function(obj, id, remove) {
 	}
 };
 
-View.Item.Chooser = (function() {
-	var target,
-		obj,
-		thisObj,
-		chooser,
-		data;
+View.Item.Chooser = function(target, obj) {
+	this.target 	= target;
+	this.obj		= obj;
+	this.chooser 	= null;
+	this.data 		= null;
+};
 		
-	return {
-		show: function(t, o) {
-			target 	= t;
-			obj 	= o;
-			thisObj = this;
+View.Item.Chooser.prototype = {
+	show: function() {
+		thisObj = this;
+		
+		Model.Item.list(function(r) {
+			thisObj.data	= r;
+			thisObj.chooser = thisObj.createCombobox();
 			
-			Model.Item.list(function(r) {
-				data	= r;
-				chooser = thisObj.createCombobox();
-				
-				// Add the item selector to the target with super fancy effects
-				chooser.hide().appendTo(target).fadeIn("slow", function(){
-					obj.incomeStatement.sortUpdate();
-				});
+			// Add the item selector to the target with super fancy effects
+			thisObj.chooser.hide().appendTo(thisObj.target).fadeIn("slow", function(){
+				thisObj.obj.incomeStatement.sortUpdate();
+			});
+		
+			// Applies the combobox ui component
+			thisObj.chooser.find('.combobox').combobox();
 			
-				// Applies the combobox ui component
-				chooser.find('.combobox').combobox();
-				
-				// Call event registrations
-				thisObj.registerOnSubmit();
-				thisObj.registerOnCancel();
-				thisObj.registerOnNewAccount();
-				
-			});
-		},
-		
-		showError: function(message) {
-			chooser.find('.message').show().html(message);
-		},
-		
-		registerOnSubmit: function() {
-			chooser.find('.submit').click(function() {
-				var s = data[ chooser.find('.combobox').val() ];
-				var m = chooser.find('.message');
+			// Call event registrations
+			thisObj.registerOnSubmit();
+			thisObj.registerOnCancel();
+			thisObj.registerOnNewAccount();
 			
-				if (!s)
-					thisObj.showError("Escolha uma conta para adicionar");
-				else if ($(target).parent().hasClass("group") && (s.type == "group" || s.type == "result"))
-					thisObj.showError("Não é permitido adicionar grupos de contas aqui");
-				else if (obj.incomeStatement.getItem(s.type + "_" + s.id))
-					thisObj.showError("Esta conta já existe no DRE");
-				else {
-					View.Item.addItem(obj, s, chooser);
-				}
-				return false;
-			});
-		},
-		
-		registerOnCancel: function() {
-			chooser.find('.cancel').click(function() {
-				chooser.fadeOut("slow", function() {
-					$(this).remove();
-				});
-				return false;
-			});
-		},
-		
-		registerOnNewAccount: function() {
-			chooser.find('.newAccount').click(function() {
-				View.Item.NewAccountBox.show(chooser, data);
-				return false;
-			});
-		},
-		
-		createCombobox: function() {
-			// Creates the combobox with the resulting data array
-			var html = '<li class="new"><label>Esolha a conta a ser adicionada: </label>'
-					 + '<select class="combobox"><option value=""></option>';
+		});
+	},
 	
-			for (var i = 0; i < data.length; i++)
-				html += '<option value="' + i + '">' + data[i].name + '</option>';
-			
-			html += '</select><a class="button submit" href="#" title="">OK</a>'
-				  + '<a class="button cancel" href="#" title="">Cancelar</a>'
-				  + '<label class="labelNewAccount">ou crie uma</label>'
-				  + '<a class="green-button newAccount" href="#" title="">nova conta</a>'
-				  + '<p class="message"></p></li>';
-				  
-			return $(html);
-		}
-	};
-})();
+	showError: function(message) {
+		this.chooser.find('.message').show().html(message);
+	},
+	
+	registerOnSubmit: function() {
+		var thisObj = this;
+		this.chooser.find('.submit').click(function() {
+			var s = thisObj.data[ thisObj.chooser.find('.combobox').val() ];
+			var m = thisObj.chooser.find('.message');
+		
+			if (!s)
+				thisObj.showError("Escolha uma conta para adicionar");
+			else if ($(thisObj.target).parent().hasClass("group") && (s.type == "group" || s.type == "result"))
+				thisObj.showError("Não é permitido adicionar grupos de contas aqui");
+			else if (thisObj.obj.incomeStatement.getItem(s.type + "_" + s.id))
+				thisObj.showError("Esta conta já existe no DRE");
+			else {
+				View.Item.addItem(thisObj.obj, s, thisObj.chooser);
+			}
+			return false;
+		});
+	},
+	
+	registerOnCancel: function() {
+		var thisObj = this;
+		this.chooser.find('.cancel').click(function() {
+			thisObj.chooser.fadeOut("slow", function() {
+				$(this).remove();
+			});
+			return false;
+		});
+	},
+	
+	registerOnNewAccount: function() {
+		var thisObj = this;
+		this.chooser.find('.newAccount').click(function() {
+			View.Item.NewAccountBox.show(thisObj.chooser, thisObj.data);
+			return false;
+		});
+	},
+	
+	createCombobox: function() {
+		// Creates the combobox with the resulting data array
+		var html = '<li class="new"><label>Esolha a conta a ser adicionada: </label>'
+				 + '<select class="combobox"><option value=""></option>';
+
+		for (var i = 0; i < this.data.length; i++)
+			html += '<option value="' + i + '">' + this.data[i].name + '</option>';
+		
+		html += '</select><a class="button submit" href="#" title="">OK</a>'
+			  + '<a class="button cancel" href="#" title="">Cancelar</a>'
+			  + '<label class="labelNewAccount">ou crie uma</label>'
+			  + '<a class="green-button newAccount" href="#" title="">nova conta</a>'
+			  + '<p class="message"></p></li>';
+			  
+		return $(html);
+	}
+};
 
 View.Item.NewAccountBox = (function() {
 	var chooser,
@@ -965,11 +966,12 @@ View.IncomeStatement.prototype = {
 			
 		if (this.addButton)
 			this.addButton.click(function() {
-				View.Item.Chooser.show(thisObj.target, {
+				var chooser = new View.Item.Chooser(thisObj.target, {
 					incomeStatement: thisObj,
 					items: thisObj.items,
 					list: thisObj.target
 				});
+				chooser.show();
 			});
 	},
 	

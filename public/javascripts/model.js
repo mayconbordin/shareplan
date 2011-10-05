@@ -41,6 +41,8 @@ Model.IncomeStatement = (function() {
 	var id = null,
 		beforeSave = null,
 		afterSave = null;
+		
+	var buffer = {items:{}};
 	
 	return {
 		get: function(id, callback) {
@@ -89,6 +91,12 @@ Model.IncomeStatement = (function() {
 			data.items[item.id] = item;
 			data.id = id;
 			
+			// a little experiment
+			if (buffer.items[item.id])
+				$.extend(buffer.items[item.id], item);
+			else
+				buffer.items[item.id] = item;
+			
 			$.ajax({
 				type: 'POST',
 			 	url: "http://localhost:3000/projections/save",
@@ -99,6 +107,10 @@ Model.IncomeStatement = (function() {
 						afterSave({date: new Date(), success: true});
 				}
 			});
+		},
+		
+		printBuffer: function() {
+			console.log(buffer);
 		}
 	};
 })();

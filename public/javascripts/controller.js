@@ -171,7 +171,7 @@ Controller.Projection = (function() {
 			});
 			
 			$("#projection-save").click(function() {
-				Model.IncomeStatement.sendData();
+				Model.IncomeStatement.printBuffer();
 				return false;
 			});
 		},
