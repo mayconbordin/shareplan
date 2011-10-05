@@ -130,6 +130,7 @@ Controller.Projection = (function() {
 		newStepOne: function() {
 			// load datepickers
 			$(".datepicker").datepicker(DatePickerConfig);
+			$(".datepicker").mask('99/99/9999');
 			
 			// load basic validations
 			loadValidations();
@@ -167,6 +168,11 @@ Controller.Projection = (function() {
 					else
 						$("#projection-save-date").html("Erro ao salvar projeção");
 				}
+			});
+			
+			$("#projection-save").click(function() {
+				Model.IncomeStatement.sendData();
+				return false;
 			});
 		},
 		newStepThree: function() {

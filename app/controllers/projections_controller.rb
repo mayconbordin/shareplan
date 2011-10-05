@@ -45,6 +45,12 @@ class ProjectionsController < ApplicationController
 	  render :text => params
 	end
 	
+	def new_step_three
+	  
+	end
+	
+	
+	
 	def create
 	  @projection = IncomeStatement.new(params[:projection])
 	  @projection.save
@@ -67,23 +73,30 @@ class ProjectionsController < ApplicationController
 	
 	# ------ JSON Actions ------
 	
+	def list_item_history
+	  render :json => IncomeStatementItem.list_values_by_date(params[:id])
+	end
+	
 	def save
 	  id     = params[:id]
 	  items  = params[:items]
 	  
-	  items.each do |i|
-	    logger.info(i[1]["id"])
-	    
-	    if i[1]["type"] == "delete"
-	      @item = IncomeStatementItem.where(:income_statement_id => id, :item_id => i[1]["id"]).first
-	      @item.destroy
-	    elsif i[1]["type"] == "update" or i[1]["type"] == "create"
-	      @item = IncomeStatementItem.from_hash(id, i[1])
-	      @item.save
-	    end
+	  if items
+  	  items.each do |i|
+  	    if i[1]["type"] == "delete"
+  	      @item = IncomeStatementItem.where(:income_statement_id => id, :item_id => i[1]["id"]).first
+  	      IncomeStatementItem.destroy_all(:parent_id => @item.id)
+  	      @item.destroy
+  	    elsif i[1]["type"] == "update" or i[1]["type"] == "create"
+  	      @item = IncomeStatementItem.from_hash(id, i[1])
+  	      @item.save
+  	    end
+  	  end
+  	  
+  	  render :json => params
+  	else
+	    render :json => {status: "empty"}
 	  end
-	  
-	  render :json => params
 	end
 	
 	def destroy

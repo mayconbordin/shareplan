@@ -4,15 +4,11 @@ Model.Contact = (function() {
 	return {
 		// a id do usuário pega pela session
 		list: function(callback) {
-			var data = [
-				{value: "cadam21@verizon.net", label: "ADAMO, Charles"},
-				{value: "kbaker4640@aol.com", label: "BAKER, Kenneth"},
-				{value: "mtbecks@centurytel.net", label: "BECK, William"},
-				{value: "eburket1@cox.net", label: "BURKETT, Fred"},
-				{value: "james9398@att.net", label: "CARTER, James"}
-			];
-			
-			if (callback) callback(data);
+			$.ajax({
+  				url: "http://localhost:3000/contacts/list",
+  				dataType: 'json',
+  				success: callback
+			});
 		}
 	};
 })();
@@ -43,9 +39,6 @@ Model.Item = (function() {
 
 Model.IncomeStatement = (function() {
 	var id = null,
-		buffer = {items: {}},
-		lastSaved = new Date().getTime(),
-		delay = 1000 * 10,
 		beforeSave = null,
 		afterSave = null;
 	
@@ -66,43 +59,17 @@ Model.IncomeStatement = (function() {
 			});
 		},
 		
-		getItemHistory: function(itemId, callback) {
-			var data;
-			
-			if (itemId <= 3)
-				data = [
-					[ new Date("2009/07/12"), 100 ],
-					[ new Date("2009/07/19"), 150 ],
-					[ new Date("2009/07/20"), 160 ],
-					[ new Date("2009/07/21"), 170 ],
-					[ new Date("2009/07/22"), 180 ],
-					[ new Date("2009/07/23"), 190 ],
-					[ new Date("2009/07/24"), 200 ],
-					[ new Date("2009/07/25"), 300 ],
-					[ new Date("2009/07/26"), 400 ],
-					[ new Date("2009/07/27"), 450 ],
-					[ new Date("2009/07/28"), 460 ],
-					[ new Date("2009/07/29"), 470 ],
-					[ new Date("2009/07/30"), 480 ]
-				];
-			else
-				data = [
-					[ new Date("2009/07/15"), 400 ],
-					[ new Date("2009/07/16"), 600 ],
-					[ new Date("2009/07/17"), 620 ],
-					[ new Date("2009/07/18"), 630 ],
-					[ new Date("2009/07/19"), 640 ],
-					[ new Date("2009/07/20"), 650 ],
-					[ new Date("2009/07/21"), 660 ],
-					[ new Date("2009/07/25"), 700 ],
-					[ new Date("2009/07/26"), 720 ],
-					[ new Date("2009/07/27"), 730 ],
-					[ new Date("2009/07/28"), 740 ],
-					[ new Date("2009/07/29"), 750 ],
-					[ new Date("2009/07/30"), 760 ]
-				];
-			
-			if (callback) callback(data);
+		getItemHistory: function(id, callback) {
+			$.ajax({
+  				url: "http://localhost:3000/projections/list_item_history/" + id,
+  				dataType: 'json',
+  				success: function(data) {
+  					for (i in data)
+  						data[i][0] = new Date(data[i][0]);
+  						
+  					callback(data);
+  				}
+			});
 		},
 		
 		setSaveCallbacks: function(b, a) {
@@ -115,42 +82,22 @@ Model.IncomeStatement = (function() {
 		},
 		
 		save: function(item) {
-			if (buffer[item.id])
-				$.extend(buffer.items[item.id], item);
-			else
-				buffer.items[item.id] = item;
-
-			var now = new Date().getTime();
-			
-			if (lastSaved && (now - lastSaved) > delay)
-				this.sendData();
-		},
-		
-		sendData: function() {
 			if (beforeSave)
 				beforeSave();
-			
-			// set the income statement id
-			buffer.id = id;
+				
+			var data = {items:{}};
+			data.items[item.id] = item;
+			data.id = id;
 			
 			$.ajax({
-			  type: 'POST',
-			  url: "http://localhost:3000/projections/save",
-			  data: buffer,
-			  dataType: "json",
-			  success: function() {
-				var date = new Date();
-				lastSaved = date.getTime();
-				
-				if (afterSave)
-					afterSave({date: date, success: true});
-				
-				// clear the buffer
-				// requisições podem ser feitas durante o envio
-				// é preciso criar uma fechadura que aloca em outro buffer os dados
-				// recebidos ou algo do tipo
-				buffer = {items: {}};
-			  }
+				type: 'POST',
+			 	url: "http://localhost:3000/projections/save",
+			  	data: data,
+			  	dataType: "json",
+			  	success: function() {
+					if (afterSave)
+						afterSave({date: new Date(), success: true});
+				}
 			});
 		}
 	};

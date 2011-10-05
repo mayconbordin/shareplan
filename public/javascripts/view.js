@@ -115,6 +115,7 @@ View.Formula.prototype = {
 		if (this.input)
 			this.input.val(parseFloat(this.value));
 			
+		
 		// Verifica se valor foi modificado na atualização
 		if (value != this.value) {
 			Model.IncomeStatement.save({id: this.item.id, value: this.value, type: "update"});
@@ -122,6 +123,7 @@ View.Formula.prototype = {
 		
 		if (this.newFormula) {
 			// precisa atualizar valor e/ou formula via ajax
+			console.log("update formula");
 			Model.IncomeStatement.save({id: this.item.id, value: this.value, funct: this.formula, type: "update"});
 			
 			this.newFormula = false;
@@ -468,17 +470,6 @@ View.Item.prototype = {
 		this.formula = new View.Formula(this);
 	},
 	
-	save: function() {
-		Model.IncomeStatement.save({
-			id: this.id,
-			order: this.order,
-			value: this.value,
-			funct: this.funct,
-			parent_id: this.parentId,
-			type: "update"
-		});
-	},
-	
 	/**
 	 * Creates the html of an item based on the givin object
 	 *
@@ -672,7 +663,9 @@ View.Item.prototype = {
 			
 			//atualiza via ajax o novo pai
 			console.log("moved item");
-			Model.IncomeStatement.save({id: this.id, parent: target.id, type: "update"});
+			var parentId = (parent instanceof View.IncomeStatement) ? null : parent.id;
+			
+			Model.IncomeStatement.save({id: this.id, parent: parentId, type: "update"});
 		} else {
 			Model.IncomeStatement.save({id: this.id, parent: null, type: "update"});
 		}
@@ -900,7 +893,7 @@ View.Item.addItem = function(obj, item, toRemove) {
 
 	//atualiza via ajax o novo item
 	console.log("added item");
-	Model.IncomeStatement.save({id: item.id, type: "create"});
+	Model.IncomeStatement.save({id: item.id, parent: obj.id, type: "create"});
 };
 
 /**
@@ -1216,7 +1209,6 @@ View.ProjectionChart.prototype = {
 		for (attr in this.items) {
 			var data = this.items[attr].data;
 			
-		
 			for (i in data)
 				this.add(data[i][0], data[i][1], col);
 				

@@ -36,7 +36,10 @@ class IncomeStatementItem < ActiveRecord::Base
     
     if hash["parent"]
       p = where(:income_statement_id => id, :item_id => hash["parent"]).first
-      item.parent_id = p.id
+      
+      if !p.nil?
+        item.parent_id = p.id
+      end
     end
     
     if hash["value"]
@@ -49,4 +52,23 @@ class IncomeStatementItem < ActiveRecord::Base
     
     return item
   end
+  
+  def self.list_values_by_date(id)
+    items = find(
+      :all,
+      :conditions => {:item_id => id},
+      :joins => :income_statement,
+      :select => "income_statement_items.value, income_statement_items.income_statement_id, income_statements.start_date, income_statements.end_date",
+      :order => "income_statements.start_date"
+    )
+    
+    list = []
+    items.each do |i|
+      list.push([i.income_statement.start_date, i.value])
+      list.push([i.income_statement.end_date, i.value])
+    end
+    
+    return list
+  end
+  
 end

@@ -14,8 +14,9 @@ class ItemsController < ApplicationController
     end
   end
   
-  def list(user = nil)
-    id = user == nil ? nil : user.id
+  def list
+    @user = current_user
+    id = @user.id
     @items = Item.where("user_id IS NULL OR user_id = ?", id).order('name')
     
     list = []
