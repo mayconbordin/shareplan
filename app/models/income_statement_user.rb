@@ -10,4 +10,18 @@ class IncomeStatementUser < ActiveRecord::Base
 	
 	belongs_to :income_statement
 	belongs_to :user
+	
+	def self.can_edit(id, user)
+    user = where("income_statement_id = ? AND user_id = ?", id, user.id).limit(1).first
+        
+    if user.nil?
+      return false
+    elsif user.classification == CREATOR_CLASS
+        return true
+    else
+      return false
+    end
+    
+  end
+  
 end

@@ -20,6 +20,24 @@ class IncomeStatement < ActiveRecord::Base
   has_many :income_statement_items
   has_many :items, :through => :income_statement_items
   
+  # ---- Scopes ----
+  scope :has_my_projections, {
+    :conditions => ['(income_statements.classification = ? OR income_statements.classification = ?) AND income_statement_users.classification = ?',
+                   PROJECTION, TEMP, IncomeStatementUser::CREATOR_CLASS]
+  }
+  
+  scope :has_shared_projections, {
+    :conditions => ['income_statements.classification = ? AND (income_statement_users.classification = ? OR income_statement_users.classification = ?)',
+                   PROJECTION, IncomeStatementUser::EDITOR_CLASS, IncomeStatementUser::READER_CLASS]
+  }
+                       
+  scope :childrens_count, {
+    :select => "(SELECT COUNT(*) FROM income_statements inc_stmt WHERE inc_stmt.parent_id = income_statements.id) AS childrens_count"
+  }
+  
+  scope :comments_count, {
+    :select => "(SELECT COUNT(*) FROM comments WHERE comments.income_statement_id = income_statements.id) AS comments_count"
+  }
    
   # ---- Methods ----
   def get_hash_items
@@ -48,6 +66,7 @@ class IncomeStatement < ActiveRecord::Base
       "title"       => title,
       "start_date"  => start_date,
       "end_date"    => end_date,
+      "type"        => classification,
       "items"       => get_hash_items
     }
     

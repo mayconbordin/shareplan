@@ -822,6 +822,7 @@ View.Item.NewAccountBox = (function() {
 		registerOnCancel: function() {
 			accountBox.find(".cancel").click(function() {
 				jQuery(document).trigger('close.facebox');
+				return false;
 			});
 		},
 		
@@ -908,6 +909,7 @@ View.IncomeStatement = function(options) {
 		target: null,
 		addButton: null,
 		id: null,
+		type: null,
 		saveDateTarget: null,
 		onItemClick: null,
 		beforeSave: null,
@@ -930,10 +932,7 @@ View.IncomeStatement = function(options) {
 		
 	if (this.opt.afterSave)
 		Model.IncomeStatement.setSaveCallbacks(this.opt.beforeSave, this.opt.afterSave);
-	
-	if (this.opt.id)
-		Model.IncomeStatement.setId(this.opt.id);
-	
+
 	// Data properties
 	this.id 	= this.opt.id;
 	this.items 	= [];
@@ -1123,6 +1122,8 @@ View.IncomeStatement.prototype = {
 			// Copy additional data
 			thisObj.start_date 	= new Date(is.start_date);
 			thisObj.end_date 	= new Date(is.end_date);
+			Model.IncomeStatement.setId(is.id);
+			Model.IncomeStatement.setType(is.type);
 			
 			// Carrega as fórmulas e valores
 			View.Formula.reloadAll(thisObj.items);
@@ -1366,15 +1367,17 @@ View.Table = {
 			"aoColumns": [
 				{
 					"sTitle": "Projeção",
+					"sWidth": "30%",
 					"fnRender": function(obj) {
 						var sReturn = obj.aData[ obj.iDataColumn ];
-						var html = '<a href="#'+obj.aData[6]+'" title="Visualizar projeção">'+sReturn+'</a>';
+						var html = '<a href="/projections/edit/'+obj.aData[6]+'" title="Visualizar projeção">'+sReturn+'</a>';
 						return html;
 					}
 				},
 				{
 					"sTitle": "Início",
 					"sClass": "center",
+					"sWidth": "15%",
 					"fnRender": function(obj) {
 						var sReturn = obj.aData[ obj.iDataColumn ];
 						return new Date(sReturn).format('d/m/Y');
@@ -1383,16 +1386,18 @@ View.Table = {
 				{
 					"sTitle": "Fim",
 					"sClass": "center",
+					"sWidth": "15%",
 					"fnRender": function(obj) {
 						var sReturn = obj.aData[ obj.iDataColumn ];
 						return new Date(sReturn).format('d/m/Y');
 					}
 				},
-				{ "sTitle": "Criado por", "sClass": "center", "bSortable": false, },
-				{ "sTitle": "Versões", "sClass": "center", "bSortable": false, },
+				{ "sTitle": "Criado por", "sClass": "center", "sWidth": "15%", "bSortable": false, },
+				{ "sTitle": "Versões", "sClass": "center", "sWidth": "10%", "bSortable": false, },
 				{
 					"sTitle": "Criado em",
 					"sClass": "center",
+					"sWidth": "15%",
 					"fnRender": function(obj) {
 						var sReturn = obj.aData[ obj.iDataColumn ];
 						return new Date(sReturn).format('d/m/Y');
@@ -1404,6 +1409,8 @@ View.Table = {
 					.append($('#shared-projections-table_info'))
 					.append($('#shared-projections-table_paginate'))
 					.appendTo('#shared-projections-table_wrapper');
+					
+				$("#shared-projections-table").css("width", "");
 					
 				if (callback) callback();
 			}
@@ -1418,9 +1425,10 @@ View.Table = {
 			"aoColumns": [
 				{
 					"sTitle": "Projeção",
+					"sWidth": "30%",
 					"fnRender": function(obj) {
 						var sReturn = obj.aData[ obj.iDataColumn ];
-						var html = '<a href="#'+obj.aData[6]+'" title="Visualizar projeção">'+sReturn+'</a>';
+						var html = '<a href="/projections/edit/'+obj.aData[6]+'" title="Visualizar projeção">'+sReturn+'</a>';
 						
 						if (obj.aData[7] == "temp")
 							html += ' - Rascunho';
@@ -1430,6 +1438,7 @@ View.Table = {
 				{
 					"sTitle": "Início",
 					"sClass": "center",
+					"sWidth": "15%",
 					"fnRender": function(obj) {
 						var sReturn = obj.aData[ obj.iDataColumn ];
 						return new Date(sReturn).format('d/m/Y');
@@ -1438,16 +1447,18 @@ View.Table = {
 				{
 					"sTitle": "Fim",
 					"sClass": "center",
+					"sWidth": "15%",
 					"fnRender": function(obj) {
 						var sReturn = obj.aData[ obj.iDataColumn ];
 						return new Date(sReturn).format('d/m/Y');
 					}
 				},
-				{ "sTitle": "Comentários", "sClass": "center", "bSortable": false, },
-				{ "sTitle": "Versões", "sClass": "center", "bSortable": false, },
+				{ "sTitle": "Comentários", "sClass": "center", "sWidth": "5%", "bSortable": false, },
+				{ "sTitle": "Versões", "sClass": "center", "sWidth": "5%", "bSortable": false, },
 				{
 					"sTitle": "Criado em",
 					"sClass": "center",
+					"sWidth": "15%",
 					"fnRender": function(obj) {
 						var sReturn = obj.aData[ obj.iDataColumn ];
 						return new Date(sReturn).format('d/m/Y');
@@ -1456,6 +1467,7 @@ View.Table = {
 				{
 					"sTitle": "Ações",
 					"sClass": "center",
+					"sWidth": "15%",
 					"bSortable": false,
 					"fnRender": function(obj) {
 						var id = obj.aData[ obj.iDataColumn ];
@@ -1469,6 +1481,8 @@ View.Table = {
 					.append($('#projections-table_info'))
 					.append($('#projections-table_paginate'))
 					.appendTo('#projections-table_wrapper');
+					
+				$("#projections-table").css("width", "");
 			}
 		};
 		$.extend(options, this.options);

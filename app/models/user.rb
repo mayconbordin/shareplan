@@ -24,14 +24,23 @@ class User < ActiveRecord::Base
 		
   # ---- Methods ----
   def my_projections(order = nil, limit = nil, offset = nil)
-    income_statements.where('(income_statements.classification = ? OR income_statements.classification = ?) AND income_statement_users.classification = ?',
-                       IncomeStatement::PROJECTION, IncomeStatement::TEMP, IncomeStatementUser::CREATOR_CLASS)
+    income_statements.childrens_count()
+                     .comments_count()
+                     .has_my_projections()
                      .order(order).limit(limit).offset(offset)
   end
   
   def shared_projections(order = nil, limit = nil, offset = nil)
-    income_statements.where('income_statements.classification = ? AND (income_statement_users.classification = ? OR income_statement_users.classification = ?)',
-                       IncomeStatement::PROJECTION, IncomeStatementUser::EDITOR_CLASS, IncomeStatementUser::READER_CLASS)
+    income_statements.childrens_count()
+                     .has_shared_projections()
                      .order(order).limit(limit).offset(offset)
+  end
+  
+  def count_my_projections
+    income_statements.has_my_projections().count()
+  end
+  
+  def count_shared_projections
+    income_statements.has_shared_projections().count()
   end
 end

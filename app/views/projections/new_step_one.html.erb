@@ -29,101 +29,100 @@
 	</script>
 <% end %>
 
-
-<h1 class="page">Nova Projeção</h1>
+<!-- Main Container -->
+<div class="main-container">
+	
+	<h1 class="page">Nova Projeção</h1>
+					
+	<!-- New Projection -->
+	<div id="new-projection">
+		
+		<%= render 'progress', :step => "one", :id => @id %>
+		
+		<% if @projection.errors.any? %>
+		<ul class="messages">
+			<% @projection.errors.full_messages.each do |msg| %>
+			<li class="error"><p><%= msg %></p><span class="close"></span></li>
+			<% end %>
+		</ul>
+		<% end %>
+	
+		<!-- Form -->
+		<div id="projection-form" class="form-container">
+			<%= form_tag(:action => 'save_step_one', :controller => 'projections', :method => "post") do %>
+				<fieldset>
+					<legend>Período</legend>
+					<dl class="inline">
+						<dt class="first">
+							<label>De</label>
+						</dt>
+						<dd>
+							<input type="text" class="datepicker" name="projection[start_date]" id="start-date" value="<%= @projection.start_date ? @projection.start_date.strftime("%d/%m/%Y") : "" %>" />
+						</dd>
+		
+						<dt>
+							<label>até</label>
+						</dt>
+						<dd>
+							<input type="text" class="datepicker" name="projection[end_date]" id="end-date" value="<%= @projection.end_date ? @projection.end_date.strftime("%d/%m/%Y") : "" %>" />
+						</dd>
+						<dt id="invalid-period" class="invalid">
+							<span class="invalid-message">Você precisa informar um período</span>
+						</dt><dd></dd>
+					</dl>
+				</fieldset>
+	
+				<fieldset>
+					<legend>Template</legend>
+					<dl class="normal">
+						<dt>
+							<label>Escolha um template</label>
+						</dt>
+						<dd>
+							<select name="template" id="template">
+								<option value="">Nenhum</option>
+								<% @templates.each do |t| %>
+								<option value="<%= t.id %>"><%= t.title %></option>
+								<% end %>
+							</select>
+							<p>Templates contém a estrutura das contas e seus grupos, usar templates facilita a criação de projeções</p>
+						</dd>
+					</dl>
+				</fieldset>
+	
+				<fieldset>
+					<legend>Informações</legend>
+					<dl class="normal">
+						<dt>
+							<label>Título</label>
+						</dt>
+						<dd>
+							<input type="text" class="large" name="projection[title]" value="<%= @projection.title %>" />
+							<p>Descreva brevemente a projeção para poder indentificá-la posteriormente</p>
+						</dd>
+		
+						<dt>
+							<label>Comentário</label>
+						</dt>
+						<dd>
+							<textarea class="large" name="projection[comment]"><%= @projection.comment %></textarea>
+							<p>Se desejar, pode colocar aqui alguns comentários/observações a respeito de sua projeção</p>
+						</dd>
+					</dl>
+				</fieldset>
 				
-<!-- New Projection -->
-<div id="new-projection">
-	
-	<!-- Progress -->
-	<ul id="new-projection-progress" class="progress">
-		<li class="current corner-left-step"><a href="#" title=""><span class="dot">1</span> Informações Básicas</a></li>
-		<li class="step"><a href="#" title=""><span class="dot">2</span> Projetar DRE</a></li>
-		<li class="corner-right-step"><a href="#" title=""><span class="dot">3</span> Compartilhar</a></li>
-	</ul>
-	<!-- Progress -->
-	
-	<% if @projection.errors.any? %>
-	<ul class="messages">
-		<% @projection.errors.full_messages.each do |msg| %>
-		<li class="error"><p><%= msg %></p><span class="close"></span></li>
-		<% end %>
-	</ul>
-	<% end %>
-
-	<!-- Form -->
-	<div id="projection-form" class="form-container">
-		<%= form_tag(:action => 'save_step_one', :controller => 'projections', :method => "post") do %>
-			<fieldset>
-				<legend>Período</legend>
-				<dl class="inline">
-					<dt class="first">
-						<label>De</label>
-					</dt>
-					<dd>
-						<input type="text" class="datepicker" name="projection[start_date]" id="start-date" value="<%= @projection.start_date ? @projection.start_date.strftime("%d/%m/%Y") : "" %>" />
-					</dd>
-	
-					<dt>
-						<label>até</label>
-					</dt>
-					<dd>
-						<input type="text" class="datepicker" name="projection[end_date]" id="end-date" value="<%= @projection.end_date ? @projection.end_date.strftime("%d/%m/%Y") : "" %>" />
-					</dd>
-					<dt id="invalid-period" class="invalid">
-						<span class="invalid-message">Você precisa informar um período</span>
-					</dt><dd></dd>
-				</dl>
-			</fieldset>
-
-			<fieldset>
-				<legend>Template</legend>
-				<dl class="normal">
-					<dt>
-						<label>Escolha um template</label>
-					</dt>
-					<dd>
-						<select name="template" id="template">
-							<option value="">Nenhum</option>
-							<% @templates.each do |t| %>
-							<option value="<%= t.id %>"><%= t.title %></option>
-							<% end %>
-						</select>
-						<p>Templates contém a estrutura das contas e seus grupos, usar templates facilita a criação de projeções</p>
-					</dd>
-				</dl>
-			</fieldset>
-
-			<fieldset>
-				<legend>Informações</legend>
-				<dl class="normal">
-					<dt>
-						<label>Título</label>
-					</dt>
-					<dd>
-						<input type="text" class="large" name="projection[title]" value="<%= @projection.title %>" />
-						<p>Descreva brevemente a projeção para poder indentificá-la posteriormente</p>
-					</dd>
-	
-					<dt>
-						<label>Comentário</label>
-					</dt>
-					<dd>
-						<textarea class="large" name="projection[comment]"><%= @projection.comment %></textarea>
-						<p>Se desejar, pode colocar aqui alguns comentários/observações a respeito de sua projeção</p>
-					</dd>
-				</dl>
-			</fieldset>
+				<div id="projection-bottom">
+					<a id="projection-cancel" class="button" href="<%= url_for(:controller => 'projections') %>" title="Cancelar projeção">Cancelar</a>
+					<a id="projection-next" class="button" href="#" title="Avançar na criação da projeção">Avançar</a>
+				</div>
+				<div class="clear"></div>
+			<% end %>
 			
-			<div id="projection-bottom">
-				<a id="projection-cancel" class="button" href="<%= url_for(:controller => 'projections') %>" title="Cancelar projeção">Cancelar</a>
-				<a id="projection-next" class="button" href="#" title="Avançar na criação da projeção">Avançar</a>
-			</div>
-			<div class="clear"></div>
-		<% end %>
+		</div>
+		<!-- Form -->
 		
 	</div>
-	<!-- Form -->
+	<!-- New Projection -->
 	
 </div>
-<!-- New Projection -->
+<!-- Main Container -->

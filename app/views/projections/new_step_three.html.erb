@@ -46,54 +46,50 @@
 	</script>
 <% end %>
 
-
-<h1 class="page">Nova Projeção</h1>
-				
-<!-- New Projection -->
-<div id="new-projection">
-
-	<!-- Progress -->
-	<ul id="new-projection-progress" class="progress">
-		<li class="corner-left-step"><a href="#" title=""><span class="dot">1</span> Informações Básicas</a></li>
-		<li class="step"><a href="#" title=""><span class="dot">2</span> Projetar DRE</a></li>
-		<li class="current corner-right-step"><a href="#" title=""><span class="dot">3</span> Compartilhar</a></li>
-	</ul>
-	<!-- Progress -->
+<!-- Main Container -->
+<div class="main-container">
+	<h1 class="page">Nova Projeção</h1>
+					
+	<!-- New Projection -->
+	<div id="new-projection">
 	
+		<%= render 'progress', :step => "three", :id => @id %>
+			
+		<ul class="messages">
+			<% if @status == "success" %><li class="success"><p>A projeção foi salva com sucesso</p><span class="close"></span></li><% end %>
+		</ul>
 	
-	<ul class="messages">
-		<li class="success"><p>A projeção foi salva com sucesso</p><span class="close"></span></li>
-	</ul>
-
-
-	<div id="projection-form" class="form-container">
-		<form action="save_step_three" method="post">
-			<fieldset>
-				<legend>Compartilhe sua projeção</legend>
-
-				<dl class="normal">
-					<dt>
-						<label>Enviar para:</label>
-					</dt>
-					<dd>
-						<textarea id="contacts-list"></textarea>
-						<p>Coloque o email de quem irá receber esta projeção separando-os por vírgula.</p>
-					</dd>
-				</dl>
-				
-			</fieldset>
-		</form>
+		<div id="projection-form" class="form-container">
+			<form action="save_step_three" method="post">
+				<fieldset>
+					<legend>Compartilhe sua projeção</legend>
+	
+					<dl class="normal">
+						<dt>
+							<label>Enviar para:</label>
+						</dt>
+						<dd>
+							<textarea id="contacts-list"></textarea>
+							<p>Coloque o email de quem irá receber esta projeção separando-os por vírgula.</p>
+						</dd>
+					</dl>
+					
+				</fieldset>
+			</form>
+		</div>
+	
+		<!-- Bottom -->
+		<div id="projection-bottom">
+			<p>
+				<span id="projection-save-date"></span>
+				<a id="projection-dont-share" class="button" href="#" title="Não desejo compartilhar a projeção">Não, obrigado</a>
+				<a id="projection-share" class="button" href="#" title="Compartilhar a projeção">Compartilhar</a>
+			</p>
+		</div>
+		<!-- Bottom -->
+		
 	</div>
-
-	<!-- Bottom -->
-	<div id="projection-bottom">
-		<p>
-			<span id="projection-save-date"></span>
-			<a id="projection-dont-share" class="button" href="#" title="Não desejo compartilhar a projeção">Não, obrigado</a>
-			<a id="projection-share" class="button" href="#" title="Compartilhar a projeção">Compartilhar</a>
-		</p>
-	</div>
-	<!-- Bottom -->
+	<!-- New Projection -->
 	
 </div>
-<!-- New Projection -->
+<!-- Main Container -->

@@ -155,6 +155,7 @@ Controller.Projection = (function() {
 				target: "#income-statement .body",
 				addButton: "#add-projection-item",
 				id: id,
+				type: "projection",
 				saveDateTarget: "#projection-save-date span",
 				onItemClick: function(item, remove) {
 					chart.load(item, remove);
@@ -171,7 +172,14 @@ Controller.Projection = (function() {
 			});
 			
 			$("#projection-save").click(function() {
-				Model.IncomeStatement.printBuffer();
+				Model.IncomeStatement.setType("projection");
+				Model.IncomeStatement.sendData(function(status) {
+					if (status == "success")
+						$("#step-three-form").submit();
+						//window.location = '/projections/new_step_three/' + id;
+					else
+						alert("Não foi possível salvar a projeção");
+				});
 				return false;
 			});
 		},
@@ -179,7 +187,42 @@ Controller.Projection = (function() {
 			var contactList = new View.ContactList("#contacts-list");
 		
 			messagesClose();
-		}
+		},
+		edit: function(id) {
+			var chart = new View.ProjectionChart("chart");
+
+			var is = new View.IncomeStatement({
+				target: "#income-statement .body",
+				addButton: "#add-projection-item",
+				id: id,
+				type: "projection",
+				saveDateTarget: "#projection-save-date span",
+				onItemClick: function(item, remove) {
+					chart.load(item, remove);
+				},
+				beforeSave: function() {
+					$("#projection-save-date").html('<img class="loader" src="/images/loader.gif" alt="loading" /> salvando projeção...');
+				},
+				afterSave: function(r) {
+					if (r.success)
+						$("#projection-save-date").html("Salvo automaticamente as " + r.date.format('h:i:s A'));
+					else
+						$("#projection-save-date").html("Erro ao salvar projeção");
+				}
+			});
+			
+			$("#projection-save").click(function() {
+				Model.IncomeStatement.setType("projection");
+				Model.IncomeStatement.sendData(function(status) {
+					if (status == "success")
+						$("#step-three-form").submit();
+						//window.location = '/projections/new_step_three/' + id;
+					else
+						alert("Não foi possível salvar a projeção");
+				});
+				return false;
+			});
+		},
 	};
 })();
 

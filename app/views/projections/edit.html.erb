@@ -1,5 +1,5 @@
 <% content_for :title do %>
-  <title>SharePlan - Nova Projeção</title>
+  <title>SharePlan - Projeção: <%= @projection.title %></title>
 <% end %>
 
 <% content_for :styles do %>
@@ -39,9 +39,9 @@
 		"controller")
 	%>
 	<script type="text/javascript">
-		var projection_id = <%= @id %>;
+		var projection_id = <%= @projection.id %>;
 		$(document).ready(function () {
-			Controller.Projection.newStepTwo(projection_id);
+			Controller.Projection.edit(projection_id);
 			Controller.User.logout();
 		});
 	</script>
@@ -49,26 +49,35 @@
 
 <!-- Main Container -->
 <div class="main-container">
-	<h1 class="page">Nova Projeção</h1>
+	<h1 class="page">Projeção: <%= @projection.title %></h1>
 					
-	<!-- New Projection -->
+	<!-- Edit Projection -->
 	<div id="new-projection">
-	
-		<%= render 'progress', :step => "two", :id => @id %>
-	
-		<!-- Chart -->
-		<div id="projection-chart">
-			<h2>Gráfico</h2>
 		
-			<div id="chart-legend"></div>
-			<div id="chart">
-				<div id="empty-chart">
-	     			<p class="one">Nenhuma conta carregada</p>
-	     			<p class="two">Clique nas contas para carregá-las no gráfico</p>
-	     		</div>
+		<div id="income-statement-info" class="container-box">
+			<ul id="projections-header" class="header">
+				<li class="selected"><a id="select-information" href="#" title="">Informações</a></li>
+				<li><a id="select-chart" href="#" title="">Gráfico</a></li>
+				<li><a id="select-versions" href="#" title="">Versões</a></li>
+				<li><a id="select-comments" href="#" title="">Comentários</a></li>
+			</ul>
+			
+			<div class="tab-items">
+				<!-- Chart -->
+				<div id="projection-chart" style="display: none;">
+					<h2>Gráfico</h2>
+				
+					<div id="chart-legend"></div>
+					<div id="chart">
+						<div id="empty-chart">
+			     			<p class="one">Nenhuma conta carregada</p>
+			     			<p class="two">Clique nas contas para carregá-las no gráfico</p>
+			     		</div>
+					</div>
+				</div>
+				<!-- Chart -->
 			</div>
 		</div>
-		<!-- Chart -->
 	
 		<!-- Income Statement -->
 		<div id="projection-income-statement">
@@ -98,7 +107,8 @@
 				<a id="projection-discard" class="button" href="#" title="Descartar projeção">Descartar</a>
 				<a id="projection-save" class="button" href="#" title="Salvar projeção">Salvar</a>
 				
-				<% form_tag '/projections/new_step_three/'+@id, :id => "step-three-form", :method => "post" do -%>
+				<!-- ARRUMAR ISSO -->
+				<% form_tag '/projections/new_step_three/', :id => "step-three-form", :method => "post" do -%>
 					<input type="hidden" name="status" value="success" />
 				<% end -%>
 			</p>
@@ -106,7 +116,7 @@
 		<!-- Bottom -->
 		
 	</div>
-	<!-- New Projection -->
-
+	<!-- Edit Projection -->
+	
 </div>
 <!-- Main Container -->

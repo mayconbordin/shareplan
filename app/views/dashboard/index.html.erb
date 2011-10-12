@@ -3,166 +3,154 @@
 <% end %>
 
 <% content_for :styles do %>
-<link rel="stylesheet" href="/stylesheets/reset.css" type="text/css" media="screen" />
-<link rel="stylesheet" href="/stylesheets/style.css" type="text/css" media="screen" />
-<link rel="stylesheet" href="/stylesheets/jquery.tipsy.css" type="text/css" media="screen" />
-<link rel="stylesheet" href="/stylesheets/jquery.select_skin.css" type="text/css" media="screen" />
+	<%= stylesheet_link_tag(
+		"reset",
+		"style",
+		"jquery.select_skin")
+	%>
 <% end %>
 
 <% content_for :scripts do %>
-<script src="/javascripts/jquery-1.6.2.min.js" type="text/javascript"></script>
-<script src="/javascripts/jquery.tipsy.js" type="text/javascript"></script>
-<script src="/javascripts/jquery.select_skin.js" type="text/javascript"></script>
-<script src="/javascripts/highcharts.js" type="text/javascript"></script>
-<script src="/javascripts/dygraph.js" type="text/javascript"></script>
-
-<script src="/javascripts/util.js" type="text/javascript"></script>
-<script src="/javascripts/model.js" type="text/javascript"></script>
-<script src="/javascripts/view.js" type="text/javascript"></script>
-<script src="/javascripts/controller.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-	$(document).ready(function () {
-		Controller.Dashboard.index();
-		Controller.Sidebar.initialize();
-	});
-</script>
+	<%= javascript_include_tag(
+		"jquery-1.6.2.min",
+		"jquery.select_skin",
+		"dygraph",
+		"util",
+		"model",
+		"view",
+		"controller")
+	%>
+	<script type="text/javascript">
+		$(document).ready(function () {
+			Controller.Dashboard.index();
+			Controller.User.logout();
+		});
+	</script>
 <% end %>
 
 
+<!-- Main Container -->
+<div id="dashboard" class="main-container widgets">
 
-<!-- Dashboard -->
-<div id="dashboard">
-	<h1 id="dashboard-title"><span>Dashboard</span></h1>
+	<h1>Dashboard</h1>
+
+	<div id="notifications" class="widget left">
+		<div class="header">
+			<h3>Notificações</h3>
+		</div>
+		
+		<div class="body">
+			<ul>
+				<li>
+					<a href="#1" title="">Marcos compartilhou uma projeção com você</a>
+					<div class="close" title="Remover notificação"></div>
+				</li>
+				<li>
+					<a href="#2" title="">André modificou uma projeção sua</a>
+					<div class="close" title="Remover notificação"></div>
+				</li>
+				<li>
+					<a href="#3" title="">Luciano comentou em uma projeção sua</a>
+					<div class="close" title="Remover notificação"></div>
+				</li>
+				<li>
+					<a href="#3" title="">João comentou em uma projeção sua</a>
+					<div class="close" title="Remover notificação"></div>
+				</li>
+			</ul>
+			<a id="all-notifications" class="button" href="#" title="Ver todas as notificações">ver todas »</a>
+		</div>
+	</div>
 	
-	<!-- Widgets -->
-	<div id="dashboard-widgets">
-		
-		<!-- Notificações -->
-		<div id="widget-notificacoes" class="widget left">
-			<div class="widget-header">
-				<h3><span>Notificações</span></h3>
-			</div>
-			
-			<div class="widget-body">
-				<ul id="notificacoes">
-					<li>
-						<a href="#1" title="">Marcos compartilhou uma projeção com você</a>
-						<div class="close" title="Remover notificação"></div>
-					</li>
-					<li>
-						<a href="#2" title="">André modificou uma projeção sua</a>
-						<div class="close" title="Remover notificação"></div>
-					</li>
-					<li>
-						<a href="#3" title="">Luciano comentou em uma projeção sua</a>
-						<div class="close" title="Remover notificação"></div>
-					</li>
-					<li>
-						<a href="#3" title="">João comentou em uma projeção sua</a>
-						<div class="close" title="Remover notificação"></div>
-					</li>
-				</ul>
-				<a id="notificacoes-todas" class="blue-button" href="#" title="Ver todas as notificações">ver todas »</a>
-			</div>
+	<div id="history" class="widget right">
+		<div class="header">
+			<h3>Histórico da Conta</h3>
 		</div>
-		<!-- Notificações -->
 		
-		<!-- Histórico -->
-		<div id="widget-historico" class="widget right">
-			<div class="widget-header">
-				<h3><span>Histórico</span></h3>
+		<div class="body">
+			<div id="item-history">
+				<select id="item-history-select" class="styled">
+					<option value="1">Resultado Líquido do Exercício</option>
+					<option value="2">Resultado Bruto do Exercício</option>
+					<option value="3">EBITDA</option>		
+				</select>
 			</div>
-			
-			<div class="widget-body">
-					<div id="historico-conta">
-						<select id="historico-conta-select" class="styled">
-							<option value="1">Resultado Líquido do Exercício</option>
-							<option value="2">Resultado Bruto do Exercício</option>
-							<option value="3">EBITDA</option>		
-						</select>
-					</div>
-				<div id="historico-chart"></div>
-				<a id="reset-zoom" class="blue-button" href="#" title="Resetar zoom do gráfico">Reset zoom</a>
-			</div>
+			<div id="history-chart"></div>
 		</div>
-		<!-- Histórico -->
+	</div>
+	
+	<div id="last-projections" class="widget full">
+		<div class="header">
+			<h3>Últimas projeções</h3>
+		</div>
 		
-		<!-- Últimas Projeções -->
-		<div id="widget-ultimas-projecoes" class="widget full">
-			<div class="widget-header">
-				<h3><span>Últimas Projeções</span></h3>
-			</div>
-			
-			<div class="widget-body">
-				<table id="ultimas-projecoes" cellpadding="0" cellspacing="0" width="100%">
+		<div class="body">
+			<div id="last-projections-container">
+				<table id="last-projections-table" cellpadding="0" cellspacing="0" width="100%">
 					<thead>
 						<tr>
 							<th>Projeção</th>
-							<th>Criado em</th>
-							<th>Versões</th>
-							<th>Comentários</th>
+							<th class="center">Criado em</th>
+							<th class="center">Versões</th>
+							<th class="center">Comentários</th>
 						</tr>
 					</thead>
-			
+	
 					<tbody>
 						<tr id="projecao1" class="even">
-							<td>Projeção para 2012</td>
-							<td>20.03.2010</td>
-							<td>2</td>
-							<td>5</td>
+							<td><a href="#" title="">Projeção para 2012</a></td>
+							<td class="center">20.03.2010</td>
+							<td class="center">2</td>
+							<td class="center">5</td>
 						</tr>
-				
+		
 						<tr id="projecao2" class="odd">
-							<td>Projeção para 2012</td>
-							<td>20.03.2010</td>
-							<td>2</td>
-							<td>5</td>
+							<td><a href="#" title="">Projeção para 2012</a></td>
+							<td class="center">20.03.2010</td>
+							<td class="center">2</td>
+							<td class="center">5</td>
 						</tr>
-				
+		
 						<tr id="projecao3" class="even">
-							<td>Projeção para 2012</td>
-							<td>20.03.2010</td>
-							<td>2</td>
-							<td>5</td>
+							<td><a href="#" title="">Projeção para 2012</a></td>
+							<td class="center">20.03.2010</td>
+							<td class="center">2</td>
+							<td class="center">5</td>
 						</tr>
-				
+		
 						<tr id="projecao4" class="odd">
-							<td>Projeção para 2012</td>
-							<td>20.03.2010</td>
-							<td>2</td>
-							<td>5</td>
+							<td><a href="#" title="">Projeção para 2012</a></td>
+							<td class="center">20.03.2010</td>
+							<td class="center">2</td>
+							<td class="center">5</td>
 						</tr>
-				
+		
 						<tr id="projecao5" class="even">
-							<td>Projeção para 2012</td>
-							<td>20.03.2010</td>
-							<td>2</td>
-							<td>5</td>
+							<td><a href="#" title="">Projeção para 2012</a></td>
+							<td class="center">20.03.2010</td>
+							<td class="center">2</td>
+							<td class="center">5</td>
 						</tr>
-				
+		
 						<tr id="projecao6" class="odd">
-							<td>Projeção para 2012</td>
-							<td>20.03.2010</td>
-							<td>2</td>
-							<td>5</td>
+							<td><a href="#" title="">Projeção para 2012</a></td>
+							<td class="center">20.03.2010</td>
+							<td class="center">2</td>
+							<td class="center">5</td>
 						</tr>
-				
+		
 						<tr id="projecao7" class="even">
-							<td>Projeção para 2012</td>
-							<td>20.03.2010</td>
-							<td>2</td>
-							<td>5</td>
+							<td><a href="#" title="">Projeção para 2012</a></td>
+							<td class="center">20.03.2010</td>
+							<td class="center">2</td>
+							<td class="center">5</td>
 						</tr>
 					</tbody>
 				</table>
-				<a id="projecoes-todas" class="blue-button" href="#" title="Ver todas as projeções">ver todas »</a>
 			</div>
+			<a id="all-projections" class="button" href="#" title="Ver todas as projeções">ver todas »</a>
 		</div>
-		<!-- Últimas Projeções -->
-		
 	</div>
-	<!-- Widgets -->
-	
+
 </div>
-<!-- Dashboard -->
+<!-- Main Container -->

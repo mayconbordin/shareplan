@@ -120,6 +120,10 @@ h3 {
 }
 
 /* DASHBOARD ================================================================ */
+#dashboard h1 {
+	margin-bottom: 20px;
+}
+
 #last-projections {
 	position: relative;
 	top: 30px;
@@ -325,6 +329,10 @@ h3 {
 	height: 15px;
 	float: right;
 	margin: 0 8px 10px 0;
+}
+
+#income-statement-info {
+	margin: 0;
 }
 
 /* INCOME STATEMENT ========================================================= */
@@ -1262,6 +1270,20 @@ a.red-button:hover {
 	background-color: #B0E2F9;
 	background-image: url(../images/info_16.png);
 	border-color: #00A2ED;
+}
+
+/* ERROR PAGE =============================================================== */
+#error-container {
+	background: #dcdcdc;
+	text-align: center;
+	height: 200px;
+	border-radius: 5px;
+		-webkit-border-radius: 5px;
+			-moz-border-radius: 5px;
+}
+
+#error-container h1 {
+	padding-top: 80px;
 }
 
 /* JQUERY UI ================================================================ */

@@ -39,15 +39,17 @@ Model.Item = (function() {
 
 Model.IncomeStatement = (function() {
 	var id = null,
+		type = null,
 		beforeSave = null,
 		afterSave = null;
 		
 	var buffer = {items:{}};
+	var sending = false;
 	
 	return {
 		get: function(id, callback) {
 			$.ajax({
-  				url: "http://localhost:3000/projections/show/" + id,
+  				url: "http://localhost:3000/income_statements/show/" + id,
   				dataType: 'json',
   				success: callback
 			});
@@ -56,14 +58,14 @@ Model.IncomeStatement = (function() {
 		destroy: function(id, callback) {
 			$.ajax({
 			  type: 'DELETE',
-			  url: "http://localhost:3000/projections/destroy/" + id,
+			  url: "http://localhost:3000/income_statements/destroy/" + id,
 			  success: success,
 			});
 		},
 		
 		getItemHistory: function(id, callback) {
 			$.ajax({
-  				url: "http://localhost:3000/projections/list_item_history/" + id,
+  				url: "http://localhost:3000/income_statements/list_item_history/" + id,
   				dataType: 'json',
   				success: function(data) {
   					for (i in data)
@@ -81,12 +83,15 @@ Model.IncomeStatement = (function() {
 		
 		setId: function(isId) {
 			id = isId;
+			buffer.id = id;
+		},
+		
+		setType: function(isType) {
+			type = isType;
+			buffer.type = isType;
 		},
 		
 		save: function(item) {
-			if (beforeSave)
-				beforeSave();
-				
 			var data = {items:{}};
 			data.items[item.id] = item;
 			data.id = id;
@@ -97,16 +102,39 @@ Model.IncomeStatement = (function() {
 			else
 				buffer.items[item.id] = item;
 			
+			if (!sending) {
+				Model.IncomeStatement.sendData();
+				sending = true;
+			}
+		},
+		
+		sendData: function(callback) {
+			if (beforeSave)
+				beforeSave();
+				
+			console.log("saving...");
+			
 			$.ajax({
 				type: 'POST',
-			 	url: "http://localhost:3000/projections/save",
-			  	data: data,
+			 	url: "http://localhost:3000/income_statements/save",
+			  	data: buffer,
 			  	dataType: "json",
 			  	success: function() {
 					if (afterSave)
 						afterSave({date: new Date(), success: true});
+						
+					if (callback)
+						callback("success");
+				},
+				error: function() {
+					if (callback)
+						callback("error");
 				}
 			});
+			
+			setTimeout(function() {
+				Model.IncomeStatement.sendData();
+			}, 15000);
 		},
 		
 		printBuffer: function() {

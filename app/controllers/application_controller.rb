@@ -49,6 +49,7 @@ class ApplicationController < ActionController::Base
 		return json
 	end
 	
+	
 	protected
 
   def layout_by_resource
