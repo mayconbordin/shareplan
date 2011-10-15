@@ -1467,6 +1467,15 @@ a.red-button:hover {
 	color: #333;
 }
 
+#comments .comment .delete {
+	cursor: pointer;
+	position: relative;
+	height: 0;
+	top: -10px;
+	float: right;
+	right: -3px;
+}
+
 #comments .new {
 	width: 350px;
 }

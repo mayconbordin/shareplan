@@ -14,4 +14,15 @@ class Comment < ActiveRecord::Base
       :order => "comments.created_at desc"
     )
   end
+  
+  def self.find_by_inc_stmt_and_newer_than(id, date)
+    find(
+      :all,
+      :conditions => ["comments.income_statement_id = ? AND comments.created_at > ?", id, date],
+      :joins => :user,
+      :select => "comments.id, comments.content, comments.created_at, users.name",
+      :order => "comments.created_at desc"
+    )
+  end
+  
 end

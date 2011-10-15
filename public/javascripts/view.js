@@ -1657,6 +1657,8 @@ View.IncomeStatementEditor.prototype = {
 View.Comments = function(target, id) {
 	this.target = $(target);
 	this.id = id;
+	this.data = null;
+	this.newest = null;
 	
 	this.initialize();
 };
@@ -1667,31 +1669,86 @@ View.Comments.prototype = {
 		this.registerSend();
 		this.registerCancel();
 		this.load();
+		
+		this.update();
 	},
 	load: function() {
 		var thisObj = this;
 		Model.Comment.list(this.id, function(data) {
-			var html = "";
-			for (i in data)
-				html += thisObj.buildHtml(data[i]);
+			thisObj.data = data;
+			if (data[0]) thisObj.newest = data[0];
 			
-			thisObj.target.find('.list').html(html);
+			thisObj.target.find('.list').html("");
 			thisObj.target.find(".comments-inner").tinyscrollbar();
+			
+			for (i in data)
+				thisObj.add(data[i]);
 		});
+	},
+	update: function() {
+		var thisObj = this;
+		
+		if (this.newest) {
+			var obj = {id: this.id, date: this.newest.created_at};
+			
+			Model.Comment.listUpdated(obj, function(data) {
+				thisObj.data.push(data);
+				if (data[0]) thisObj.newest = data[0];
+				
+				for (i in data)
+					thisObj.add(data[i], true);
+			});
+		}
+		
+		setTimeout(function() {
+			thisObj.update();
+			console.log("update comments");
+		}, 15000);
 	},
 	loadScrollbar: function() {
 		this.target.find(".comments-inner").tinyscrollbar_update();
 	},
 	buildHtml: function(c) {
 		var date = new Date(c.created_at).format("d/m/Y h:i:s");
-		return '<div id="comment_'+c.id+'" class="comment">'
-			 + '<p class="content">'+c.content+'</p>'
-			 + '<p class="info">por <span class="author">'+c.author+'</span> em '+date+'</p>'
-			 + '</div>';
+		var html = '<div id="comment_'+c.id+'" class="comment">';
+		
+		if (c.owner)
+			html += '<div class="delete" title="Remover comentário"><img src="/images/facebox/closelabel.png" alt="Deletar comentário" /></div>';
+		
+		html += '<p class="content">'+c.content+'</p>'
+			  + '<p class="info">por <span class="author">'+c.author+'</span> em '+date+'</p>'
+			  + '</div>';
+			  
+		html = $(html);
+		
+		if (c.owner)
+			this.registerDelete(c, html);
+		
+		return html;
 	},
-	add: function(c) {
-		$(this.buildHtml(c)).hide().prependTo(this.target.find('.list')).fadeIn("slow");
+	add: function(c, e) {
+		var html = this.buildHtml(c);
+		
+		if (e)
+			$(this.buildHtml(c)).hide().prependTo(this.target.find('.list')).fadeIn("slow");
+		else
+			this.target.find('.list').append(html);
+			
 		this.loadScrollbar();
+	},
+	
+	registerDelete: function(c, el) {
+		var thisObj = this;
+		el.find(".delete").click(function() {
+			var p = $(this).parent();
+			Model.Comment.destroy(c.id, function(data) {
+				if (data.status = "success")
+					p.fadeOut("slow", function() {
+						$(this).remove();
+						thisObj.loadScrollbar();
+					});
+			});
+		});
 	},
 	
 	registerSend: function() {
@@ -1712,7 +1769,8 @@ View.Comments.prototype = {
 					if (data.status == "success") {
 						thisObj.loader("hide");
 						thisObj.cancel();
-						thisObj.add(data.comment);
+						thisObj.add(data.comment, true);
+						thisObj.newest = data.comment;
 					} else if (data.status == "no_rights")
 						message.html("Você não tem permissão para postar comentários.");
 					else

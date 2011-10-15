@@ -37,6 +37,15 @@ Model.Comment = (function() {
 			});
 		},
 		
+		listUpdated: function(obj, callback) {
+			$.ajax({
+  				url: "http://localhost:3000/comments/list_updated/",
+  				dataType: 'json',
+  				data: obj,
+  				success: callback
+			});
+		},
+		
 		save: function(obj, callback) {
 			$.ajax({
 			  type: 'POST',
@@ -45,6 +54,14 @@ Model.Comment = (function() {
 			  success: callback,
 			  error: callback,
 			  dataType: "json"
+			});
+		},
+		
+		destroy: function(id, callback) {
+			$.ajax({
+			  type: 'DELETE',
+			  url: "http://localhost:3000/comments/destroy/" + id,
+			  success: callback,
 			});
 		}
 	};
