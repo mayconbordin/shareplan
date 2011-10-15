@@ -1,0 +1,98 @@
+<% content_for :title do %>
+  <title>SharePlan - Nova Projeção</title>
+<% end %>
+
+<% content_for :styles do %>
+	<%= stylesheet_link_tag(
+		"reset",
+		"base/jquery.ui.all",
+		"facebox",
+		"style",
+		"jquery.select_skin",
+		"jquery.dataTables",
+		"jquery.gritter")
+	%>
+<% end %>
+
+<% content_for :scripts do %>
+	<%= javascript_include_tag(
+		"jquery-1.6.2.min",
+		"jquery.dataTables.min",
+		"jquery.gritter.min",
+		"jquery.facebox",
+		"jquery.tinyscrollbar",
+		
+		"ui/jquery.ui.core.min",
+		"ui/jquery.ui.widget.min",
+		"ui/jquery.ui.mouse.min",
+		"ui/jquery.ui.sortable.min",
+		"ui/jquery.ui.datepicker.min",
+		"ui/jquery.ui.position.min",
+		"ui/jquery.ui.button.min",
+		"ui/jquery.ui.autocomplete.min",
+		"ui/jquery.ui.combobox",
+		
+		"dygraph",
+		"util",
+		"model",
+		"view",
+		"controller")
+	%>
+	<script type="text/javascript">
+		var history_id = <%= @id %>;
+		$(document).ready(function () {
+			Controller.History.newStepTwo(history_id);
+			Controller.User.logout();
+		});
+	</script>
+<% end %>
+
+<!-- Main Container -->
+<div class="main-container">
+	<h1 class="page">Novo DRE</h1>
+					
+	<!-- New Projection -->
+	<div id="new-history">
+	
+		<%= render 'progress', :step => "two", :id => @id %>
+	
+		<!-- Income Statement -->
+		<div id="history-income-statement">
+			<h2>Demonstração do Resultado do Exercício</h2>
+	
+			<div id="income-statement">
+				<ul class="header">
+					<li class="account-label"><span>Conta</span></li>
+					<li class="projection-label"><span>Projeção</span></li>
+					<li class="options-label"><span>Opções</span></li>
+				</ul>
+	
+				<ul class="body"></ul>
+	
+				<div class="footer">
+					<div id="add-history-item">Adicionar Conta</div>
+				</div>
+			</div>
+	
+		</div>
+		<!-- Income Statement -->
+	
+		<!-- Bottom -->
+		<div id="history-bottom">
+			<p>
+				<span id="history-save-date"></span>
+				<a id="history-discard" class="button" href="#" title="Descartar projeção">Descartar</a>
+				<a id="history-save" class="button" href="#" title="Salvar projeção">Salvar</a>
+				
+				<% form_tag '/history', :id => "save-form", :method => "post" do -%>
+					<input type="hidden" name="status" value="success" />
+				<% end -%>
+			</p>
+		</div>
+		<!-- Bottom -->
+		
+	</div>
+	<!-- New Projection -->
+
+</div>
+<!-- Main Container -->

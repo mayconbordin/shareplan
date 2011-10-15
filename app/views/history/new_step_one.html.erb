@@ -1,0 +1,128 @@
+<% content_for :title do %>
+  <title>SharePlan - Nova Projeção</title>
+<% end %>
+
+<% content_for :styles do %>
+	<%= stylesheet_link_tag(
+		"reset",
+		"base/jquery.ui.all",
+		"style")
+	%>
+<% end %>
+
+<% content_for :scripts do %>
+	<%= javascript_include_tag(
+		"jquery-1.6.2.min",
+		"jquery.maskedinput-1.3.min",
+		"ui/jquery.ui.core.min",
+		"ui/jquery.ui.datepicker.min",
+		"util",
+		"model",
+		"view",
+		"controller")
+	%>
+	<script type="text/javascript">
+		$(document).ready(function () {
+			Controller.History.newStepOne();
+			Controller.User.logout();
+		});
+	</script>
+<% end %>
+
+<!-- Main Container -->
+<div class="main-container">
+	
+	<h1 class="page">Novo DRE</h1>
+					
+	<!-- New History -->
+	<div id="new-history">
+		
+		<%= render 'progress', :step => "one", :id => @id %>
+		
+		<% if @history.errors.any? %>
+		<ul class="messages">
+			<% @history.errors.full_messages.each do |msg| %>
+			<li class="error"><p><%= msg %></p><span class="close"></span></li>
+			<% end %>
+		</ul>
+		<% end %>
+	
+		<!-- Form -->
+		<div id="history-form" class="form-container">
+			<%= form_tag(:action => 'save_step_one', :controller => 'history', :method => "post") do %>
+				<fieldset>
+					<legend>Período</legend>
+					<dl class="inline">
+						<dt class="first">
+							<label>De</label>
+						</dt>
+						<dd>
+							<input type="text" class="datepicker" name="history[start_date]" id="start-date" value="<%= @history.start_date ? @history.start_date.strftime("%d/%m/%Y") : "" %>" />
+						</dd>
+		
+						<dt>
+							<label>até</label>
+						</dt>
+						<dd>
+							<input type="text" class="datepicker" name="history[end_date]" id="end-date" value="<%= @history.end_date ? @history.end_date.strftime("%d/%m/%Y") : "" %>" />
+						</dd>
+						<dt id="invalid-period" class="invalid">
+							<span class="invalid-message">Você precisa informar um período</span>
+						</dt><dd></dd>
+					</dl>
+				</fieldset>
+	
+				<fieldset>
+					<legend>Template</legend>
+					<dl class="normal">
+						<dt>
+							<label>Escolha um template</label>
+						</dt>
+						<dd>
+							<select name="template" id="template">
+								<option value="">Nenhum</option>
+								<% @templates.each do |t| %>
+								<option value="<%= t.id %>"><%= t.title %></option>
+								<% end %>
+							</select>
+							<p>Templates contém a estrutura das contas e seus grupos, usar templates facilita a criação de projeções</p>
+						</dd>
+					</dl>
+				</fieldset>
+	
+				<fieldset>
+					<legend>Informações</legend>
+					<dl class="normal">
+						<dt>
+							<label>Título</label>
+						</dt>
+						<dd>
+							<input type="text" class="large" name="history[title]" value="<%= @history.title %>" />
+							<p>Descreva brevemente a projeção para poder indentificá-la posteriormente</p>
+						</dd>
+		
+						<dt>
+							<label>Comentário</label>
+						</dt>
+						<dd>
+							<textarea class="large" name="history[comment]"><%= @history.comment %></textarea>
+							<p>Se desejar, pode colocar aqui alguns comentários/observações a respeito de sua projeção</p>
+						</dd>
+					</dl>
+				</fieldset>
+				
+				<div id="history-bottom">
+					<a id="history-cancel" class="button" href="<%= url_for(:controller => 'history') %>" title="Cancelar projeção">Cancelar</a>
+					<a id="history-next" class="button" href="#" title="Avançar na criação da projeção">Avançar</a>
+				</div>
+				<div class="clear"></div>
+			<% end %>
+			
+		</div>
+		<!-- Form -->
+		
+	</div>
+	<!-- New History -->
+	
+</div>
+<!-- Main Container -->

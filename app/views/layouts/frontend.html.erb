@@ -22,13 +22,13 @@
 				<div id="logo">
 					<a href="#" title="Ir para página principal"><img src="/images/logo.png" alt="logo" /></a>
 				</div>
-				
+							
 				<ul id="menu">
-					<li><a class="dashboard" href="<%= url_for(:controller => 'dashboard') %>" title="">Dashboard</a></li>
-					<li><a class="projection current" href="<%= url_for(:controller => 'projections') %>" title="">Projeções</a></li>
-					<li><a class="history" href="<%= url_for(:controller => 'history') %>" title="">Histórico</a></li>
-					<li><a class="contacts" href="<%= url_for(:controller => 'contacts') %>" title="">Contatos</a></li>
-					<li><a class="templates" href="<%= url_for(:controller => 'templates') %>" title="">Templates</a></li>
+					<li><a class="<%= controller.controller_name == "dashboard" ? "current " : "" %>dashboard" href="<%= url_for(:controller => 'dashboard') %>" title="">Dashboard</a></li>
+					<li><a class="<%= controller.controller_name == "projections" ? "current " : "" %>projection" href="<%= url_for(:controller => 'projections') %>" title="">Projeções</a></li>
+					<li><a class="<%= controller.controller_name == "history" ? "current " : "" %>history" href="<%= url_for(:controller => 'history') %>" title="">Histórico</a></li>
+					<li><a class="<%= controller.controller_name == "contacts" ? "current " : "" %>contacts" href="<%= url_for(:controller => 'contacts') %>" title="">Contatos</a></li>
+					<li><a class="<%= controller.controller_name == "templates" ? "current " : "" %>templates" href="<%= url_for(:controller => 'templates') %>" title="">Templates</a></li>
 				</ul>
 				
 			</div>

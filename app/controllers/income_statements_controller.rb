@@ -5,6 +5,24 @@ class IncomeStatementsController < ApplicationController
     render :json => IncomeStatementItem.list_values_by_date(params[:id])
   end
   
+  def save_info
+    @user  = current_user
+    id     = params[:id]
+    
+    if IncomeStatementUser.can_edit(id, @user)
+      inc_stmt = IncomeStatement.find(id)
+      
+      if inc_stmt.update_attributes(params[:values])
+        render :json => {status: "success"}
+      else
+        render :json => {status: "error"}
+      end
+    else
+      render :json => {status: "no_rights"}
+    end
+    
+  end
+  
   def save
     @user  = current_user
     id     = params[:id]

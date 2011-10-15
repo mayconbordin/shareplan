@@ -7,10 +7,13 @@ class ProjectionsController < ApplicationController
 	end
 	
 	def edit
-	  if !params[:id].nil?
-	    @projection = IncomeStatement.find(params[:id])
-	  else
+	  if params[:id].nil?
 	    redirect_to :action => "error", :type => "not_found"
+	  else
+	    @projection = IncomeStatement.find(params[:id])
+	    
+	    @user = current_user
+      @can_edit = IncomeStatementUser.can_edit(params[:id], @user)
 	  end
 	end
 	
@@ -30,14 +33,22 @@ class ProjectionsController < ApplicationController
 	end
 	
   def new_step_two
-    @projection = IncomeStatement.find(params[:id])
-    @id = params[:id]
+    if params[:id].nil?
+      redirect_to :action => "error", :type => "not_found"
+    else
+      @projection = IncomeStatement.find(params[:id])
+      @id = params[:id]
+    end
   end
   
   def new_step_three
-    @projection = IncomeStatement.find(params[:id])
-    @id = params[:id]
-    @status = params[:status]
+    if params[:id].nil?
+      redirect_to :action => "error", :type => "not_found"
+    else
+      @projection = IncomeStatement.find(params[:id])
+      @id = params[:id]
+      @status = params[:status]
+    end
   end
 	
 	def save_step_one
@@ -72,11 +83,11 @@ class ProjectionsController < ApplicationController
 		@projections.each do |p|
 			list.push([
 			  p.title,
-			  p.start_date,
-			  p.end_date,
+			  p.start_date.strftime("%d/%m/%Y"),
+			  p.end_date.strftime("%d/%m/%Y"),
 			  p.comments_count,
 			  p.childrens_count,
-			  p.created_at,
+			  p.created_at.strftime("%d/%m/%Y"),
 			  p.id,
 			  p.classification
 			])
@@ -99,11 +110,12 @@ class ProjectionsController < ApplicationController
     @projections.each do |p|
       list.push([
         p.title,
-        p.start_date,
-        p.end_date,
+        p.start_date.strftime("%d/%m/%Y"),
+        p.end_date.strftime("%d/%m/%Y"),
         @user.name,
         p.childrens_count,
-        p.created_at, p.id
+        p.created_at.strftime("%d/%m/%Y"),
+        p.id
       ])
     end
 

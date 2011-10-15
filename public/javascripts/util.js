@@ -18,6 +18,81 @@ if ($.facebox) {
 	$.facebox.settings.closeImage 	= '/images/facebox/closelabel.png';
 }
 
+function messagesClose() {
+	$(".messages .close").each(function() {
+		$(this).click(function() {
+			$(this).parent().fadeOut("slow", function() {
+				$(this).remove();
+			});
+		});
+	});
+}
+
+function validatePeriod(target) {
+	var valid = true;
+	$(target).find(".datepicker").each(function() {
+		if ($(this).val()) {
+			$(this).removeClass("invalid");
+			if (valid) $("#invalid-period").hide();
+		} else {
+			$(this).addClass("invalid");
+			$("#invalid-period span").html("Você precisa informar um período");
+			$("#invalid-period").css("display", "inline");
+			valid = false;
+		}
+	});
+	
+	var start 	= $("#start-date").datepicker("getDate");
+	var end 	= $("#end-date").datepicker("getDate");
+	
+	if (start && end)
+		if (start.getTime() > end.getTime()) {
+			$("#invalid-period span").html("A data final precisa ser maior que a data inicial");
+			$("#invalid-period").css("display", "inline");
+			valid = false;
+		} else
+			if (valid) $("#invalid-period").hide();
+};
+
+function loadValidations() {
+	$("#start-date, #end-date").each(function() {
+		$(this).change(function() {
+			validatePeriod($(this).parent().parent());
+		});
+		
+		$(this).focusout(function() {
+			validatePeriod($(this).parent().parent());
+		});
+	});
+}
+
+function loadTabs(callbacks) {
+	$(".container-box .header .select").click(function() {
+		var thisObj = $(this);
+		var id = thisObj.attr("id").replace("select-", "");
+		var active = $(".container-box .tab-items .active");
+		
+		if (active.attr("id") == id)
+			return;
+		
+		active.fadeOut(function() {
+			$(".container-box .header .selected").removeClass("selected");
+			thisObj.parent().addClass("selected");
+			
+			$(this).removeClass("active");
+						
+			$("#"+id).fadeIn(function() {
+				$(this).addClass("active");
+				
+				if (callbacks[id])
+					callbacks[id]();
+			});
+		});
+		
+		return false;
+	});
+}
+
 // jQuery plugin: PutCursorAtEnd 1.0
 // http://plugins.jquery.com/project/PutCursorAtEnd
 // by teedyay
@@ -78,6 +153,11 @@ Date.prototype.format = function(format) {
         }
     }
     return returnStr;
+};
+
+Date.toDate = function(str) {
+	var date = str.split("/");
+	return new Date(date[2] + "-" + date[1] + "-" + date[0]);
 };
 
 Date.replaceChars = {

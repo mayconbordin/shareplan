@@ -4,4 +4,14 @@ class Comment < ActiveRecord::Base
 
   belongs_to :income_statement
   belongs_to :user
+  
+  def self.find_by_income_statement(id)
+    find(
+      :all,
+      :conditions => {:income_statement_id => id},
+      :joins => :user,
+      :select => "comments.id, comments.content, comments.created_at, users.name",
+      :order => "comments.created_at desc"
+    )
+  end
 end

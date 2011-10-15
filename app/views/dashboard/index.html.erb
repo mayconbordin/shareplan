@@ -41,28 +41,18 @@
 		
 		<div class="body">
 			<ul>
-				<li>
-					<a href="#1" title="">Marcos compartilhou uma projeção com você</a>
+				<% @messages.each do |m| %>
+				<li id="message<%= m.id %>">
+					<a href="<%= m.url %>" title="<%= m.content %>"><%= m.content %></a>
 					<div class="close" title="Remover notificação"></div>
 				</li>
-				<li>
-					<a href="#2" title="">André modificou uma projeção sua</a>
-					<div class="close" title="Remover notificação"></div>
-				</li>
-				<li>
-					<a href="#3" title="">Luciano comentou em uma projeção sua</a>
-					<div class="close" title="Remover notificação"></div>
-				</li>
-				<li>
-					<a href="#3" title="">João comentou em uma projeção sua</a>
-					<div class="close" title="Remover notificação"></div>
-				</li>
+				<% end %>
 			</ul>
 			<a id="all-notifications" class="button" href="#" title="Ver todas as notificações">ver todas »</a>
 		</div>
 	</div>
 	
-	<div id="history" class="widget right">
+	<div id="history-widget" class="widget right">
 		<div class="header">
 			<h3>Histórico da Conta</h3>
 		</div>
@@ -70,9 +60,9 @@
 		<div class="body">
 			<div id="item-history">
 				<select id="item-history-select" class="styled">
-					<option value="1">Resultado Líquido do Exercício</option>
-					<option value="2">Resultado Bruto do Exercício</option>
-					<option value="3">EBITDA</option>		
+					<% @items.each do |i| %>
+					<option value="<%= i.id %>"><%= i.name %></option>
+					<% end %>
 				</select>
 			</div>
 			<div id="history-chart"></div>
@@ -97,58 +87,18 @@
 					</thead>
 	
 					<tbody>
-						<tr id="projecao1" class="even">
-							<td><a href="#" title="">Projeção para 2012</a></td>
-							<td class="center">20.03.2010</td>
-							<td class="center">2</td>
-							<td class="center">5</td>
+						<% @projections.each_with_index do |p, index| %>
+						<tr id="projection_<%= p.id %>" class="<%= index%2 == 0 ? "even" : "odd" %>">
+							<td><a href="/projections/edit/<%= p.id %>" title="Visualizar projeção"><%= p.title == "" ? "(Sem Título)" : p.title %></a></td>
+							<td class="center"><%= p.created_at.strftime("%d/%m/%Y - %H:%M") %></td>
+							<td class="center"><%= p.childrens_count %></td>
+							<td class="center"><%= p.comments_count %></td>
 						</tr>
-		
-						<tr id="projecao2" class="odd">
-							<td><a href="#" title="">Projeção para 2012</a></td>
-							<td class="center">20.03.2010</td>
-							<td class="center">2</td>
-							<td class="center">5</td>
-						</tr>
-		
-						<tr id="projecao3" class="even">
-							<td><a href="#" title="">Projeção para 2012</a></td>
-							<td class="center">20.03.2010</td>
-							<td class="center">2</td>
-							<td class="center">5</td>
-						</tr>
-		
-						<tr id="projecao4" class="odd">
-							<td><a href="#" title="">Projeção para 2012</a></td>
-							<td class="center">20.03.2010</td>
-							<td class="center">2</td>
-							<td class="center">5</td>
-						</tr>
-		
-						<tr id="projecao5" class="even">
-							<td><a href="#" title="">Projeção para 2012</a></td>
-							<td class="center">20.03.2010</td>
-							<td class="center">2</td>
-							<td class="center">5</td>
-						</tr>
-		
-						<tr id="projecao6" class="odd">
-							<td><a href="#" title="">Projeção para 2012</a></td>
-							<td class="center">20.03.2010</td>
-							<td class="center">2</td>
-							<td class="center">5</td>
-						</tr>
-		
-						<tr id="projecao7" class="even">
-							<td><a href="#" title="">Projeção para 2012</a></td>
-							<td class="center">20.03.2010</td>
-							<td class="center">2</td>
-							<td class="center">5</td>
-						</tr>
+						<% end %>
 					</tbody>
 				</table>
 			</div>
-			<a id="all-projections" class="button" href="#" title="Ver todas as projeções">ver todas »</a>
+			<a id="all-projections" class="button" href="/projections" title="Ver todas as projeções">ver todas »</a>
 		</div>
 	</div>
 

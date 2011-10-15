@@ -24,4 +24,15 @@ class IncomeStatementUser < ActiveRecord::Base
     
   end
   
+  def self.can_see(id, user)
+    user = where("income_statement_id = ? AND user_id = ?", id, user.id).limit(1).first
+        
+    if user.nil?
+      return false
+    else
+      return true
+    end
+    
+  end
+  
 end

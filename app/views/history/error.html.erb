@@ -1,0 +1,53 @@
+<%
+  if !@type.nil?
+    if @type == "not_found"
+   	  message = "DRE não encontrado"
+   	end
+  end
+%>
+
+
+<% content_for :title do %>
+  <title>SharePlan - <%= message %></title>
+<% end %>
+
+<% content_for :styles do %>
+	<%= stylesheet_link_tag(
+		"reset",
+		"style",
+		"jquery.tipsy",
+		"jquery.select_skin",
+		"jquery.dataTables")
+	%>
+<% end %>
+
+<% content_for :scripts do %>
+	<%= javascript_include_tag(
+		"jquery-1.6.2.min",
+		"jquery.dataTables.min",
+		"util",
+		"model",
+		"view",
+		"controller")
+	%>
+	<script type="text/javascript">
+		$(document).ready(function () {
+			Controller.Projection.index();
+			Controller.User.logout();
+		});
+	</script>
+<% end %>
+
+<!-- Main Container -->
+<div class="main-container">
+	
+	<div id="error-container">
+		<h1><%= message %></h1>
+		
+		<% if @type == "not_found" %>
+		<p>Clique <a href="/history" title="Voltar para o histórico de DRE">aqui</a> para voltar para o histórico de DRE</p>
+		<% end %>
+	</div>
+	
+</div>
+<!-- Main Container -->

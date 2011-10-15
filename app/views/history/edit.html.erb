@@ -1,5 +1,5 @@
 <% content_for :title do %>
-  <title>SharePlan - Projeção: <%= @projection.title %></title>
+  <title>SharePlan - DRE: <%= @history.title %></title>
 <% end %>
 
 <% content_for :styles do %>
@@ -40,9 +40,9 @@
 		"controller")
 	%>
 	<script type="text/javascript">
-		var projection_id = <%= @projection.id %>;
+		var projection_id = <%= @history.id %>;
 		$(document).ready(function () {
-			Controller.Projection.edit(projection_id);
+			Controller.History.edit(projection_id);
 			Controller.User.logout();
 		});
 	</script>
@@ -50,20 +50,18 @@
 
 <!-- Main Container -->
 <div class="main-container">
-	<h1 class="page">Projeção: <%= @projection.title %></h1>
+	<h1 class="page">DRE: <%= @history.title %></h1>
 					
 	<!-- Edit Projection -->
-	<div id="new-projection">
+	<div id="new-history">
 		
 		<div id="income-statement-info" class="container-box">
-			<ul id="projections-header" class="header">
+			<ul id="history-header" class="header">
 				<li class="selected"><a class="select" id="select-information" href="#" title="">Informações</a></li>
-				<li><a class="select" id="select-chart-tab" href="#" title="">Gráfico</a></li>
-				<li><a class="select" id="select-versions" href="#" title="">Versões</a></li>
-				<li><a class="select" id="select-comments" href="#" title="">Comentários</a></li>
 			</ul>
 			
 			<div class="tab-items">
+				
 				<!-- INFORMATION -->
 				<div id="information" class="container-tab active">
 					
@@ -72,19 +70,19 @@
 						<dl>
 							<dd>
 								<label class="label">Título:</label>
-								<input type="text" class="value title" value="<%= @projection.title %>" />
+								<input type="text" class="value title" value="<%= @history.title %>" />
 							</dd>
 							<dd>
 								<label class="label">Comentários:</label>
-								<textarea  class="value comment"><%= @projection.comment %></textarea>
+								<textarea  class="value comment"><%= @history.comment %></textarea>
 							</dd>
 							<dd>
 								<label class="label">Início:</label>
-								<input type="text" class="value datepicker start-date" value="<%= @projection.start_date ? @projection.start_date.strftime("%d/%m/%Y") : "" %>" />
+								<input type="text" class="value datepicker start-date" value="<%= @history.start_date ? @history.start_date.strftime("%d/%m/%Y") : "" %>" />
 							</dd>
 							<dd>
 								<label class="label">Fim:</label>
-								<input type="text" class="value datepicker end-date" value="<%= @projection.end_date ? @projection.end_date.strftime("%d/%m/%Y") : "" %>" />
+								<input type="text" class="value datepicker end-date" value="<%= @history.end_date ? @history.end_date.strftime("%d/%m/%Y") : "" %>" />
 							</dd>
 						</dl>
 						
@@ -102,19 +100,19 @@
 						<% end %>
 						<p>
 							<span class="label">Título:</span>
-							<span class="value title"><%= @projection.title %></span>
+							<span class="value title"><%= @history.title %></span>
 						</p>
 						<p>
 							<span class="label">Comentário:</span>
-							<span  class="value comment"><%= @projection.comment %></span>
+							<span  class="value comment"><%= @history.comment %></span>
 						</p>
 						<p>
 							<span class="label">Início:</span>
-							<span class="value start-date"><%= @projection.start_date ? @projection.start_date.strftime("%d/%m/%Y") : "" %></span>
+							<span class="value start-date"><%= @history.start_date ? @history.start_date.strftime("%d/%m/%Y") : "" %></span>
 						</p>
 						<p>
 							<span class="label">Fim:</span>
-							<span class="value end-date"><%= @projection.end_date ? @projection.end_date.strftime("%d/%m/%Y") : "" %></span>
+							<span class="value end-date"><%= @history.end_date ? @history.end_date.strftime("%d/%m/%Y") : "" %></span>
 						</p>
 						<p style="clear: both;"></p>
 					</div>
@@ -122,50 +120,11 @@
 				</div>
 				<!-- INFORMATION -->
 				
-				<!-- VERSIONS -->
-				<div id="versions" class="container-tab">
-					VERSIONS
-				</div>
-				<!-- VERSIONS -->
-				
-				<!-- COMMENTS -->
-				<div id="comments" class="container-tab">
-					<div class="comments-inner">
-						<div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
-					 	<div class="viewport">
-					 		<div class="overview">
-								<div class="list"></div>
-							</div>
-						</div>
-					</div>
-					
-					<div class="new">
-						<textarea class="content">Responder...</textarea>
-						<p class="message"></p>
-						<a class="button send" href="#" title="Enviar">Enviar</a> 
-						<a class="button cancel" href="#" title="Cancelar">Cancelar</a>
-						<div style="clear: both;"></div>
-					</div>
-				</div>
-				<!-- COMMENTS -->
-				
-				<!-- CHART -->
-				<div id="chart-tab" class="container-tab">
-					<div id="chart-legend"></div>
-					<div id="chart">
-						<div id="empty-chart">
-			     			<p class="one">Nenhuma conta carregada</p>
-			     			<p class="two">Clique nas contas para carregá-las no gráfico</p>
-			     		</div>
-					</div>
-				</div>
-				<!-- CHART -->
-				
 			</div>
 		</div>
 	
 		<!-- Income Statement -->
-		<div id="projection-income-statement">
+		<div id="history-income-statement">
 			<h2>Demonstração do Resultado do Exercício</h2>
 	
 			<div id="income-statement">
@@ -178,7 +137,7 @@
 				<ul class="body"></ul>
 	
 				<div class="footer">
-					<div id="add-projection-item">Adicionar Conta</div>
+					<div id="add-history-item">Adicionar Conta</div>
 				</div>
 			</div>
 	
@@ -186,14 +145,14 @@
 		<!-- Income Statement -->
 	
 		<!-- Bottom -->
-		<div id="projection-bottom">
+		<div id="history-bottom">
 			<p>
-				<span id="projection-save-date"></span>
-				<a id="projection-discard" class="button" href="#" title="Descartar projeção">Descartar</a>
-				<a id="projection-save" class="button" href="#" title="Salvar projeção">Salvar</a>
+				<span id="history-save-date"></span>
+				<a id="history-discard" class="button" href="#" title="Descartar projeção">Descartar</a>
+				<a id="history-save" class="button" href="#" title="Salvar projeção">Salvar</a>
 				
 				<!-- ARRUMAR ISSO -->
-				<% form_tag '/projections/new_step_three/', :id => "step-three-form", :method => "post" do -%>
+				<% form_tag '/history/', :id => "save-form", :method => "post" do -%>
 					<input type="hidden" name="status" value="success" />
 				<% end -%>
 			</p>

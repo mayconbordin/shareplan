@@ -22,14 +22,20 @@ Controller.Dashboard = (function() {
 	
 	function enableNotifications() {
 		$('#notifications .body ul li').each(function() {
-			$(this).click(function() {
-				window.location = $(this).children('a').attr('href');
+			var id = $(this).attr("id").replace("message", "");
+			$(this).click(function(e) {
+				if (!$(e.target).hasClass("close"))
+					Model.Message.setAsRead(id);/*, function() {
+						window.location = $(this).children('a').attr('href');
+					});*/
 			});
 			
 			$(this).children('.close').click(function() {
-				//ajax para marcar notificação como lida
-				$(this).parent().fadeOut("slow", function() {
-					$(this).remove();
+				var thisObj = $(this);
+				Model.Message.setAsRead(id, function() {
+					thisObj.parent().fadeOut("slow", function() {
+						$(this).remove();
+					});
 				});
 			});
 		});
@@ -41,12 +47,20 @@ Controller.Dashboard = (function() {
 			itemId = $("#item-history-select").val();
 		
 		Model.IncomeStatement.getItemHistory(itemId, function(data) {
+			data.sort(function(a, b) {
+				if (a[0].getTime() > b[0].getTime())
+					return 1;
+				if (a[0].getTime() < b[0].getTime())
+					return -1;
+				return 0;
+			});
+			
 			chart = new Dygraph(
 				document.getElementById("history-chart"),
 				data,
 		        {
 		        	ylabel: 'R$',
-		        	labels: "Item",
+		        	labels: ["Data", "Item"],
 		        	fillGraph: true,
 		        	fillAlpha: 0.8,
 		        	colors: ["#ffb400"]
@@ -74,54 +88,6 @@ Controller.Projection = (function() {
 	var chart,
 		chartData = {};
 
-	function messagesClose() {
-		$(".messages .close").each(function() {
-			$(this).click(function() {
-				$(this).parent().fadeOut("slow", function() {
-					$(this).remove();
-				});
-			});
-		});
-	}
-	
-	function validatePeriod(target) {
-		var valid = true;
-		$(target).find(".datepicker").each(function() {
-			if ($(this).val()) {
-				$(this).removeClass("invalid");
-				if (valid) $("#invalid-period").hide();
-			} else {
-				$(this).addClass("invalid");
-				$("#invalid-period span").html("Você precisa informar um período");
-				$("#invalid-period").css("display", "inline");
-				valid = false;
-			}
-		});
-		
-		var start 	= $("#start-date").datepicker("getDate");
-		var end 	= $("#end-date").datepicker("getDate");
-		
-		if (start && end)
-			if (start.getTime() > end.getTime()) {
-				$("#invalid-period span").html("A data final precisa ser maior que a data inicial");
-				$("#invalid-period").css("display", "inline");
-				valid = false;
-			} else
-				if (valid) $("#invalid-period").hide();
-	};
-	
-	function loadValidations() {
-		$("#start-date, #end-date").each(function() {
-			$(this).change(function() {
-				validatePeriod($(this).parent().parent());
-			});
-			
-			$(this).focusout(function() {
-				validatePeriod($(this).parent().parent());
-			});
-		});
-	}
-	
 	return {
 		index: function() {
 			View.Table.loadProjections();
@@ -191,6 +157,7 @@ Controller.Projection = (function() {
 		edit: function(id) {
 			var chart = new View.ProjectionChart("chart");
 
+			var editor;
 			var is = new View.IncomeStatement({
 				target: "#income-statement .body",
 				addButton: "#add-projection-item",
@@ -198,6 +165,7 @@ Controller.Projection = (function() {
 				type: "projection",
 				saveDateTarget: "#projection-save-date span",
 				onItemClick: function(item, remove) {
+					$("#select-chart-tab").click();
 					chart.load(item, remove);
 				},
 				beforeSave: function() {
@@ -208,8 +176,17 @@ Controller.Projection = (function() {
 						$("#projection-save-date").html("Salvo automaticamente as " + r.date.format('h:i:s A'));
 					else
 						$("#projection-save-date").html("Erro ao salvar projeção");
+				},
+				onLoad: function() {
+					editor = new View.IncomeStatementEditor("#information", is.obj);
 				}
 			});
+			
+			var comments = new View.Comments("#comments", id);
+
+			loadTabs({comments: function() {
+				comments.loadScrollbar();
+			}});
 			
 			$("#projection-save").click(function() {
 				Model.IncomeStatement.setType("projection");
@@ -222,7 +199,102 @@ Controller.Projection = (function() {
 				});
 				return false;
 			});
+		}
+	};
+})();
+
+Controller.History = (function() {
+	return {
+		index: function() {
+			View.Table.loadHistory();
+			messagesClose();
 		},
+		newStepOne: function() {
+			// load datepickers
+			$(".datepicker").datepicker(DatePickerConfig);
+			$(".datepicker").mask('99/99/9999');
+			
+			// load basic validations
+			loadValidations();
+			
+			// submit form and teste validations
+			$("#history-next").click(function() {				
+				if (!$("#start-date").val() || !$("#end-date").val())
+					validatePeriod($("#start-date").parent().parent());
+				else
+					$("#history-form form").submit();
+					
+				return false;
+			});
+			
+			// register message close buttons
+			messagesClose();
+		},
+		newStepTwo: function(id) {
+			var is = new View.IncomeStatement({
+				target: "#income-statement .body",
+				addButton: "#add-history-item",
+				id: id,
+				type: "history",
+				saveDateTarget: "#history-save-date span",
+				beforeSave: function() {
+					$("#history-save-date").html('<img class="loader" src="/images/loader.gif" alt="loading" /> salvando projeção...');
+				},
+				afterSave: function(r) {
+					if (r.success)
+						$("#history-save-date").html("Salvo automaticamente as " + r.date.format('h:i:s A'));
+					else
+						$("#history-save-date").html("Erro ao salvar projeção");
+				}
+			});
+			
+			$("#history-save").click(function() {
+				Model.IncomeStatement.sendData(function(status) {
+					if (status == "success")
+						$("#save-form").submit();
+						//window.location = '/projections/new_step_three/' + id;
+					else
+						alert("Não foi possível salvar a projeção");
+				});
+				return false;
+			});
+		},
+		edit: function(id) {
+			$(".datepicker").datepicker(DatePickerConfig);
+			$(".datepicker").mask('99/99/9999');
+			loadTabs();
+			
+			var editor;
+			var is = new View.IncomeStatement({
+				target: "#income-statement .body",
+				addButton: "#add-history-item",
+				id: id,
+				type: "history",
+				saveDateTarget: "#history-save-date span",
+				beforeSave: function() {
+					$("#history-save-date").html('<img class="loader" src="/images/loader.gif" alt="loading" /> salvando projeção...');
+				},
+				afterSave: function(r) {
+					if (r.success)
+						$("#history-save-date").html("Salvo automaticamente as " + r.date.format('h:i:s A'));
+					else
+						$("#history-save-date").html("Erro ao salvar DRE");
+				},
+				onLoad: function() {
+					editor = new View.IncomeStatementEditor("#information", is.obj);
+				}
+			});
+			
+			$("#history-save").click(function() {
+				Model.IncomeStatement.sendData(function(status) {
+					if (status == "success")
+						$("#save-form").submit();
+					else
+						alert("Não foi possível salvar o DRE");
+				});
+				return false;
+			});
+		}
 	};
 })();
 

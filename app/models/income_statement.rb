@@ -30,6 +30,10 @@ class IncomeStatement < ActiveRecord::Base
     :conditions => ['income_statements.classification = ? AND (income_statement_users.classification = ? OR income_statement_users.classification = ?)',
                    PROJECTION, IncomeStatementUser::EDITOR_CLASS, IncomeStatementUser::READER_CLASS]
   }
+  
+  scope :has_history, {
+    :conditions => ['income_statements.classification = ?', HISTORY]
+  }
                        
   scope :childrens_count, {
     :select => "(SELECT COUNT(*) FROM income_statements inc_stmt WHERE inc_stmt.parent_id = income_statements.id) AS childrens_count"
@@ -64,6 +68,7 @@ class IncomeStatement < ActiveRecord::Base
     hash = {
       "id"          => id,
       "title"       => title,
+      "comment"     => comment,
       "start_date"  => start_date,
       "end_date"    => end_date,
       "type"        => classification,
@@ -85,6 +90,10 @@ class IncomeStatement < ActiveRecord::Base
     end
     
     return nil
+  end
+  
+  def comments_by_date
+    comments.order("comments.created_at desc")
   end
   
   def self.find_by_id_and_user(id, user)

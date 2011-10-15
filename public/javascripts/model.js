@@ -13,6 +13,43 @@ Model.Contact = (function() {
 	};
 })();
 
+Model.Message = (function() {
+	
+	return {
+		setAsRead: function(id, callback) {
+			$.ajax({
+  				url: "http://localhost:3000/messages/set_as_read/"+id,
+  				dataType: 'json',
+  				success: callback
+			});
+		}
+	};
+})();
+
+Model.Comment = (function() {
+	
+	return {
+		list: function(id, callback) {
+			$.ajax({
+  				url: "http://localhost:3000/comments/list/"+id,
+  				dataType: 'json',
+  				success: callback
+			});
+		},
+		
+		save: function(obj, callback) {
+			$.ajax({
+			  type: 'POST',
+			  url: "http://localhost:3000/comments/save",
+			  data: obj,
+			  success: callback,
+			  error: callback,
+			  dataType: "json"
+			});
+		}
+	};
+})();
+
 Model.Item = (function() {
 	
 	return {
@@ -73,6 +110,21 @@ Model.IncomeStatement = (function() {
   						
   					callback(data);
   				}
+			});
+		},
+		
+		saveInfo: function(obj, callback) {
+			$.ajax({
+				type: 'POST',
+			 	url: "http://localhost:3000/income_statements/save_info",
+			  	data: obj,
+			  	dataType: "json",
+			  	success: function() {
+					if (callback) callback("success");
+				},
+				error: function() {
+					if (callback) callback("error");
+				}
 			});
 		},
 		

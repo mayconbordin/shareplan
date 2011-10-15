@@ -36,11 +36,19 @@ class User < ActiveRecord::Base
                      .order(order).limit(limit).offset(offset)
   end
   
+  def history(order = nil, limit = nil, offset = nil)
+    income_statements.has_history().order(order).limit(limit).offset(offset)
+  end
+  
   def count_my_projections
     income_statements.has_my_projections().count()
   end
   
   def count_shared_projections
     income_statements.has_shared_projections().count()
+  end
+  
+  def count_history
+    income_statements.has_history().count()
   end
 end

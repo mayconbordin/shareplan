@@ -1,4 +1,6 @@
 Shareplan::Application.routes.draw do
+  get "comments/list"
+
   devise_for :users
   
   # Let's add the root route

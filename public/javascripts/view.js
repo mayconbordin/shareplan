@@ -913,7 +913,8 @@ View.IncomeStatement = function(options) {
 		saveDateTarget: null,
 		onItemClick: null,
 		beforeSave: null,
-		afterSave: null
+		afterSave: null,
+		onLoad: null
 	};
 	
 	// Merge das opções
@@ -938,6 +939,9 @@ View.IncomeStatement = function(options) {
 	this.items 	= [];
 	this.start_date = null;
 	this.end_date = null;
+	
+	// Original object
+	this.obj = null;
 
 	this.initialize();
 };
@@ -1114,7 +1118,11 @@ View.IncomeStatement.prototype = {
 	 */
 	loadFromModel: function(id) {
 		var thisObj = this;
+		this.loader("show");
+		
 		Model.IncomeStatement.get(id, function(is) {
+			thisObj.obj = is;
+			
 			for (i in is.items) {
 				thisObj.items[i] = new View.Item(is.items[i], thisObj, thisObj);
 			}
@@ -1138,10 +1146,21 @@ View.IncomeStatement.prototype = {
 	 * @param {array} items The items objects of the income statement
 	 */
 	toView: function(items) {
+		this.loader("hide");
 		for (i in items)
 			this.target.append(items[i].element);
 			
 		this.sortUpdate();
+		
+		if (this.opt.onLoad)
+			this.opt.onLoad();
+	},
+	
+	loader: function(a) {
+		if (a == "show")
+			this.target.html('<li class="loader"><img src="/images/loader_grey.gif"></li>');
+		else if (a == "hide")
+			this.target.html('');
 	}
 };
 
@@ -1374,35 +1393,11 @@ View.Table = {
 						return html;
 					}
 				},
-				{
-					"sTitle": "Início",
-					"sClass": "center",
-					"sWidth": "15%",
-					"fnRender": function(obj) {
-						var sReturn = obj.aData[ obj.iDataColumn ];
-						return new Date(sReturn).format('d/m/Y');
-					}
-				},
-				{
-					"sTitle": "Fim",
-					"sClass": "center",
-					"sWidth": "15%",
-					"fnRender": function(obj) {
-						var sReturn = obj.aData[ obj.iDataColumn ];
-						return new Date(sReturn).format('d/m/Y');
-					}
-				},
+				{ "sTitle": "Início", "sClass": "center", "sWidth": "15%" },
+				{ "sTitle": "Fim", "sClass": "center", "sWidth": "15%" },
 				{ "sTitle": "Criado por", "sClass": "center", "sWidth": "15%", "bSortable": false, },
 				{ "sTitle": "Versões", "sClass": "center", "sWidth": "10%", "bSortable": false, },
-				{
-					"sTitle": "Criado em",
-					"sClass": "center",
-					"sWidth": "15%",
-					"fnRender": function(obj) {
-						var sReturn = obj.aData[ obj.iDataColumn ];
-						return new Date(sReturn).format('d/m/Y');
-					}
-				}
+				{ "sTitle": "Criado em", "sClass": "center", "sWidth": "15%" }
 			],
 			"fnInitComplete": function() {
 				$('<div id="shared-projections-table-footer" class="footer"></div>')
@@ -1428,42 +1423,20 @@ View.Table = {
 					"sWidth": "30%",
 					"fnRender": function(obj) {
 						var sReturn = obj.aData[ obj.iDataColumn ];
+						sReturn = sReturn == "" ? "(Sem Título)" : sReturn;
+						
 						var html = '<a href="/projections/edit/'+obj.aData[6]+'" title="Visualizar projeção">'+sReturn+'</a>';
 						
 						if (obj.aData[7] == "temp")
-							html += ' - Rascunho';
+							html += '<span class="draft"> (Rascunho)</span>';
 						return html;
 					}
 				},
-				{
-					"sTitle": "Início",
-					"sClass": "center",
-					"sWidth": "15%",
-					"fnRender": function(obj) {
-						var sReturn = obj.aData[ obj.iDataColumn ];
-						return new Date(sReturn).format('d/m/Y');
-					}
-				},
-				{
-					"sTitle": "Fim",
-					"sClass": "center",
-					"sWidth": "15%",
-					"fnRender": function(obj) {
-						var sReturn = obj.aData[ obj.iDataColumn ];
-						return new Date(sReturn).format('d/m/Y');
-					}
-				},
+				{ "sTitle": "Início", "sClass": "center", "sWidth": "15%" },
+				{ "sTitle": "Fim", "sClass": "center", "sWidth": "15%" },
 				{ "sTitle": "Comentários", "sClass": "center", "sWidth": "5%", "bSortable": false, },
 				{ "sTitle": "Versões", "sClass": "center", "sWidth": "5%", "bSortable": false, },
-				{
-					"sTitle": "Criado em",
-					"sClass": "center",
-					"sWidth": "15%",
-					"fnRender": function(obj) {
-						var sReturn = obj.aData[ obj.iDataColumn ];
-						return new Date(sReturn).format('d/m/Y');
-					}
-				},
+				{ "sTitle": "Criado em", "sClass": "center", "sWidth": "15%", },
 				{
 					"sTitle": "Ações",
 					"sClass": "center",
@@ -1471,7 +1444,7 @@ View.Table = {
 					"bSortable": false,
 					"fnRender": function(obj) {
 						var id = obj.aData[ obj.iDataColumn ];
-						var html = '<a class="delete" href="#'+id+'" title="Deletar projeção">deletar</a>';
+						var html = '<a class="delete" href="'+id+'" title="Deletar projeção">deletar</a>';
 						return html;
 					}
 				}
@@ -1483,10 +1456,81 @@ View.Table = {
 					.appendTo('#projections-table_wrapper');
 					
 				$("#projections-table").css("width", "");
+			},
+			"fnDrawCallback": function() {
+				//on delete
+				$("#projections-table .delete").each(function() {
+					$(this).click(function() {
+						var html = $(
+							'<h3>Deseja remover esta projeção?</h3>'
+							+ '<a class="button" href="#" title="Não">Não</a>'
+							+ '<a class="button" href="#" title="Sim">Sim</a>'
+						);
+						jQuery.facebox(html);
+						return false;
+					});
+				});
 			}
 		};
 		$.extend(options, this.options);
 		$('#projections-table').dataTable(options);
+	},
+	
+	loadHistory: function() {
+		var options = {
+			"sAjaxSource": "/history/list",
+			"aoColumns": [
+				{
+					"sTitle": "DRE",
+					"sWidth": "30%",
+					"fnRender": function(obj) {
+						var sReturn = obj.aData[ obj.iDataColumn ];
+						sReturn = sReturn == "" ? "(Sem Título)" : sReturn;
+						
+						var html = '<a href="/history/edit/'+obj.aData[4]+'" title="Visualizar DRE">'+sReturn+'</a>';
+						return html;
+					}
+				},
+				{ "sTitle": "Início", "sClass": "center", "sWidth": "15%" },
+				{ "sTitle": "Fim", "sClass": "center", "sWidth": "15%" },
+				{ "sTitle": "Criado em", "sClass": "center", "sWidth": "15%" },
+				{
+					"sTitle": "Ações",
+					"sClass": "center",
+					"sWidth": "15%",
+					"bSortable": false,
+					"fnRender": function(obj) {
+						var id = obj.aData[ obj.iDataColumn ];
+						var html = '<a class="delete" href="'+id+'" title="Deletar DRE">deletar</a>';
+						return html;
+					}
+				}
+			],
+			"fnInitComplete": function() {
+				$('<div id="history-table-footer" class="footer"></div>')
+					.append($('#history-table_info'))
+					.append($('#history-table_paginate'))
+					.appendTo('#history-table_wrapper');
+					
+				$("#history-table").css("width", "");
+			},
+			"fnDrawCallback": function() {
+				//on delete
+				$("#history-table .delete").each(function() {
+					$(this).click(function() {
+						var html = $(
+							'<h3>Deseja remover esta DRE?</h3>'
+							+ '<a class="button" href="#" title="Não">Não</a>'
+							+ '<a class="button" href="#" title="Sim">Sim</a>'
+						);
+						jQuery.facebox(html);
+						return false;
+					});
+				});
+			}
+		};
+		$.extend(options, this.options);
+		$('#history-table').dataTable(options);
 	},
 	
 	loadProjections: function() {
@@ -1523,3 +1567,197 @@ View.Table = {
 		});
 	}
 };
+
+View.IncomeStatementEditor = function(target, obj) {
+	this.target	= $(target);
+	this.obj 	= obj;
+	
+	this.values = [
+		this.obj.title,
+		this.obj.comment,
+		new Date(this.obj.start_date).format("d/m/Y"),
+		new Date(this.obj.end_date).format("d/m/Y")
+	];
+	this.inputs = ["title", "comment", "start-date", "end-date"];
+		
+	this.initialize();
+};
+
+View.IncomeStatementEditor.prototype = {
+	initialize: function() {
+		var thisObj = this;
+		
+		this.target.find(".edit").click(function() {
+			thisObj.enableEdit();
+			return false;
+		});
+		
+		this.target.find(".cancel").click(function() {
+			thisObj.disableEdit();
+			return false;
+		});
+		
+		this.target.find(".save").click(function() {
+			thisObj.save();
+			thisObj.disableEdit();
+			return false;
+		});
+	},
+	enableEdit: function() {
+		var thisObj = this;
+		
+		this.target.find(".container-text").fadeOut("slow", function() {
+			thisObj.target.find(".container-form").fadeIn("slow");
+		});
+		
+		for (i in this.inputs)
+			this.target.find(".container-form ."+this.inputs[i]).val(this.values[i]);
+	},
+	disableEdit: function() {
+		var thisObj = this;
+		this.target.find(".container-form").fadeOut("slow", function() {
+			thisObj.target.find(".container-text").fadeIn("slow");
+		});
+	},
+	save: function() {
+		var thisObj = this;
+		var data = {id: this.obj.id, values:{}};
+		for (i in this.inputs) {
+			this.values[i] = this.target.find(".container-form ."+this.inputs[i]).val();
+			this.target.find(".container-text ."+this.inputs[i]).html(this.values[i]);
+			
+			data.values[this.inputs[i].replace("-", "_")] 	= this.values[i];
+			this.obj[this.inputs[i].replace("-", "_")] 		= this.values[i];
+		}
+		
+		this.obj.start_date = Date.toDate(this.values[2]);
+		this.obj.end_date 	= Date.toDate(this.values[3]);
+		
+		this.loader("show");
+		Model.IncomeStatement.saveInfo(data, function(data) {
+			if (data.status = "success")
+				thisObj.loader("hide");
+			else
+				alert("Ocorreu um erro ao salvar o DRE");
+		});
+	},
+	
+	loader: function(a) {
+		if (a == "show") {
+			this.target.find(".save, .cancel").hide();
+			this.target.find(".buttons").append('<img class="loader" src="/images/loader_grey.gif" alt="loader">');
+		}
+		else if (a == "hide") {
+			this.target.find(".save, .cancel").show();
+			this.target.find(".loader").remove();
+		}
+	}
+};
+
+View.Comments = function(target, id) {
+	this.target = $(target);
+	this.id = id;
+	
+	this.initialize();
+};
+
+View.Comments.prototype = {
+	initialize: function() {
+		this.registerTextarea();
+		this.registerSend();
+		this.registerCancel();
+		this.load();
+	},
+	load: function() {
+		var thisObj = this;
+		Model.Comment.list(this.id, function(data) {
+			var html = "";
+			for (i in data)
+				html += thisObj.buildHtml(data[i]);
+			
+			thisObj.target.find('.list').html(html);
+			thisObj.target.find(".comments-inner").tinyscrollbar();
+		});
+	},
+	loadScrollbar: function() {
+		this.target.find(".comments-inner").tinyscrollbar_update();
+	},
+	buildHtml: function(c) {
+		var date = new Date(c.created_at).format("d/m/Y h:i:s");
+		return '<div id="comment_'+c.id+'" class="comment">'
+			 + '<p class="content">'+c.content+'</p>'
+			 + '<p class="info">por <span class="author">'+c.author+'</span> em '+date+'</p>'
+			 + '</div>';
+	},
+	add: function(c) {
+		$(this.buildHtml(c)).hide().prependTo(this.target.find('.list')).fadeIn("slow");
+		this.loadScrollbar();
+	},
+	
+	registerSend: function() {
+		var thisObj = this;
+		this.target.find('.new .send').click(function() {
+			console.log("send");
+			var content = $(this).parent().find(".content");
+			var message = $(this).parent().find(".message");
+			
+			if (content.val() == "")
+				message.html("Você precisa escrever algo para poder enviar!");
+			else {
+				message.html("");
+				thisObj.loader("show");
+				
+				var obj = {id: thisObj.id, comment: {content: content.val()}};
+				Model.Comment.save(obj, function(data) {
+					if (data.status == "success") {
+						thisObj.loader("hide");
+						thisObj.cancel();
+						thisObj.add(data.comment);
+					} else if (data.status == "no_rights")
+						message.html("Você não tem permissão para postar comentários.");
+					else
+						message.html("Ocorreu um erro ao enviar seu comentário.");
+				});
+			}
+			return false;
+		});
+	},
+	
+	registerCancel: function() {
+		var thisObj = this;
+		this.target.find('.new .cancel').click(function() {
+			thisObj.cancel();
+			return false;
+		});
+	},
+	
+	registerTextarea: function() {
+		this.target.find('.new .content').focusin(function() {
+			$(this).css({"height":"50px", "color":"#666"});
+			$(this).parent().find(".send, .cancel").show();
+			
+			if ($(this).val() == "Responder...")
+				$(this).val("");
+		});
+	},
+	
+	cancel: function() {
+		var content = this.target.find(".new .content");
+		content.css({"height":"20px", "color":"#ccc"})
+			   .val("Responder...");
+			   
+		this.target.find(".new .send, .new .cancel").hide();
+		this.target.find(".new .message").html("");
+	},
+	
+	loader: function(a) {
+		if (a == "show") {
+			this.target.find(".new .send, .new .cancel").hide();
+			this.target.find(".message").append('<img class="loader" src="/images/loader.gif" alt="loader">');
+		}
+		else if (a == "hide") {
+			this.target.find(".new .send, .new .cancel").show();
+			this.target.find(".loader").remove();
+		}
+	}
+}

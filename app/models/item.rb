@@ -20,4 +20,8 @@ class Item < ActiveRecord::Base
       "name"  => name
     }
   end
+  
+  def self.list_by_user(user)
+    where("user_id IS NULL OR user_id = ?", user.id).order('name')
+  end
 end
