@@ -53,16 +53,17 @@ class IncomeStatementUser < ActiveRecord::Base
 
     users.each do |u|
       new_user = u.dup
-      new_user.id = nil
       new_user.income_statement_id = new_id
       
-      if new_user.classification == CREATOR_CLASS
+      if new_user.classification == CREATOR_CLASS and new_user.id != owner.id
         owner = new_user.dup
+        owner.id = nil
         owner.save
         
         new_user.classification = EDITOR_CLASS
       end
       
+      new_user.id = nil
       new_user.save
     end
     

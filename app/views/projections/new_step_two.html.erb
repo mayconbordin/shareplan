@@ -8,6 +8,7 @@
 		"base/jquery.ui.all",
 		"facebox",
 		"style",
+		"jquery.jqplot.min",
 		"jquery.select_skin",
 		"jquery.dataTables",
 		"jquery.gritter")
@@ -15,12 +16,16 @@
 <% end %>
 
 <% content_for :scripts do %>
+	<!--[if lt IE 9]>
+		<script language="javascript" type="text/javascript" src="/javascripts/jqplot/excanvas.min.js"></script>
+	<![endif]-->
 	<%= javascript_include_tag(
 		"jquery-1.6.2.min",
 		"jquery.dataTables.min",
 		"jquery.gritter.min",
 		"jquery.facebox",
 		"jquery.tinyscrollbar",
+		"jqplot/jquery.jqplot.min",
 		
 		"ui/jquery.ui.core.min",
 		"ui/jquery.ui.widget.min",
@@ -32,7 +37,6 @@
 		"ui/jquery.ui.autocomplete.min",
 		"ui/jquery.ui.combobox",
 		
-		"dygraph",
 		"util",
 		"model",
 		"view",

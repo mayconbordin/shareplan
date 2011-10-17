@@ -41,31 +41,41 @@ Controller.Dashboard = (function() {
 		});
 	}
 	
-	function loadHistoryChart(itemId) {
+	function loadHistoryChart(itemId, itemTitle) {
 		var data = null;
 		if (!itemId)
 			itemId = $("#item-history-select").val();
+			
+		if (!itemTitle)
+			itemTitle = $("#item-history-select option:selected").html();
 		
 		Model.IncomeStatement.getItemHistory(itemId, function(data) {
-			data.sort(function(a, b) {
-				if (a[0].getTime() > b[0].getTime())
-					return 1;
-				if (a[0].getTime() < b[0].getTime())
-					return -1;
-				return 0;
-			});
+			$.jqplot.config.enablePlugins = true;
 			
-			chart = new Dygraph(
-				document.getElementById("history-chart"),
-				data,
-		        {
-		        	ylabel: 'R$',
-		        	labels: ["Data", "Item"],
-		        	fillGraph: true,
-		        	fillAlpha: 0.8,
-		        	colors: ["#ffb400"]
-		        }
-			);
+			if (chart)
+				chart.destroy();
+				
+			if (data.length == 0)
+				console.log("no data to show");
+			else
+				chart = $.jqplot('history-chart', [data], {
+				    series: [{
+				        label: itemTitle,
+				        neighborThreshold: 0
+				    }],
+				    axes: {
+				        xaxis: {
+				          renderer:$.jqplot.DateAxisRenderer,
+				          tickOptions:{formatString:"%d/%m/%Y"}
+				        },
+				        yaxis: {
+				            renderer: $.jqplot.LogAxisRenderer,
+				            tickOptions:{formatString:'$%.2f'}
+				        }
+				    },
+				    cursor:{zoom:true},
+				    highlighter:{show:true}
+				});
 		});
 	}
 	
@@ -74,12 +84,13 @@ Controller.Dashboard = (function() {
 			resizeWidgets();
 			$(window).resize(resizeWidgets);
 			
-			$("#item-history-select").select_skin(function(value) {
-				loadHistoryChart(value);
+			$("#item-history-select").select_skin(function(id) {
+				var title = $("#item-history-select option:selected").html();
+				loadHistoryChart(id, title);
 			});
 			
 			enableNotifications();
-			//loadHistoryChart();
+			loadHistoryChart();
 		}
 	};
 })();

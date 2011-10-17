@@ -1164,7 +1164,7 @@ View.IncomeStatement.prototype = {
 	}
 };
 
-
+if ($.jqplot) {
 /**
  * Projection Chart
  *
@@ -1177,26 +1177,25 @@ View.ProjectionChart = function(id) {
 	this.chart 	= null;
 	this.data 	= null;
 	this.labels = null;
+	
+	$.jqplot.config.enablePlugins = true;
 };
 
 View.ProjectionChart.prototype = {
 	options: {
-		ylabel: 'R$',
-		legend: 'always',
-		labels: ["", "", ""],
-		fillGraph: false,		// fill the area below the line
-		fillAlpha: 0.8,			// the opacity of the filled area
-		drawPoints: true, 		// put a point in each spot
-		pointSize: 5, 			// size of the ploted dots
-		strokeWidth: 3, 		// size of the line
-		highlightCircleSize: 9, // size of the highlight circle
-		labelsDivWidth: 400,	// the width of the labels div
-		labelsDivStyles: {
-			'text-align': 'right',
-			'font-size': '14pt',
-		},
-		labelsDiv: document.getElementById("chart-legend"),
-		colors: ["#ffb400", "#00AEFE"]
+	    axes: {
+	        xaxis: {
+	          renderer:$.jqplot.DateAxisRenderer,
+	          tickOptions:{formatString:"%d/%m/%Y"}
+	        },
+	        yaxis: {
+	            renderer: $.jqplot.LogAxisRenderer,
+	            tickOptions:{formatString:'$%.2f'}
+	        }
+	    },
+	    cursor:{zoom:true},
+	    highlighter:{show:true},
+	    legend: { show:true, location: 'e' }
 	},
 	
 	load: function(item, remove) {
@@ -1204,46 +1203,53 @@ View.ProjectionChart.prototype = {
 		if (remove == undefined)
 			remove = true;
 			
+		if (this.chart)
+			this.chart.destroy();
+			
 		if (!remove)
 			Model.IncomeStatement.getItemHistory(item.id, function(data) {
 				thisObj.items[item.id] = {data: data, item: item};
 				thisObj.mergeData();
-				thisObj.chart = new Dygraph(thisObj.target, thisObj.data, $.extend(thisObj.options, {labels: thisObj.labels}));
+				thisObj.chart = $.jqplot("chart", thisObj.data, $.extend(thisObj.options, {series: thisObj.labels}));
 			});
 		else if (item) {
 			delete(this.items[item.id]);
 			this.mergeData();
 			
 			if (this.data.length > 0)
-				this.chart = new Dygraph(thisObj.target, thisObj.data, $.extend(thisObj.options, {labels: thisObj.labels}));
-			else {
-				this.chart.destroy();
+				this.chart = $.jqplot("chart", [thisObj.data], $.extend(thisObj.options, {series: thisObj.labels}));
+			else
 				this.emptyChart();
-			}
 		}
 	},
 
 	mergeData: function() {
 		var col = 1;
 		this.data = [];
-		this.labels = ["Data"];
+		this.labels = [];
 		
 		for (attr in this.items) {
 			var data = this.items[attr].data;
 			
-			for (i in data)
-				this.add(data[i][0], data[i][1], col);
-				
+			//for (i in data)
+			//	this.add(data[i][0], data[i][1], col);
 			var item = this.items[attr].item;
-			this.add(item.incomeStatement.start_date, item.formula.value, col);
-			this.add(item.incomeStatement.end_date, item.formula.value, col);
-			this.labels[col] = item.name;
+			data.push([item.incomeStatement.start_date, item.formula.value]);
+			data.push([item.incomeStatement.end_date, item.formula.value]);
+			
+			this.data.push(data);
+				
+			//var item = this.items[attr].item;
+			//this.add(item.incomeStatement.start_date, item.formula.value, col);
+			//this.add(item.incomeStatement.end_date, item.formula.value, col);
+			
+			this.labels.push({label: item.name});
 	
 			col++;
 		}
 		
-		this.fillEmpty(col);
-		this.data.sort(this.sortByDate);
+		//this.fillEmpty(col);
+		//this.data.sort(this.sortByDate);
 	},
 	
 	add: function(key, value, col) {
@@ -1293,6 +1299,7 @@ View.ProjectionChart.prototype = {
 		$("#chart-legend").html("");
 	}
 };
+}
 
 View.ContactList = function(id) {
 	this.id = id;

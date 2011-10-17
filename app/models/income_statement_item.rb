@@ -56,7 +56,7 @@ class IncomeStatementItem < ActiveRecord::Base
   def self.list_values_by_date(id)
     items = find(
       :all,
-      :conditions => {:item_id => id},
+      :conditions => ["income_statement_items.item_id = ? AND income_statements.classification = ?", id, IncomeStatement::HISTORY],
       :joins => :income_statement,
       :select => "income_statement_items.value, income_statement_items.income_statement_id, income_statements.start_date, income_statements.end_date",
       :order => "income_statements.start_date"

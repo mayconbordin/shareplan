@@ -32,7 +32,8 @@ class IncomeStatement < ActiveRecord::Base
   }
   
   scope :has_history, {
-    :conditions => ['income_statements.classification = ?', HISTORY]
+    :conditions => ['income_statements.classification = ? AND income_statement_users.classification = ?',
+                   HISTORY, IncomeStatementUser::CREATOR_CLASS]
   }
                        
   scope :childrens_count, {
