@@ -1702,8 +1702,7 @@ View.Comments.prototype = {
 		
 		setTimeout(function() {
 			thisObj.update();
-			console.log("update comments");
-		}, 15000);
+		}, 25 * 1000);
 	},
 	loadScrollbar: function() {
 		this.target.find(".comments-inner").tinyscrollbar_update();
@@ -1818,4 +1817,107 @@ View.Comments.prototype = {
 			this.target.find(".loader").remove();
 		}
 	}
-}
+};
+
+View.Version = function(id, projId, rootId) {
+	this.target = $(id);
+	this.projId = projId;
+	this.rootId = rootId;
+	this.initialize();
+};
+
+View.Version.prototype = {
+	initialize: function() {
+		this.loadVersions();
+		this.registerNewVersion();
+		this.registerOnCancel();
+		this.registerOnCreate();
+		
+		this.target.find(".versions-inner").tinyscrollbar();
+	},
+	
+	loadVersions: function() {
+		var thisObj = this;
+		Model.IncomeStatement.getVersions(this.rootId, function(data) {
+			var html = "";
+			for (i in data) {
+				var v = data[i];
+				html += '<li id="version_'+v.id+'" class="version'+((v.id == thisObj.projId) ? " current" : "")+'">'
+						  + '<p class="comment"><span class="number">#'+(parseInt(i)+1)+'</span> '+((v.comment == "") ? "(Sem Comentários)" : v.comment)+'</p>'
+						  + '<p class="info">criada por <span class="author">'+v.name+'</span> em '+v.created_at+'</p>'
+						  + '</li>';
+			}
+			
+			thisObj.target.find(".overview").html(html);
+			thisObj.registerOnClick();
+			thisObj.loadScrollbar();
+		});
+	},
+	
+	loadScrollbar: function() {
+		this.target.find(".versions-inner").tinyscrollbar_update();
+	},
+	
+	registerOnClick: function() {
+		this.target.find(".version").click(function() {
+			var id = $(this).attr("id").replace("version_", "");
+			window.open("/projections/edit/" + id);
+		});
+	},
+	registerNewVersion: function() {
+		var thisObj = this;
+		this.target.find(".new-version").click(function() {
+			$(this).parent().fadeOut("slow", function() {
+				$(this).parent().find(".create, .cancel").show();
+				thisObj.target.find(".new").fadeIn("slow");
+			});
+			return false;
+		});
+	},
+	registerOnCancel: function() {
+		var thisObj = this;
+		this.target.find(".cancel").click(function() {
+			$(this).parent().fadeOut("slow", function() {
+				$(this).parent().find(".create, .cancel").hide();
+				thisObj.target.find(".buttons").fadeIn("slow");
+				thisObj.target.find(".new .comment").val("");
+			});
+			return false;
+		});
+	},
+	registerOnCreate: function() {
+		var thisObj = this;
+		this.target.find(".create").click(function() {
+			var obj = {
+				id: thisObj.rootId,
+				comment: thisObj.target.find(".new .comment").val()
+			};
+			
+			thisObj.loader("show");
+			Model.IncomeStatement.newVersion(obj, function(data) {
+				var message = thisObj.target.find(".new .message");
+				if (data.status == "error")
+					message.html("Ocorreu um erro ao criar a nova versão.");
+				else if (data.status == "no_rights")
+					message.html("Você não tem permissão para criar versões desta projeção.");
+				else {
+					thisObj.loader("hide");
+					thisObj.target.find(".cancel").click();
+					window.location = "/projections/edit/" + data.id + "?new_version=true";
+				}
+			});
+			return false;
+		});
+	},
+	
+	loader: function(a) {
+		if (a == "show") {
+			this.target.find(".new .create, .new .cancel").hide();
+			this.target.find(".message").append('<img class="loader" src="/images/loader.gif" alt="loader">');
+		}
+		else if (a == "hide") {
+			this.target.find(".new .create, .new .cancel").show();
+			this.target.find(".loader").remove();
+		}
+	}
+};

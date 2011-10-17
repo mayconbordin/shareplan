@@ -6,26 +6,30 @@ class ProjectionsController < ApplicationController
 		
 	end
 	
+	def error
+    @type = params[:type]
+  end
+	
 	def edit
-	  if params[:id].nil?
-	    redirect_to :action => "error", :type => "not_found"
-	  else
-	    @projection = IncomeStatement.find(params[:id])
-	    
+    @projection = IncomeStatement.find_by_id(params[:id])
+    
+    if @projection != nil
+      @root_id = @projection.parent_id == nil ? @projection.id : @projection.parent_id
+	    @versions = IncomeStatement.find_versions(@root_id)
+	    	    
 	    @user = current_user
       @can_edit = IncomeStatementUser.can_edit(params[:id], @user)
-	  end
-	end
-	
-	def error
-	  @type = params[:type]
+      @new_version = (params[:new_version] == "true")
+    else
+      redirect_to :action => "error", :type => "not_found"
+    end
 	end
 	
 	def new_step_one
 	  if params[:id].nil?
 	    @projection = IncomeStatement.new
 	  else
-	    @projection = IncomeStatement.find(params[:id])
+	    @projection = IncomeStatement.find_by_id(params[:id])
 	  end
 	  
 	  @templates = IncomeStatement.where("classification = ?", IncomeStatement::TEMPLATE)
@@ -68,7 +72,20 @@ class ProjectionsController < ApplicationController
     end
 	end
 	
-	# ---- JSON Actions ----
+	def new_version
+	  if params[:id].nil?
+      render :json => {status: "error"}
+    else
+      @user = current_user
+      if IncomeStatementUser.can_create_version(params[:id], @user)
+        projection = IncomeStatement.new_version(params[:id], params[:comment], @user)
+        render :json => {id: projection.id}
+      else
+        render :json => {status: "no_rights"}
+      end
+    end
+	end
+	
 	def list_my_projections
     @user = current_user
 

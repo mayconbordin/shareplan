@@ -41,8 +41,9 @@
 	%>
 	<script type="text/javascript">
 		var projection_id = <%= @projection.id %>;
+		var root_id = <%= @root_id %>;
 		$(document).ready(function () {
-			Controller.Projection.edit(projection_id);
+			Controller.Projection.edit(projection_id, root_id);
 			Controller.User.logout();
 		});
 	</script>
@@ -50,6 +51,13 @@
 
 <!-- Main Container -->
 <div class="main-container">
+	
+	<% if @new_version == true %>
+	<ul class="messages">
+		<li class="success"><p>Nova versão criada com sucesso!</p><span class="close"></span></li>
+	</ul>
+	<% end %>
+	
 	<h1 class="page">Projeção: <%= @projection.title %></h1>
 					
 	<!-- Edit Projection -->
@@ -124,7 +132,25 @@
 				
 				<!-- VERSIONS -->
 				<div id="versions" class="container-tab">
-					VERSIONS
+					<div class="versions-inner">
+						<div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
+					 	<div class="viewport">
+							<ul class="overview"></ul>
+						</div>
+					</div>
+										
+					<div class="buttons">
+						<a class="new-version button" href="#" title="Criar nova versão">Criar Nova Versão</a>
+					</div>
+					
+					<div class="new">
+						<p class="title">Comentário sobre a nova versão:</p>
+						<textarea class="comment"></textarea>
+						<p class="message"></p>
+						<a class="button create" href="#" title="Enviar">Criar</a> 
+						<a class="button cancel" href="#" title="Cancelar">Cancelar</a>
+						<div style="clear: both;"></div>
+					</div>
 				</div>
 				<!-- VERSIONS -->
 				

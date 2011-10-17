@@ -79,7 +79,7 @@ Controller.Dashboard = (function() {
 			});
 			
 			enableNotifications();
-			loadHistoryChart();
+			//loadHistoryChart();
 		}
 	};
 })();
@@ -154,7 +154,7 @@ Controller.Projection = (function() {
 		
 			messagesClose();
 		},
-		edit: function(id) {
+		edit: function(id, rootId) {
 			var chart = new View.ProjectionChart("chart");
 
 			var editor;
@@ -183,10 +183,18 @@ Controller.Projection = (function() {
 			});
 			
 			var comments = new View.Comments("#comments", id);
-
-			loadTabs({comments: function() {
-				comments.loadScrollbar();
-			}});
+			var versions = new View.Version("#versions", id, rootId);
+			
+			loadTabs({
+				comments: function() {
+					comments.loadScrollbar();
+				},
+				versions: function() {
+					versions.loadScrollbar();
+				}
+			});
+			
+			messagesClose();
 			
 			$("#projection-save").click(function() {
 				Model.IncomeStatement.setType("projection");

@@ -5,6 +5,21 @@ class IncomeStatementsController < ApplicationController
     render :json => IncomeStatementItem.list_values_by_date(params[:id])
   end
   
+  def list_versions
+    if params[:id].nil?
+      render :json => {status: "error"}
+    else
+      @versions = IncomeStatement.find_versions(params[:id])
+      list = []
+      
+      @versions.each do |v|
+        list.push({id: v.id, comment: v.comment, created_at: v.created_at, name: v.name})
+      end
+      
+      render :json => list
+    end
+  end
+  
   def save_info
     @user  = current_user
     id     = params[:id]
@@ -40,8 +55,12 @@ class IncomeStatementsController < ApplicationController
         items.each do |i|
           if i[1]["type"] == "delete"
             @item = IncomeStatementItem.where(:income_statement_id => id, :item_id => i[1]["id"]).first
-            IncomeStatementItem.destroy_all(:parent_id => @item.id)
-            @item.destroy
+            
+            if !@item.nil?
+              IncomeStatementItem.destroy_all(:parent_id => @item.id)
+              @item.destroy
+            end
+            
           elsif i[1]["type"] == "update" or i[1]["type"] == "create"
             @item = IncomeStatementItem.from_hash(id, i[1])
             @item.save

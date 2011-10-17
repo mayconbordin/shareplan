@@ -22,7 +22,7 @@ class IncomeStatement < ActiveRecord::Base
   
   # ---- Scopes ----
   scope :has_my_projections, {
-    :conditions => ['(income_statements.classification = ? OR income_statements.classification = ?) AND income_statement_users.classification = ?',
+    :conditions => ['(income_statements.classification = ? OR income_statements.classification = ?) AND income_statement_users.classification = ? AND income_statements.parent_id IS NULL',
                    PROJECTION, TEMP, IncomeStatementUser::CREATOR_CLASS]
   }
   
@@ -96,10 +96,37 @@ class IncomeStatement < ActiveRecord::Base
     comments.order("comments.created_at desc")
   end
   
+  def self.find_versions(id)
+    find(
+      :all,
+      :conditions => ["income_statements.id = ? OR income_statements.parent_id = ?", id, id],
+      :joins => [:users],
+      :select => "income_statements.id, income_statements.comment, income_statements.created_at, users.name",
+      :group => "income_statements.id",
+      :order => "income_statements.created_at asc"
+    )
+  end
+  
   def self.find_by_id_and_user(id, user)
     self.joins(:income_statement_users)
         .where("income_statements.id = ? AND income_statement_users.user_id = ?", id, user.id)
         .first
+  end
+  
+  def self.new_version(id, comment, user)
+    projection = find(id)
+    new_proj = projection.dup
+    new_proj.id = new_proj.created_at = new_proj.updated_at = nil
+    new_proj.parent_id = id
+    new_proj.comment = comment
+        
+    if new_proj.save
+      IncomeStatementItem.new_version(id, new_proj.id)
+      IncomeStatementUser.new_version(id, new_proj.id, user)
+      return new_proj
+    else
+      return false
+    end
   end
 
 end

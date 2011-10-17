@@ -24,6 +24,19 @@ class IncomeStatementUser < ActiveRecord::Base
     
   end
   
+  def self.can_create_version(id, user)
+    user = where("income_statement_id = ? AND user_id = ?", id, user.id).limit(1).first
+        
+    if user.nil?
+      return false
+    elsif user.classification == CREATOR_CLASS or user.classification == EDITOR_CLASS
+        return true
+    else
+      return false
+    end
+    
+  end
+  
   def self.can_see(id, user)
     user = where("income_statement_id = ? AND user_id = ?", id, user.id).limit(1).first
         
@@ -31,6 +44,26 @@ class IncomeStatementUser < ActiveRecord::Base
       return false
     else
       return true
+    end
+    
+  end
+  
+  def self.new_version(old_id, new_id, owner)
+    users = where(["income_statement_id = ?", old_id])
+
+    users.each do |u|
+      new_user = u.dup
+      new_user.id = nil
+      new_user.income_statement_id = new_id
+      
+      if new_user.classification == CREATOR_CLASS
+        owner = new_user.dup
+        owner.save
+        
+        new_user.classification = EDITOR_CLASS
+      end
+      
+      new_user.save
     end
     
   end

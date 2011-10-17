@@ -71,4 +71,31 @@ class IncomeStatementItem < ActiveRecord::Base
     return list
   end
   
+  def self.new_version(old_id, new_id)
+    items = where(["income_statement_id = ?", old_id])
+    new_items = []
+    
+    items.each do |i|
+      new_item = i.dup
+      new_item.id = nil
+      new_item.income_statement_id = new_id
+      new_item.save
+      new_items.push(new_item)
+    end
+    
+    new_items.each do |ni|
+      if ni.parent_id != nil
+        items.each_with_index do |i, index|
+          if i.id == ni.parent_id
+            ni.parent_id = new_items[index].id
+            break
+          end
+        end
+        
+        ni.save
+      end
+    end
+    
+  end
+  
 end

@@ -130,6 +130,24 @@ Model.IncomeStatement = (function() {
 			});
 		},
 		
+		newVersion: function(obj, callback) {
+			$.ajax({
+				type: 'POST',
+			 	url: "http://localhost:3000/projections/new_version",
+			  	data: obj,
+			  	dataType: "json",
+			  	success: callback
+			});
+		},
+		
+		getVersions: function(id, callback) {
+			$.ajax({
+  				url: "http://localhost:3000/income_statements/list_versions/" + id,
+  				dataType: 'json',
+  				success: callback
+			});
+		},
+		
 		saveInfo: function(obj, callback) {
 			$.ajax({
 				type: 'POST',

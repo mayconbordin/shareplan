@@ -2,6 +2,8 @@
   if !@type.nil?
     if @type == "not_found"
    	  message = "Projeção não encontrada"
+   	elsif @type == "no_new_version_permission"
+   	  message == "Você não tem permissão para criar uma versão desta projeção"
    	end
   end
 %>
@@ -44,7 +46,7 @@
 	<div id="error-container">
 		<h1><%= message %></h1>
 		
-		<% if @type == "not_found" %>
+		<% if @type == "not_found" or @type == "no_new_version_permission" %>
 		<p>Clique <a href="/projections" title="Voltar para a lista de projeções">aqui</a> para voltar para a lista de projeções</p>
 		<% end %>
 	</div>

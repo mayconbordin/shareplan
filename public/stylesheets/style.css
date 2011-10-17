@@ -1476,11 +1476,22 @@ a.red-button:hover {
 	right: -3px;
 }
 
-#comments .new {
+#comments .comments-inner,
+#versions .comments-inner {
+	margin-bottom: 10px;
+}
+
+#comments .new,
+#versions .new {
 	width: 350px;
 }
 
-#comments .new .content {
+#versions .new {
+	display: none;
+}
+
+#comments .new .content,
+#versions .new .comment {
 	width: 100%;
 	height: 20px;
 	display: block;
@@ -1492,25 +1503,35 @@ a.red-button:hover {
 			-moz-border-radius: 5px;
 }
 
+#versions .new .comment {
+	height: 50px;
+	color: #666;
+}
+
 #comments .new .send,
-#comments .new .cancel {
+#comments .new .cancel,
+#versions .new .create,
+#versions .new .cancel {
+	display: none;
 	float: right;
 	padding: 5px;
 	font-size: 10pt;
-	display: none;
 }
 
-#comments .new .cancel {
+#comments .new .cancel,
+#versions .new .cancel {
 	margin-right: 4px;
 }
 
-#comments .new .message {
+#comments .new .message,
+#versions .new .message {
 	font-size: 10pt;
 	margin-bottom: 5px;
 	color: red;
 }
 
-#comments .new .message .loader {
+#comments .new .message .loader,
+#versions .new .message .loader {
 	float: right;
 	padding: 2px;
 	background: #fff;
@@ -1519,17 +1540,26 @@ a.red-button:hover {
 			-moz-border-radius: 5px;
 }
 
+#versions .new .title {
+	margin-bottom: 4px;
+}
 
-
-
-
-#comments .viewport {
-	height: 200px;
+#comments .viewport,
+#versions .viewport {
 	overflow: hidden;
 	position: relative;
 }
 
-#comments .overview {
+#comments .viewport {
+	height: 200px;
+}
+
+#versions .viewport {
+	height: 215px;
+}
+
+#comments .overview,
+#versions .overview {
 	list-style: none;
 	position: absolute;
 	left: 0;
@@ -1539,14 +1569,16 @@ a.red-button:hover {
 	width: 100%;
 }
 
-#comments .scrollbar {
+#comments .scrollbar,
+#versions .scrollbar {
 	position: relative;
 	float: right;
 	width: 8px;
 	right: -5px;
 }
 
-#comments .track {
+#comments .track,
+#versions .track {
 	background: #666;
 	width: 8px;
 	position: relative;
@@ -1555,7 +1587,8 @@ a.red-button:hover {
 			-moz-border-radius: 5px;
 }
 
-#comments .thumb {
+#comments .thumb,
+#versions .thumb {
 	background: #ccc;
 	width: 8px;
 	cursor: pointer;
@@ -1566,8 +1599,49 @@ a.red-button:hover {
 			-moz-border-radius: 5px;
 }
 
-#comments .thumb .end {
+#comments .thumb .end,
+#versions .thumb .end {
 	overflow: hidden;
 	height: 5px;
 	width: 25px;
+}
+
+#versions .version {
+	cursor: pointer;
+	background: #dcdcdc;
+	padding: 10px;
+	border-radius: 5px;
+		-webkit-border-radius: 5px;
+			-moz-border-radius: 5px;
+	margin-bottom: 10px;
+}
+
+#versions .version:hover {
+	background: #ccc;
+}
+
+#versions .version .comment {
+	margin-bottom: 10px;
+}
+
+#versions .version .comment .number {
+	font-size: 16pt;
+}
+
+#versions .version .info {
+	font-size: 8pt;
+	color: #999;
+}
+
+#versions .version .info .author {
+	color: #333;
+}
+
+#versions .current {
+	background: #a7f661;
+}
+
+#versions .buttons {
+	margin-top: 20px;
+	min-height: 28px;
 }
