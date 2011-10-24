@@ -1,4 +1,6 @@
 Shareplan::Application.routes.draw do
+  get "index/index"
+
   get "comments/list"
 
   devise_for :users

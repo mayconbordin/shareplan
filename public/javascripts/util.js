@@ -143,15 +143,19 @@ function loadTabs(callbacks) {
 Date.prototype.format = function(format) {
     var returnStr = '';
     var replace = Date.replaceChars;
-    for (var i = 0; i < format.length; i++) {       var curChar = format.charAt(i);         if (i - 1 >= 0 && format.charAt(i - 1) == "\\") {
-            returnStr += curChar;
-        }
-        else if (replace[curChar]) {
-            returnStr += replace[curChar].call(this);
-        } else if (curChar != "\\"){
-            returnStr += curChar;
-        }
-    }
+    
+    if (format && format.length)
+	    for (var i = 0; i < format.length; i++) {
+		    var curChar = format.charAt(i);         
+		    if (i - 1 >= 0 && format.charAt(i - 1) == "\\") {
+	        	returnStr += curChar;
+	    	}
+	        else if (replace[curChar]) {
+	            returnStr += replace[curChar].call(this);
+	        } else if (curChar != "\\"){
+	            returnStr += curChar;
+	        }
+	    }
     return returnStr;
 };
 

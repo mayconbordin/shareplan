@@ -1,5 +1,5 @@
 <% content_for :title do %>
-  <title>SharePlan - Nova Projeção</title>
+  <title>SharePlan - Novo Template</title>
 <% end %>
 
 <% content_for :styles do %>
@@ -8,7 +8,6 @@
 		"base/jquery.ui.all",
 		"facebox",
 		"style",
-		"jquery.jqplot.min",
 		"jquery.select_skin",
 		"jquery.dataTables",
 		"jquery.gritter")
@@ -16,9 +15,6 @@
 <% end %>
 
 <% content_for :scripts do %>
-	<!--[if lt IE 9]>
-		<script language="javascript" type="text/javascript" src="/javascripts/jqplot/excanvas.min.js"></script>
-	<![endif]-->
 	<%= javascript_include_tag(
 		"jquery-1.6.2.min",
 		"jquery.dataTables.min",
@@ -43,9 +39,9 @@
 		"controller")
 	%>
 	<script type="text/javascript">
-		var projection_id = <%= @id %>;
+		var template_id = <%= @id %>;
 		$(document).ready(function () {
-			Controller.Projection.newStepTwo(projection_id);
+			Controller.Template.newStepTwo(template_id);
 			Controller.User.logout();
 		});
 	</script>
@@ -53,29 +49,16 @@
 
 <!-- Main Container -->
 <div class="main-container">
-	<h1 class="page">Nova Projeção</h1>
+	<h1 class="page">Novo Template</h1>
 					
 	<!-- New Projection -->
-	<div id="new-projection">
+	<div id="new-template">
 	
 		<%= render 'progress', :step => "two", :id => @id %>
 	
-		<!-- Chart -->
-		<div id="projection-chart">
-			<h2>Gráfico</h2>
-		
-			<div id="chart">
-				<div id="empty-chart">
-	     			<p class="one">Nenhuma conta carregada</p>
-	     			<p class="two">Clique nas contas para carregá-las no gráfico</p>
-	     		</div>
-			</div>
-		</div>
-		<!-- Chart -->
-	
 		<!-- Income Statement -->
-		<div id="projection-income-statement">
-			<h2>Demonstração do Resultado do Exercício</h2>
+		<div id="template-income-statement">
+			<h2>Template do DRE</h2>
 	
 			<div id="income-statement">
 				<ul class="header">
@@ -87,7 +70,7 @@
 				<ul class="body"></ul>
 	
 				<div class="footer">
-					<div id="add-projection-item">Adicionar Conta</div>
+					<div id="add-template-item">Adicionar Conta</div>
 				</div>
 			</div>
 	
@@ -95,13 +78,13 @@
 		<!-- Income Statement -->
 	
 		<!-- Bottom -->
-		<div id="projection-bottom">
+		<div id="template-bottom">
 			<p>
-				<span id="projection-save-date"></span>
-				<a id="projection-discard" class="button" href="#" title="Descartar projeção">Descartar</a>
-				<a id="projection-save" class="button" href="#" title="Salvar projeção">Salvar</a>
+				<span id="template-save-date"></span>
+				<a id="template-discard" class="button" href="#" title="Descartar template">Descartar</a>
+				<a id="template-save" class="button" href="#" title="Salvar template">Salvar</a>
 				
-				<% form_tag '/projections/new_step_three/'+@id, :id => "step-three-form", :method => "post" do -%>
+				<% form_tag '/templates', :id => "save-form", :method => "post" do -%>
 					<input type="hidden" name="status" value="success" />
 				<% end -%>
 			</p>

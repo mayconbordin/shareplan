@@ -84,7 +84,7 @@ class IncomeStatementsController < ApplicationController
       Comment.destroy_all(:income_statement_id => id)
       IncomeStatementItem.destroy_all(:income_statement_id => id)
       IncomeStatementUser.destroy_all(:income_statement_id => id)
-      IncomeStatement.destroy_all(:parent_id => id)
+      #IncomeStatement.destroy_all(:parent_id => id)
       
       if IncomeStatement.destroy(id)
         render :json => {status: "success"}

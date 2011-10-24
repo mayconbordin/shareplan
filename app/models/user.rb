@@ -40,6 +40,10 @@ class User < ActiveRecord::Base
     income_statements.has_history().order(order).limit(limit).offset(offset)
   end
   
+  def templates(order = nil, limit = nil, offset = nil)
+    income_statements.has_templates().order(order).limit(limit).offset(offset)
+  end
+  
   def count_my_projections
     income_statements.has_my_projections().count()
   end
@@ -51,4 +55,9 @@ class User < ActiveRecord::Base
   def count_history
     income_statements.has_history().count()
   end
+  
+  def count_templates
+    income_statements.has_templates().count()
+  end
+  
 end

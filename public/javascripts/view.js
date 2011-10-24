@@ -87,10 +87,14 @@ View.Formula.prototype = {
 		if (isNaN(this.value))
 			this.value = 0;
 			
-		// precisa atualizar valor via ajax
+		// Update value in the model
 		Model.IncomeStatement.save({id: this.item.id, value: this.value, type: "update"});
 			
+		// Reload all formulas
 		View.Formula.reloadAll(this.item.incomeStatement.items);
+		
+		// Tell the income statement about the change		
+		this.item.incomeStatement.opt.onChangeValue();
 	},
 	
 	/**
@@ -811,8 +815,6 @@ View.Item.NewAccountBox = (function() {
 					 + '<div class="container"><label>Nome da conta:</label>'
 					 + '<input name="item[name]" class="textfield" type="text" /></div><div class="container"><label>Tipo de conta:</label>'
 					 + '<select name="item[classification]"><option value="account">Conta</option><option value="group">Grupo de contas</option><option value="result">Resultado</option></select></div>'
-					 + '<div class="container"><label>Débito ou crédito:</label>'
-					 + '<select name="item[item_type]"><option value="debt">Débito</option><option value="credit">Crédito</option></select></div>'
 					 + '<div class="buttons"><a class="button cancel" href="#" title="Cancelar">Cancelar</a>'
 					 + '<a class="button save" href="#" title="Criar">Criar</a></div></form>';
 					 
@@ -912,6 +914,7 @@ View.IncomeStatement = function(options) {
 		type: null,
 		saveDateTarget: null,
 		onItemClick: null,
+		onChangeValue: null,
 		beforeSave: null,
 		afterSave: null,
 		onLoad: null
@@ -1164,7 +1167,6 @@ View.IncomeStatement.prototype = {
 	}
 };
 
-if ($.jqplot) {
 /**
  * Projection Chart
  *
@@ -1178,24 +1180,33 @@ View.ProjectionChart = function(id) {
 	this.data 	= null;
 	this.labels = null;
 	
-	$.jqplot.config.enablePlugins = true;
+	if ($.jqplot)
+		$.jqplot.config.enablePlugins = true;
 };
 
 View.ProjectionChart.prototype = {
 	options: {
 	    axes: {
 	        xaxis: {
-	          renderer:$.jqplot.DateAxisRenderer,
+	          renderer: $.jqplot ? $.jqplot.DateAxisRenderer : null,
 	          tickOptions:{formatString:"%d/%m/%Y"}
 	        },
 	        yaxis: {
-	            renderer: $.jqplot.LogAxisRenderer,
+	            renderer: $.jqplot ? $.jqplot.LogAxisRenderer : null,
 	            tickOptions:{formatString:'$%.2f'}
 	        }
 	    },
 	    cursor:{zoom:true},
 	    highlighter:{show:true},
 	    legend: { show:true, location: 'e' }
+	},
+	
+	reload: function() {
+		if (this.chart) {
+			this.chart.destroy();
+			this.mergeData();
+			this.chart = $.jqplot("chart", this.data, $.extend(this.options, {series: this.labels}));
+		}
 	},
 	
 	load: function(item, remove) {
@@ -1206,100 +1217,58 @@ View.ProjectionChart.prototype = {
 		if (this.chart)
 			this.chart.destroy();
 			
-		if (!remove)
+		if (!remove) {
+			this.loader("show");
 			Model.IncomeStatement.getItemHistory(item.id, function(data) {
 				thisObj.items[item.id] = {data: data, item: item};
 				thisObj.mergeData();
 				thisObj.chart = $.jqplot("chart", thisObj.data, $.extend(thisObj.options, {series: thisObj.labels}));
 			});
-		else if (item) {
+		} else if (item) {
 			delete(this.items[item.id]);
 			this.mergeData();
 			
 			if (this.data.length > 0)
-				this.chart = $.jqplot("chart", [thisObj.data], $.extend(thisObj.options, {series: thisObj.labels}));
+				this.chart = $.jqplot("chart", thisObj.data, $.extend(thisObj.options, {series: thisObj.labels}));
 			else
 				this.emptyChart();
 		}
 	},
 
 	mergeData: function() {
-		var col = 1;
 		this.data = [];
 		this.labels = [];
 		
 		for (attr in this.items) {
-			var data = this.items[attr].data;
-			
-			//for (i in data)
-			//	this.add(data[i][0], data[i][1], col);
+			var data = this.items[attr].data.slice(0);
 			var item = this.items[attr].item;
+			
 			data.push([item.incomeStatement.start_date, item.formula.value]);
 			data.push([item.incomeStatement.end_date, item.formula.value]);
 			
 			this.data.push(data);
-				
-			//var item = this.items[attr].item;
-			//this.add(item.incomeStatement.start_date, item.formula.value, col);
-			//this.add(item.incomeStatement.end_date, item.formula.value, col);
-			
 			this.labels.push({label: item.name});
-	
-			col++;
-		}
-		
-		//this.fillEmpty(col);
-		//this.data.sort(this.sortByDate);
-	},
-	
-	add: function(key, value, col) {
-		var done = false;
-		
-		// Verifica se data já existe
-		for (i in this.data)
-			if (this.data[i][0].getTime() == key.getTime()) {
-				this.data[i][col] = value;
-				done = true;
-				break;
-			}
-		
-		// Se não existe, cria novo array
-		if (!done) {
-			var row = [key];
-			
-			for (var i=1; i < col; i++)
-				row[i] = null;
-			
-			row[col] = value;
-			this.data.push(row);
 		}
 	},
 	
-	fillEmpty: function(cols) {
-		for (i in this.data)
-			for (var c = 1; c < cols; c++)
-				if (this.data[i][c] == undefined)
-					this.data[i][c] = null;
-	},
-	
-	sortByDate: function(a, b) {
-		if (a[0].getTime() > b[0].getTime())
-			return 1;
-		if (a[0].getTime() < b[0].getTime())
-			return -1;
-		return 0;
-	},
-		
 	emptyChart: function() {
 		var html = '<div id="empty-chart">'
 		         + '<p class="one">Nenhuma conta carregada</p>'
 		         + '<p class="two">Clique nas contas para carregá-las no gráfico</p></div>';
 		
 		$("#chart").html(html);
-		$("#chart-legend").html("");
+	},
+	
+	loader: function(a) {
+		if (a == "show")
+			$("#chart").html(
+				'<div id="empty-chart">'
+			  + '<p class="one"><img class="loader" src="/images/loader_grey.gif" alt="loader" /></p>'
+			);
+		else
+			$("#chart").html("");
 	}
 };
-}
 
 View.ContactList = function(id) {
 	this.id = id;
@@ -1388,6 +1357,7 @@ View.Table = {
 	},
 	
 	loadSharedProjections: function(callback) {
+		var sharedProjections;
 		var options = {
 			"sAjaxSource": "/projections/list_shared_projections",
 			"aoColumns": [
@@ -1415,13 +1385,23 @@ View.Table = {
 				$("#shared-projections-table").css("width", "");
 					
 				if (callback) callback();
+			},
+			"fnDrawCallback": function() {
+				//on delete
+				$("#shared-projections-table .delete").each(function() {
+					var deleteBox = new View.DeleteBox(this, function() {
+						sharedProjections.fnDestroy();
+						View.Table.loadTemplates();
+					});
+				});
 			}
 		};
 		$.extend(options, this.options);
-		$('#shared-projections-table').dataTable(options);
+		sharedProjections = $('#shared-projections-table').dataTable(options);
 	},
 	
 	loadMyProjections: function() {
+		var myProjections;
 		var options = {
 			"sAjaxSource": "/projections/list_my_projections",
 			"aoColumns": [
@@ -1467,23 +1447,19 @@ View.Table = {
 			"fnDrawCallback": function() {
 				//on delete
 				$("#projections-table .delete").each(function() {
-					$(this).click(function() {
-						var html = $(
-							'<h3>Deseja remover esta projeção?</h3>'
-							+ '<a class="button" href="#" title="Não">Não</a>'
-							+ '<a class="button" href="#" title="Sim">Sim</a>'
-						);
-						jQuery.facebox(html);
-						return false;
+					var deleteBox = new View.DeleteBox(this, function() {
+						myProjections.fnDestroy();
+						View.Table.loadMyProjections();
 					});
 				});
 			}
 		};
 		$.extend(options, this.options);
-		$('#projections-table').dataTable(options);
+		myProjections = $('#projections-table').dataTable(options);
 	},
 	
 	loadHistory: function() {
+		var history;
 		var options = {
 			"sAjaxSource": "/history/list",
 			"aoColumns": [
@@ -1524,20 +1500,66 @@ View.Table = {
 			"fnDrawCallback": function() {
 				//on delete
 				$("#history-table .delete").each(function() {
-					$(this).click(function() {
-						var html = $(
-							'<h3>Deseja remover esta DRE?</h3>'
-							+ '<a class="button" href="#" title="Não">Não</a>'
-							+ '<a class="button" href="#" title="Sim">Sim</a>'
-						);
-						jQuery.facebox(html);
-						return false;
+					var deleteBox = new View.DeleteBox(this, function() {
+						history.fnDestroy();
+						View.Table.loadHistory();
 					});
 				});
 			}
 		};
 		$.extend(options, this.options);
-		$('#history-table').dataTable(options);
+		history = $('#history-table').dataTable(options);
+	},
+	
+	loadTemplates: function() {
+		var template;
+		var options = {
+			"sAjaxSource": "/templates/list",
+			"aoColumns": [
+				{
+					"sTitle": "Template",
+					"sWidth": "30%",
+					"fnRender": function(obj) {
+						var sReturn = obj.aData[ obj.iDataColumn ];
+						sReturn = sReturn == "" ? "(Sem Título)" : sReturn;
+						
+						var html = '<a href="/templates/edit/'+obj.aData[2]+'" title="Visualizar Template">'+sReturn+'</a>';
+						return html;
+					}
+				},
+				{ "sTitle": "Criado em", "sClass": "center", "sWidth": "15%" },
+				{
+					"sTitle": "Ações",
+					"sClass": "center",
+					"sWidth": "15%",
+					"bSortable": false,
+					"fnRender": function(obj) {
+						var id = obj.aData[ obj.iDataColumn ];
+						var html = '<a class="delete" href="'+id+'" title="Deletar Template">deletar</a>';
+						return html;
+					}
+				}
+			],
+			"fnInitComplete": function() {
+				$('<div id="template-table-footer" class="footer"></div>')
+					.append($('#template-table_info'))
+					.append($('#template-table_paginate'))
+					.appendTo('#template-table_wrapper');
+					
+				$("#template-table").css("width", "");
+			},
+			"fnDrawCallback": function() {
+				//on delete
+				$("#template-table .delete").each(function() {
+					var deleteBox = new View.DeleteBox(this, function() {
+						template.fnDestroy();
+						View.Table.loadTemplates();
+					});
+				});
+			}
+		};
+		$.extend(options, this.options);
+		template = $('#template-table').dataTable(options);
 	},
 	
 	loadProjections: function() {
@@ -1661,25 +1683,82 @@ View.IncomeStatementEditor.prototype = {
 	}
 };
 
+View.DeleteBox = function(e, c) {
+	this.e = $(e);
+	this.callback = c;
+	this.initialize();
+};
+
+View.DeleteBox.prototype = {
+	initialize: function() {
+		this.registerEvents();
+	},
+	registerEvents: function() {
+		var thisObj = this;
+		
+		this.e.click(function() {
+			jQuery.facebox(thisObj.buildBox());
+			return false;
+		});
+	},
+	
+	buildBox: function() {
+		var thisObj = this;
+		var html = $(
+			'<div class="delete-box">'
+			+ '<h3>Deseja remover este Template?</h3>'
+			+ '<div class="buttons">'
+			+ '<a class="no button" href="#" title="Não">Não</a>'
+			+ '<a class="yes button" href="#" title="Sim">Sim</a>'
+			+ '</div></div>'
+		);
+		
+		html.find('.no').click(function() {
+			jQuery(document).trigger('close.facebox');
+		});
+		
+		html.find('.yes').click(function() {
+			thisObj.loader("show");
+			var id = thisObj.e.attr("href");
+			Model.IncomeStatement.destroy(id, function() {
+				thisObj.loader("hide");
+				
+				if (thisObj.callback)
+					thisObj.callback();
+			});
+		});
+		
+		return html;
+	},
+	
+	loader: function(a) {
+		if (a == "show")
+			jQuery.facebox('<div class="delete-box"><img class="loader" src="/images/loader.gif" alt="loader" /></div>');
+		else
+			jQuery(document).trigger('close.facebox');
+	}
+};
+
 View.Comments = function(target, id) {
 	this.target = $(target);
 	this.id = id;
 	this.data = null;
-	this.newest = null;
+	this.newest = {created_at: "2000-01-01T10:10:10Z"};
 	
 	this.initialize();
 };
 
 View.Comments.prototype = {
 	initialize: function() {
+		var thisObj = this;
 		this.registerTextarea();
 		this.registerSend();
 		this.registerCancel();
-		this.load();
-		
-		this.update();
+		this.load(function() {
+			thisObj.update();
+		});
 	},
-	load: function() {
+	load: function(callback) {
 		var thisObj = this;
 		Model.Comment.list(this.id, function(data) {
 			thisObj.data = data;
@@ -1690,6 +1769,8 @@ View.Comments.prototype = {
 			
 			for (i in data)
 				thisObj.add(data[i]);
+				
+			if (callback) callback();
 		});
 	},
 	update: function() {
@@ -1817,7 +1898,7 @@ View.Comments.prototype = {
 	loader: function(a) {
 		if (a == "show") {
 			this.target.find(".new .send, .new .cancel").hide();
-			this.target.find(".message").append('<img class="loader" src="/images/loader.gif" alt="loader">');
+			this.target.find(".message").append('<img class="loader" src="/images/loader.gif" alt="loader" />');
 		}
 		else if (a == "hide") {
 			this.target.find(".new .send, .new .cancel").show();
@@ -1849,9 +1930,11 @@ View.Version.prototype = {
 			var html = "";
 			for (i in data) {
 				var v = data[i];
+				var date = new Date(v.created_at).format("d/m/Y h:i:s");
+				
 				html += '<li id="version_'+v.id+'" class="version'+((v.id == thisObj.projId) ? " current" : "")+'">'
 						  + '<p class="comment"><span class="number">#'+(parseInt(i)+1)+'</span> '+((v.comment == "") ? "(Sem Comentários)" : v.comment)+'</p>'
-						  + '<p class="info">criada por <span class="author">'+v.name+'</span> em '+v.created_at+'</p>'
+						  + '<p class="info">criada por <span class="author">'+v.name+'</span> em '+date+'</p>'
 						  + '</li>';
 			}
 			

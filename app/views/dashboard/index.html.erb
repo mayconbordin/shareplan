@@ -41,6 +41,9 @@
 		</div>
 		
 		<div class="body">
+			<% if @messages.length == 0 %>
+			<div id="no-notifications"><p>Nenhuma notificação nova</p></div>
+			<% end %>
 			<ul>
 				<% @messages.each do |m| %>
 				<li id="message<%= m.id %>">

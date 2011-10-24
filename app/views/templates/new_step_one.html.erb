@@ -1,0 +1,88 @@
+<% content_for :title do %>
+  <title>SharePlan - Novo Template</title>
+<% end %>
+
+<% content_for :styles do %>
+	<%= stylesheet_link_tag(
+		"reset",
+		"base/jquery.ui.all",
+		"style")
+	%>
+<% end %>
+
+<% content_for :scripts do %>
+	<%= javascript_include_tag(
+		"jquery-1.6.2.min",
+		"jquery.maskedinput-1.3.min",
+		"ui/jquery.ui.core.min",
+		"ui/jquery.ui.datepicker.min",
+		"util",
+		"model",
+		"view",
+		"controller")
+	%>
+	<script type="text/javascript">
+		$(document).ready(function () {
+			Controller.Template.newStepOne();
+			Controller.User.logout();
+		});
+	</script>
+<% end %>
+
+<!-- Main Container -->
+<div class="main-container">
+	
+	<h1 class="page">Novo Template</h1>
+					
+	<!-- New Projection -->
+	<div id="new-template">
+		
+		<%= render 'progress', :step => "one", :id => @id %>
+		
+		<% if @template.errors.any? %>
+		<ul class="messages">
+			<% @template.errors.full_messages.each do |msg| %>
+			<li class="error"><p><%= msg %></p><span class="close"></span></li>
+			<% end %>
+		</ul>
+		<% end %>
+	
+		<!-- Form -->
+		<div id="template-form" class="form-container">
+			<%= form_tag(:action => 'save_step_one', :controller => 'templates', :method => "post") do %>
+				<fieldset>
+					<legend>Informações</legend>
+					<dl class="normal">
+						<dt>
+							<label>Título</label>
+						</dt>
+						<dd>
+							<input type="text" class="large" name="template[title]" value="<%= @template.title %>" />
+							<p>Descreva brevemente o template para poder indentificá-lo posteriormente</p>
+						</dd>
+		
+						<dt>
+							<label>Comentário</label>
+						</dt>
+						<dd>
+							<textarea class="large" name="template[comment]"><%= @template.comment %></textarea>
+							<p>Se desejar, pode colocar aqui alguns comentários/observações a respeito de seu template</p>
+						</dd>
+					</dl>
+				</fieldset>
+				
+				<div id="template-bottom">
+					<a id="template-cancel" class="button" href="<%= url_for(:controller => 'templates') %>" title="Cancelar template">Cancelar</a>
+					<a id="template-next" class="button" href="#" title="Avançar na criação do template">Avançar</a>
+				</div>
+				<div class="clear"></div>
+			<% end %>
+			
+		</div>
+		<!-- Form -->
+		
+	</div>
+	<!-- New Projection -->
+	
+</div>
+<!-- Main Container -->

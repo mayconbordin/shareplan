@@ -1,0 +1,57 @@
+<% content_for :title do %>
+  <title>SharePlan - Templates</title>
+<% end %>
+
+<% content_for :styles do %>
+	<%= stylesheet_link_tag(
+		"reset",
+		"facebox",
+		"style",
+		"jquery.dataTables")
+	%>
+<% end %>
+
+<% content_for :scripts do %>
+	<%= javascript_include_tag(
+		"jquery-1.6.2.min",
+		"jquery.dataTables.min",
+		"jquery.facebox",
+		"util",
+		"model",
+		"view",
+		"controller")
+	%>
+	<script type="text/javascript">
+		$(document).ready(function () {
+			Controller.Template.index();
+			Controller.User.logout();
+		});
+	</script>
+<% end %>
+
+<!-- Main Container -->
+<div class="main-container">
+	
+	<div id="template-title">
+		<h1>Templates</h1>
+		<a id="new-template-button" class="green-button" href="<%= url_for(:action => 'new_step_one', :controller => 'templates') %>" title="Novo template">Novo Template</a>
+	</div>
+	
+	<% if @status %>
+	<ul class="messages">
+		<% if @status == "success" %>
+		<li class="success"><p>O template foi salvo com sucesso!</p><span class="close"></span></li>
+		<% end %>
+	</ul>
+	<% end %>
+	
+	<!-- Histórico -->
+	<div id="template" class="container-box">
+		<div id="template-table-container" class="table-container">
+			<table cellpadding="0" cellspacing="0" border="0" class="display" id="template-table"></table>
+		</div>
+	</div>
+	<!-- Histórico -->
+
+</div>
+<!-- Main Container -->

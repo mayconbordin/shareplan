@@ -113,7 +113,7 @@ Model.IncomeStatement = (function() {
 			$.ajax({
 			  type: 'DELETE',
 			  url: "http://localhost:3000/income_statements/destroy/" + id,
-			  success: success,
+			  success: callback,
 			});
 		},
 		

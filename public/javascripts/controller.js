@@ -56,7 +56,7 @@ Controller.Dashboard = (function() {
 				chart.destroy();
 				
 			if (data.length == 0)
-				console.log("no data to show");
+				$("#history-chart").html('<div id="no-data-show"><p>Sem dados para exibir</p></div>');
 			else
 				chart = $.jqplot('history-chart', [data], {
 				    series: [{
@@ -134,6 +134,9 @@ Controller.Projection = (function() {
 				id: id,
 				type: "projection",
 				saveDateTarget: "#projection-save-date span",
+				onChangeValue: function() {
+					chart.reload();
+				},
 				onItemClick: function(item, remove) {
 					chart.load(item, remove);
 				},
@@ -166,6 +169,9 @@ Controller.Projection = (function() {
 			messagesClose();
 		},
 		edit: function(id, rootId) {
+			$(".datepicker").datepicker(DatePickerConfig);
+			$(".datepicker").mask('99/99/9999');
+			
 			var chart = new View.ProjectionChart("chart");
 
 			var editor;
@@ -175,6 +181,9 @@ Controller.Projection = (function() {
 				id: id,
 				type: "projection",
 				saveDateTarget: "#projection-save-date span",
+				onChangeValue: function() {
+					chart.reload();
+				},
 				onItemClick: function(item, remove) {
 					$("#select-chart-tab").click();
 					chart.load(item, remove);
@@ -212,7 +221,6 @@ Controller.Projection = (function() {
 				Model.IncomeStatement.sendData(function(status) {
 					if (status == "success")
 						$("#step-three-form").submit();
-						//window.location = '/projections/new_step_three/' + id;
 					else
 						alert("Não foi possível salvar a projeção");
 				});
@@ -310,6 +318,93 @@ Controller.History = (function() {
 						$("#save-form").submit();
 					else
 						alert("Não foi possível salvar o DRE");
+				});
+				return false;
+			});
+		}
+	};
+})();
+
+Controller.Template = (function() {
+	return {
+		index: function() {
+			View.Table.loadTemplates();
+			messagesClose();
+		},
+		
+		newStepOne: function() {
+			// submit form and teste validations
+			$("#template-next").click(function() {				
+				$("#template-form form").submit();
+				return false;
+			});
+			
+			// register message close buttons
+			messagesClose();
+		},
+		
+		newStepTwo: function(id) {
+			var is = new View.IncomeStatement({
+				target: "#income-statement .body",
+				addButton: "#add-template-item",
+				id: id,
+				type: "template",
+				saveDateTarget: "#template-save-date span",
+				beforeSave: function() {
+					$("#template-save-date").html('<img class="loader" src="/images/loader.gif" alt="loading" /> salvando template...');
+				},
+				afterSave: function(r) {
+					if (r.success)
+						$("#template-save-date").html("Salvo automaticamente as " + r.date.format('h:i:s A'));
+					else
+						$("#template-save-date").html("Erro ao salvar template");
+				}
+			});
+			
+			$("#template-save").click(function() {
+				Model.IncomeStatement.sendData(function(status) {
+					if (status == "success")
+						$("#save-form").submit();
+					else
+						alert("Não foi possível salvar o template");
+				});
+				return false;
+			});
+		},
+		
+		edit: function(id) {
+			loadTabs();
+			
+			var editor;
+			var is = new View.IncomeStatement({
+				target: "#income-statement .body",
+				addButton: "#add-template-item",
+				id: id,
+				type: "template",
+				saveDateTarget: "#template-save-date span",
+				beforeSave: function() {
+					$("#template-save-date").html('<img class="loader" src="/images/loader.gif" alt="loading" /> salvando projeção...');
+				},
+				afterSave: function(r) {
+					if (r.success)
+						$("#template-save-date").html("Salvo automaticamente as " + r.date.format('h:i:s A'));
+					else
+						$("#template-save-date").html("Erro ao salvar template");
+				},
+				onLoad: function() {
+					editor = new View.IncomeStatementEditor("#information", is.obj);
+					
+					$('input.value, a.function').hide();
+					$('.projection-label span').css('visibility', 'hidden');
+				}
+			});
+			
+			$("#template-save").click(function() {
+				Model.IncomeStatement.sendData(function(status) {
+					if (status == "success")
+						$("#save-form").submit();
+					else
+						alert("Não foi possível salvar o template");
 				});
 				return false;
 			});

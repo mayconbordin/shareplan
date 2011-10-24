@@ -1,0 +1,163 @@
+<% content_for :title do %>
+  <title>SharePlan - Template: <%= @template.title %></title>
+<% end %>
+
+<% content_for :styles do %>
+	<%= stylesheet_link_tag(
+		"reset",
+		"base/jquery.ui.all",
+		"facebox",
+		"style",
+		"jquery.select_skin",
+		"jquery.dataTables",
+		"jquery.gritter")
+	%>
+<% end %>
+
+<% content_for :scripts do %>
+	<%= javascript_include_tag(
+		"jquery-1.6.2.min",
+		"jquery.dataTables.min",
+		"jquery.gritter.min",
+		"jquery.facebox",
+		"jquery.tinyscrollbar",
+		"jquery.maskedinput-1.3.min",
+		
+		"ui/jquery.ui.core.min",
+		"ui/jquery.ui.widget.min",
+		"ui/jquery.ui.mouse.min",
+		"ui/jquery.ui.sortable.min",
+		"ui/jquery.ui.datepicker.min",
+		"ui/jquery.ui.position.min",
+		"ui/jquery.ui.button.min",
+		"ui/jquery.ui.autocomplete.min",
+		"ui/jquery.ui.combobox",
+		
+		"util",
+		"model",
+		"view",
+		"controller")
+	%>
+	<script type="text/javascript">
+		var template_id = <%= @template.id %>;
+		$(document).ready(function () {
+			Controller.Template.edit(template_id);
+			Controller.User.logout();
+		});
+	</script>
+<% end %>
+
+<!-- Main Container -->
+<div class="main-container">
+	<h1 class="page">Template: <%= @template.title %></h1>
+					
+	<!-- Edit Projection -->
+	<div id="new-template">
+		
+		<div id="income-statement-info" class="container-box">
+			<ul id="templates-header" class="header">
+				<li class="selected"><a class="select" id="select-information" href="#" title="">Informações</a></li>
+			</ul>
+			
+			<div class="tab-items">
+				<!-- INFORMATION -->
+				<div id="information" class="container-tab active">
+					
+					<% if @can_edit == true %>
+					<div class="container-form">
+						<dl>
+							<dd>
+								<label class="label">Título:</label>
+								<input type="text" class="value title" value="<%= @template.title %>" />
+							</dd>
+							<dd>
+								<label class="label">Comentários:</label>
+								<textarea  class="value comment"><%= @template.comment %></textarea>
+							</dd>
+						</dl>
+						<dd style="display: none;">
+							<label class="label">Início:</label>
+							<input type="text" class="value datepicker start-date" />
+						</dd>
+						<dd style="display: none;">
+							<label class="label">Fim:</label>
+							<input type="text" class="value datepicker end-date" />
+						</dd>
+						
+						<div class="buttons">
+							<a class="button cancel" href="#" title="">Cancelar</a>
+							<a class="button save" href="#" title="">Salvar</a>
+						</div>
+						<div style="clear: both;"></div>
+					</div>
+					<% end %>
+					
+					<div class="container-text">
+						<% if @can_edit == true %>
+						<a class="button edit" href="#" title="Editar informações">Editar</a>
+						<% end %>
+						<p>
+							<span class="label">Título:</span>
+							<span class="value title"><%= @template.title %></span>
+						</p>
+						<p>
+							<span class="label">Comentário:</span>
+							<span  class="value comment"><%= @template.comment %></span>
+						</p>
+						<p style="display: none;">
+							<span class="label">Início:</span>
+							<span class="value start-date"></span>
+						</p>
+						<p style="display: none;">
+							<span class="label">Fim:</span>
+							<span class="value end-date"></span>
+						</p>
+						<p style="clear: both;"></p>
+					</div>
+					
+				</div>
+				<!-- INFORMATION -->
+				
+			</div>
+		</div>
+	
+		<!-- Income Statement -->
+		<div id="template-income-statement">
+			<h2>Demonstração do Resultado do Exercício</h2>
+	
+			<div id="income-statement">
+				<ul class="header">
+					<li class="account-label"><span>Conta</span></li>
+					<li class="projection-label"><span>Projeção</span></li>
+					<li class="options-label"><span>Opções</span></li>
+				</ul>
+	
+				<ul class="body"></ul>
+	
+				<div class="footer">
+					<div id="add-template-item">Adicionar Conta</div>
+				</div>
+			</div>
+	
+		</div>
+		<!-- Income Statement -->
+	
+		<!-- Bottom -->
+		<div id="template-bottom">
+			<p>
+				<span id="template-save-date"></span>
+				<a id="template-discard" class="button" href="#" title="Descartar template">Descartar</a>
+				<a id="template-save" class="button" href="#" title="Salvar template">Salvar</a>
+				
+				<% form_tag '/templates', :id => "save-form", :method => "post" do -%>
+					<input type="hidden" name="status" value="success" />
+				<% end -%>
+			</p>
+		</div>
+		<!-- Bottom -->
+		
+	</div>
+	<!-- Edit Projection -->
+	
+</div>
+<!-- Main Container -->

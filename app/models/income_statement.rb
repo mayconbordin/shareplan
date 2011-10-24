@@ -27,13 +27,18 @@ class IncomeStatement < ActiveRecord::Base
   }
   
   scope :has_shared_projections, {
-    :conditions => ['income_statements.classification = ? AND (income_statement_users.classification = ? OR income_statement_users.classification = ?)',
+    :conditions => ['income_statements.classification = ? AND (income_statement_users.classification = ? OR income_statement_users.classification = ?) AND income_statements.parent_id IS NULL',
                    PROJECTION, IncomeStatementUser::EDITOR_CLASS, IncomeStatementUser::READER_CLASS]
   }
   
   scope :has_history, {
     :conditions => ['income_statements.classification = ? AND income_statement_users.classification = ?',
                    HISTORY, IncomeStatementUser::CREATOR_CLASS]
+  }
+  
+  scope :has_templates, {
+    :conditions => ['income_statements.classification = ? AND income_statement_users.classification = ?',
+                   TEMPLATE, IncomeStatementUser::CREATOR_CLASS]
   }
                        
   scope :childrens_count, {
