@@ -1,16 +1,45 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Shareplan</title>
-  <%= stylesheet_link_tag :all %>
-  <%= javascript_include_tag :defaults %>
-  <%= csrf_meta_tag %>
-</head>
-<body>
-
-<p><%= flash[:notice] %></p>
-<p><%= flash[:alert] %></p>
-<%= yield %>
-
-</body>
+	<head>
+		<%= yield :title %>
+		<meta charset="UTF-8">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+		<!-- CSS Styles -->
+		<%= yield :styles %>
+		
+		<%= csrf_meta_tag %>
+	</head>
+	<body>
+		<!-- Wrapper -->
+		<div id="wrapper">
+			
+			<!-- Header -->
+			<div id="header">
+				
+				<div id="logo">
+					<a href="#" title="Ir para página principal"><img src="/images/logo.png" alt="logo" /></a>
+				</div>
+							
+				<ul id="menu">
+					<li><a class="<%= controller.controller_name == "dashboard" ? "current " : "" %>dashboard" href="<%= url_for(:controller => 'dashboard') %>" title="">Dashboard</a></li>
+					<li><a class="<%= controller.controller_name == "projections" ? "current " : "" %>projection" href="<%= url_for(:controller => 'projections') %>" title="">Projeções</a></li>
+					<li><a class="<%= controller.controller_name == "history" ? "current " : "" %>history" href="<%= url_for(:controller => 'history') %>" title="">Histórico</a></li>
+					<li><a class="<%= controller.controller_name == "contacts" ? "current " : "" %>contacts" href="<%= url_for(:controller => 'contacts') %>" title="">Contatos</a></li>
+					<li><a class="<%= controller.controller_name == "templates" ? "current " : "" %>templates" href="<%= url_for(:controller => 'templates') %>" title="">Templates</a></li>
+				</ul>
+				
+			</div>
+			<!-- Header -->
+			
+			<%= yield %>
+			
+		</div>
+		<!-- Wrapper -->
+		
+		<!-- JS Scripts -->
+		<%= yield :scripts %>
+	</body>
 </html>

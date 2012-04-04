@@ -6,7 +6,7 @@ Shareplan::Application.routes.draw do
   devise_for :users
   
   # Let's add the root route
-  root :to => "home#index"
+  root :to => "index#index"
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

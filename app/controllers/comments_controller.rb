@@ -11,6 +11,8 @@ class CommentsController < ApplicationController
       comment.user_id = @user.id
       
       if comment.save
+        
+        
         render :json => {
           status: "success",
           comment: {
